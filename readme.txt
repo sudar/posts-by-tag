@@ -1,0 +1,49 @@
+﻿=== Posts By Tag ===
+Contributors: sudar 
+Tags: posts, sidebar, widget, tag, cache
+Requires at least: 2.8
+Tested up to: 2.8.2
+Stable tag: 0.1
+	
+Provide sidebar widgets that cna be used to display posts from a set of tags in the sidebar.
+
+== Description ==
+
+Posts By Tag WordPress Plugin, provides sidebar widgets which can be used to display posts from a specific set of tags in the sidebar.
+
+The Plugin caches the posts of each widget separately, and issues database queries only when needed. This will reduce the amount of database queries involved for each page load and will therefore be light on your server.
+
+### Features
+
+Posts By Tag Plugin provides a sidebar widget which can be configured to display posts from a set of tags in the sidebar. You can have multiple widgets with different set of tags configured for each one of them.
+
+Each widget allows you to choose
+
+*   The set of tags whose posts should be displayed 
+*   The number of posts to be displayed. 
+*   Option to enable post excerpts to be displayed with post titles. 
+*   Option to display post thumbnail if present.
+
+### Translation
+
+The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
+
+### Support
+
+Support for the Plugin is available from the [Plugin's home page][1]. If you have any questions or suggestions, do leave a comment there.
+
+ [1]: http://sudarmuthu.com/wordpress/posts-by-tag
+	
+== Installation ==
+
+Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page. You should see a new widget called "Tag Posts" in the widgets pages, which you can drag and drop in the sidebar of your theme.
+== Changelog ==
+### Changelog
+
+**v0.1 (2009-07-26)  
+
+*   Initial Version
+
+==Readme Generator== 
+
+This Readme file was generated using <a href = 'http://sudarmuthu.com/projects/wp-readme.php'>wp-readme</a>, which generates readme files for WordPress Plugins.
