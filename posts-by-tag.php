@@ -4,12 +4,13 @@ Plugin Name: Posts By Tag
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
 Description: Provide sidebar widgets that cna be used to display posts from a set of tags in the sidebar.
 Author: Sudar
-Version: 0.1
+Version: 0.2
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
 === RELEASE NOTES ===
 2009-07-26 – v0.1 – Initial Release
+2009-08-02 – v0.1 – Added Template function and swedish translation.
 */
 
 class PostsByTag {
@@ -20,7 +21,7 @@ class PostsByTag {
     function __construct() {
 
         // Load localization domain
-        load_plugin_textdomain( 'posts-by-tag', false, '/posts-by-tag/languages' );
+        load_plugin_textdomain( 'posts-by-tag', false, dirname(plugin_basename(__FILE__)) .  '/languages' );
 
         // Register hooks
         add_action('admin_print_scripts', array(&$this, 'add_script'));
@@ -69,13 +70,13 @@ class TagWidget extends WP_Widget {
     /** constructor */
     function TagWidget() {
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'TagWidget', 'description' => __('Widget that shows posts from a set of tags'));
+		$widget_ops = array( 'classname' => 'TagWidget', 'description' => __('Widget that shows posts from a set of tags', 'posts-by-tag'));
 
 		/* Widget control settings. */
 		$control_ops = array('id_base' => 'tag-widget' );
 
 		/* Create the widget. */
-		parent::WP_Widget( 'tag-widget', __('Posts By Tag'), $widget_ops, $control_ops );
+		parent::WP_Widget( 'tag-widget', __('Posts By Tag', 'posts-by-tag'), $widget_ops, $control_ops );
     }
 
     /** @see WP_Widget::widget */
@@ -88,48 +89,13 @@ class TagWidget extends WP_Widget {
         $num = $instance['num']; // Number of posts to show.
         $title = $instance['title'];
 
-        // first look in cache
-        $tag_posts = wp_cache_get($widget_id);
-        if ($tag_posts === false) {
-            // Not present in cahce so load it
-
-            // Get array of post info.
-            $tag_array = explode(",", $tags);
-            $tag_id_array = array();
-
-            foreach ($tag_array as $tag) {
-                $tag_id_array[] = get_tag_ID(trim($tag));
-            }
-
-            $tag_posts = get_posts(array('numberposts'=>$num, 'tag__in' => $tag_id_array));
-            wp_cache_set($widget_id, $tag_posts);
-        }
-
         echo $before_widget;
         echo $before_title;
         echo $title;
         echo $after_title;
 
-        echo '<ul>';
-        foreach($tag_posts as $post) {
-            setup_postdata($post);
-            echo '<li class="posts-by-tag-item-' . $post->ID . '">';
-            if ($thumbnail) {
-                echo '<a class="thumb" href="' . get_permalink($post) . '" title="' . $post->post_title . '"><img src="' . get_post_meta($post->ID, 'post_thumbnail', true) . '" alt="' . $post->post_title . '" /></a>';
-            }
-            echo '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a><small>';
-            _e('Posted by: ');
-            echo get_the_author($post) . '</small>';
-            if( $excerpt ) {
-                echo '<br />';
-                if ($post->post_excerpt!=NULL)
-                    echo $post->post_excerpt;
-                else
-                    the_excerpt();
-            }
-            echo '</li>';
-        }
-        echo '</ul>';
+        posts_by_Tag($tags, $num, $excerpt, $thumbnail, $widget_id);
+
         echo $after_widget;
     }
 
@@ -160,38 +126,88 @@ class TagWidget extends WP_Widget {
         $excerpt = (bool) $instance['excerpt'];
 ?>
         <p>
-            <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?>
+            <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'posts-by-tag'); ?>
             <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></label>
         </p>
 
 		<p>
 			<label for="<?php echo $this->get_field_id('tags'); ?>">
-				<?php _e( 'Tags:' ); ?><br />
+				<?php _e( 'Tags:' , 'posts-by-tag'); ?><br />
                 <input class="widefat" id="<?php echo $this->get_field_id('tags'); ?>" name="<?php echo $this->get_field_name('tags'); ?>" type="text" value="<?php echo $tags; ?>" onfocus ="setSuggest('<?php echo $this->get_field_id('tags'); ?>');" />
 			</label><br />
-            <?php _e('Seperate multiple tags by comma');?>
+            <?php _e('Seperate multiple tags by comma', 'posts-by-tag');?>
 		</p>
         
         <p>
             <label for="<?php echo $this->get_field_id('number'); ?>">
-				<?php _e('Number of posts to show:'); ?>
+				<?php _e('Number of posts to show:', 'posts-by-tag'); ?>
             <input style="width: 25px; text-align: center;" id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" type="text" value="<?php echo $number; ?>" /></label>
         </p>
 
         <p>
             <label for="<?php echo $this->get_field_id('thumbnail'); ?>">
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('thumbnail'); ?>" name="<?php echo $this->get_field_name('thumbnail'); ?>" value ="true" <?php checked($thumbnail, true); ?> /></label>
-            <?php _e( 'Show Post thumbnails' ); ?>
+            <?php _e( 'Show Post thumbnails' , 'posts-by-tag'); ?>
         </p>
 
         <p>
             <label for="<?php echo $this->get_field_id('excerpt'); ?>">
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('excerpt'); ?>" name="<?php echo $this->get_field_name('excerpt'); ?>" value ="true" <?php checked($excerpt, true); ?> /></label>
-				<?php _e( 'Show post excerpt' ); ?>
+				<?php _e( 'Show post excerpt' , 'posts-by-tag'); ?>
         </p>
 <?php
     }
 } // class TagWidget
+
+/**
+ * Template function to display posts by tags
+ * @param <string> $tags
+ * @param <number> $num
+ * @param <bool> $excerpt
+ * @param <bool> $thumbnail
+ * @param <number> $widget_id 
+ */
+function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $widget_id = 0) {
+
+    // first look in cache
+    $tag_posts = wp_cache_get($widget_id);
+    if ($tag_posts === false) {
+        // Not present in cahce so load it
+
+        // Get array of post info.
+        $tag_array = explode(",", $tags);
+        $tag_id_array = array();
+
+        foreach ($tag_array as $tag) {
+            $tag_id_array[] = get_tag_ID(trim($tag));
+        }
+
+        $tag_posts = get_posts(array('numberposts'=>$num, 'tag__in' => $tag_id_array));
+        wp_cache_set($widget_id, $tag_posts);
+    }
+
+    echo '<ul>';
+    foreach($tag_posts as $post) {
+        setup_postdata($post);
+        echo '<li class="posts-by-tag-item-' . $post->ID . '">';
+        if ($thumbnail) {
+            echo '<a class="thumb" href="' . get_permalink($post) . '" title="' . $post->post_title . '"><img src="' . get_post_meta($post->ID, 'post_thumbnail', true) . '" alt="' . $post->post_title . '" /></a>';
+        }
+        echo '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a><small>';
+        _e('Posted by: ', 'posts-by-tag');
+        echo get_the_author($post) . '</small>';
+        if( $excerpt ) {
+            echo '<br />';
+            if ($post->post_excerpt!=NULL)
+                echo $post->post_excerpt;
+            else
+                the_excerpt();
+        }
+        echo '</li>';
+    }
+    echo '</ul>';
+
+}
 
 /**
  * get tag id from tag name
