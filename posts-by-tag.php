@@ -2,15 +2,16 @@
 /**
 Plugin Name: Posts By Tag
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
-Description: Provide sidebar widgets that cna be used to display posts from a set of tags in the sidebar.
+Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 Author: Sudar
-Version: 0.2
+Version: 0.3
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
 === RELEASE NOTES ===
 2009-07-26 – v0.1 – Initial Release
-2009-08-02 – v0.1 – Added Template function and swedish translation.
+2009-08-02 – v0.2 – Added Template function and swedish translation.
+2009-08-14 – v0.3 – Better caching and Turkish translation.
 */
 
 class PostsByTag {
@@ -165,14 +166,14 @@ class TagWidget extends WP_Widget {
  * @param <number> $num
  * @param <bool> $excerpt
  * @param <bool> $thumbnail
- * @param <number> $widget_id 
+ * @param <string> $widget_id
  */
-function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $widget_id = 0) {
+function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $widget_id = "0") {
 
     // first look in cache
-    $tag_posts = wp_cache_get($widget_id);
-    if ($tag_posts === false) {
-        // Not present in cahce so load it
+    $tag_posts_output = wp_cache_get($widget_id);
+    if ($tag_posts_output === false || $widget_id == "0") {
+        // Not present in cache so load it
 
         // Get array of post info.
         $tag_array = explode(",", $tags);
@@ -183,30 +184,34 @@ function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $widget
         }
 
         $tag_posts = get_posts(array('numberposts'=>$num, 'tag__in' => $tag_id_array));
-        wp_cache_set($widget_id, $tag_posts);
-    }
 
-    echo '<ul>';
-    foreach($tag_posts as $post) {
-        setup_postdata($post);
-        echo '<li class="posts-by-tag-item-' . $post->ID . '">';
-        if ($thumbnail) {
-            echo '<a class="thumb" href="' . get_permalink($post) . '" title="' . $post->post_title . '"><img src="' . get_post_meta($post->ID, 'post_thumbnail', true) . '" alt="' . $post->post_title . '" /></a>';
+        $output = '<ul>';
+        foreach($tag_posts as $post) {
+            setup_postdata($post);
+            $output .= '<li class="posts-by-tag-item-' . $post->ID . '">';
+            if ($thumbnail) {
+                $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" /></a>';
+            }
+            $output .=  '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a><small>' . __('Posted by: ', 'posts-by-tag');
+            $output .=  get_the_author($post) . '</small>';
+            if( $excerpt ) {
+                $output .=  '<br />';
+                if ($post->post_excerpt!=NULL)
+                    $output .= apply_filters('the_excerpt', $post->post_excerpt);
+                else
+                    $output .= get_the_excerpt();
+            }
+            $output .=  '</li>';
         }
-        echo '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a><small>';
-        _e('Posted by: ', 'posts-by-tag');
-        echo get_the_author($post) . '</small>';
-        if( $excerpt ) {
-            echo '<br />';
-            if ($post->post_excerpt!=NULL)
-                echo $post->post_excerpt;
-            else
-                the_excerpt();
-        }
-        echo '</li>';
-    }
-    echo '</ul>';
+        $output .=  '</ul>';
 
+        echo $output;
+
+        // if it is not called from theme, save the output to cache
+        if ($widget_id != "0") {
+            wp_cache_set($widget_id, $output);
+        }
+    }
 }
 
 /**

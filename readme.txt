@@ -2,8 +2,8 @@
 Contributors: sudar 
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
-Tested up to: 2.8.2
-Stable tag: 0.2
+Tested up to: 2.8.4
+Stable tag: 0.3
 	
 Provide sidebar widgets that cna be used to display posts from a set of tags in the sidebar.
 
@@ -37,6 +37,7 @@ posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false);
 ### Translation
 
 *   Swedish (Thanks Gunnar Lindberg Årneby)
+*   Turkish (Thanks Yakup Gövler)
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
 
@@ -67,6 +68,11 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 *   Added template functions
 *   Added Swedish translation (Thanks Gunnar Lindberg Årneby)
+
+**v0.3 (2009-08-14)  
+
+*   Improved caching performance
+*   Added Turkish translation (Thanks Yakup Gövler)
 
 ==Readme Generator== 
 
