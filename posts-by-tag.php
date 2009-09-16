@@ -4,7 +4,7 @@ Plugin Name: Posts By Tag
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
 Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 Author: Sudar
-Version: 0.3
+Version: 0.4
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -12,6 +12,7 @@ Text Domain: posts-by-tag
 2009-07-26 – v0.1 – Initial Release
 2009-08-02 – v0.2 – Added Template function and swedish translation.
 2009-08-14 – v0.3 – Better caching and Turkish translation.
+2009-09-16 – v0.4 – Added support for sorting the posts (Thanks to Michael http://mfields.org/).
 */
 
 class PostsByTag {
@@ -89,14 +90,13 @@ class TagWidget extends WP_Widget {
         $excerpt = (bool) $instance['excerpt'];
         $num = $instance['num']; // Number of posts to show.
         $title = $instance['title'];
+		$order = $instance['order'];
 
         echo $before_widget;
         echo $before_title;
         echo $title;
         echo $after_title;
-
-        posts_by_Tag($tags, $num, $excerpt, $thumbnail, $widget_id);
-
+        posts_by_tag($tags, $num, $excerpt, $thumbnail, $order, $widget_id, $order);
         echo $after_widget;
     }
 
@@ -109,6 +109,7 @@ class TagWidget extends WP_Widget {
         $instance['number'] = intval($new_instance['number']);
         $instance['thumbnail'] = (bool)$new_instance['thumbnail'];
         $instance['excerpt'] = (bool)$new_instance['excerpt'];
+		$instance['order'] = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
 
         return $instance;
     }
@@ -125,6 +126,7 @@ class TagWidget extends WP_Widget {
         $number = intval($instance['number']);
         $thumbnail = (bool) $instance['thumbnail'];
         $excerpt = (bool) $instance['excerpt'];
+		$order = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc'; 
 ?>
         <p>
             <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'posts-by-tag'); ?>
@@ -156,6 +158,16 @@ class TagWidget extends WP_Widget {
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('excerpt'); ?>" name="<?php echo $this->get_field_name('excerpt'); ?>" value ="true" <?php checked($excerpt, true); ?> /></label>
 				<?php _e( 'Show post excerpt' , 'posts-by-tag'); ?>
         </p>
+		<p>
+            <label for="<?php echo $this->get_field_id( 'order' ); ?>">
+                <input name="<?php echo $this->get_field_name('order'); ?>" type="radio" value="asc" <?php checked($order, 'asc'); ?> />
+				<?php _e( 'Ascending', 'posts-by-tag' ); ?>
+            </label>
+            <label for="<?php echo $this->get_field_id( 'order' ); ?>">
+                <input name="<?php echo $this->get_field_name('order'); ?>" type="radio" value="desc" <?php checked($order, 'desc'); ?> />
+				<?php _e( 'Descending', 'posts-by-tag' ); ?>
+            </label>
+        </p>
 <?php
     }
 } // class TagWidget
@@ -167,9 +179,9 @@ class TagWidget extends WP_Widget {
  * @param <bool> $excerpt
  * @param <bool> $thumbnail
  * @param <string> $widget_id
+ * @param <set> $order (asc,desc) defaults to 'desc'
  */
-function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $widget_id = "0") {
-
+function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order = 'desc', $widget_id = "0" ) {
     // first look in cache
     $tag_posts_output = wp_cache_get($widget_id);
     if ($tag_posts_output === false || $widget_id == "0") {
@@ -182,9 +194,8 @@ function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $widget
         foreach ($tag_array as $tag) {
             $tag_id_array[] = get_tag_ID(trim($tag));
         }
-
-        $tag_posts = get_posts(array('numberposts'=>$num, 'tag__in' => $tag_id_array));
-
+		
+        $tag_posts = get_posts( array( 'numberposts'=>$num, 'tag__in' => $tag_id_array, 'order' => $order ) ); 
         $output = '<ul>';
         foreach($tag_posts as $post) {
             setup_postdata($post);

@@ -3,7 +3,7 @@ Contributors: sudar
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Tested up to: 2.8.4
-Stable tag: 0.3
+Stable tag: 0.4
 	
 Provide sidebar widgets that cna be used to display posts from a set of tags in the sidebar.
 
@@ -23,6 +23,7 @@ Each widget allows you to choose
 *   The number of posts to be displayed. 
 *   Option to enable post excerpts to be displayed with post titles. 
 *   Option to display post thumbnail if present.
+*   Choose the order in which the posts should be displayed.
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
@@ -33,6 +34,7 @@ posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false);
 *   $num (number) - number of posts to display
 *   $excerpt (bool) - To display post excerpts or not
 *   $thumbnail (bool) - To display post thumbnails or not
+*   $order (asc,desc) - To change the order in which the posts are displayed. 
 
 ### Translation
 
@@ -57,6 +59,10 @@ If you like this Plugin, please vote for it at [WordPress Plugin blog][1] and he
 == Installation ==
 
 Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page. You should see a new widget called "Tag Posts" in the widgets pages, which you can drag and drop in the sidebar of your theme.
+
+== Screenshots ==
+1. Widget settings page
+
 == Changelog ==
 ### Changelog
 
@@ -73,6 +79,11 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 *   Improved caching performance
 *   Added Turkish translation (Thanks Yakup Gövler)
+
+**v0.4 (2009-09-16)  
+
+*   Added support for sorting the posts (Thanks to Michael http://mfields.org/)
+
 
 ==Readme Generator== 
 
