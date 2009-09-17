@@ -5,7 +5,7 @@ Requires at least: 2.8
 Tested up to: 2.8.4
 Stable tag: 0.4
 	
-Provide sidebar widgets that cna be used to display posts from a set of tags in the sidebar.
+Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
 == Description ==
 
@@ -27,7 +27,7 @@ Each widget allows you to choose
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false);
+posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order = "desc");
 
 
 *   $tags (string) - set of comma seperated tags
@@ -61,26 +61,27 @@ If you like this Plugin, please vote for it at [WordPress Plugin blog][1] and he
 Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page. You should see a new widget called "Tag Posts" in the widgets pages, which you can drag and drop in the sidebar of your theme.
 
 == Screenshots ==
+
 1. Widget settings page
 
 == Changelog ==
 ### Changelog
 
-**v0.1 (2009-07-26)  
+** v0.1 (2009-07-26)  
 
 *   Initial Version
 
-**v0.2 (2009-08-02)  
+** v0.2 (2009-08-02)  
 
 *   Added template functions
 *   Added Swedish translation (Thanks Gunnar Lindberg Årneby)
 
-**v0.3 (2009-08-14)  
+** v0.3 (2009-08-14)  
 
 *   Improved caching performance
 *   Added Turkish translation (Thanks Yakup Gövler)
 
-**v0.4 (2009-09-16)  
+** v0.4 (2009-09-16)  
 
 *   Added support for sorting the posts (Thanks to Michael http://mfields.org/)
 
