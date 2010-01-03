@@ -2,8 +2,8 @@
 Contributors: sudar 
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
-Tested up to: 2.8.4
-Stable tag: 0.4
+Tested up to: 2.9
+Stable tag: 0.5
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -29,7 +29,6 @@ In addition to using the widget, you can also use the following template functio
 
 posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order = "desc");
 
-
 *   $tags (string) - set of comma seperated tags
 *   $num (number) - number of posts to display
 *   $excerpt (bool) - To display post excerpts or not
@@ -40,6 +39,7 @@ posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order = "desc")
 
 *   Swedish (Thanks Gunnar Lindberg Årneby)
 *   Turkish (Thanks Yakup Gövler)
+*   Belorussian (Thanks [FatCow][2])
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
 
@@ -48,14 +48,8 @@ The pot file is available with the Plugin. If you are willing to do translation 
 Support for the Plugin is available from the [Plugin's home page][1]. If you have any questions or suggestions, do leave a comment there.
 
  [1]: http://sudarmuthu.com/wordpress/posts-by-tag
+ [2]: http://www.fatcow.com/
 
-### Vote for this Plugin
-
-If you like this Plugin, please vote for it at [WordPress Plugin blog][1] and help me win the [WordPress Plugin Competition][2].
-
- [1]: http://weblogtoolscollection.com/pluginblog/2009/07/28/posts-by-tag-wordpress-plugin/
- [2]: http://sudarmuthu.com/blog/2009/05/23/wordpress-plugin-competition-2009.html
-	
 == Installation ==
 
 Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page. You should see a new widget called "Tag Posts" in the widgets pages, which you can drag and drop in the sidebar of your theme.
@@ -85,6 +79,9 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 *   Added support for sorting the posts (Thanks to Michael http://mfields.org/)
 
+** v0.5 (2010-01-03)
+
+*   Removed JavaScript from unwanted admin pages and added Belorussian translation.
 
 ==Readme Generator== 
 

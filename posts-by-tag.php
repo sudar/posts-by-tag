@@ -4,15 +4,16 @@ Plugin Name: Posts By Tag
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
 Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 Author: Sudar
-Version: 0.4
+Version: 0.5
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
 === RELEASE NOTES ===
-2009-07-26 – v0.1 – Initial Release
-2009-08-02 – v0.2 – Added Template function and swedish translation.
-2009-08-14 – v0.3 – Better caching and Turkish translation.
-2009-09-16 – v0.4 – Added support for sorting the posts (Thanks to Michael http://mfields.org/).
+2009-07-26 - v0.1 - Initial Release
+2009-08-02 - v0.2 - Added Template function and swedish translation.
+2009-08-14 - v0.3 - Better caching and Turkish translation.
+2009-09-16 - v0.4 - Added support for sorting the posts (Thanks to Michael http://mfields.org/).
+2010-01-03 - v0.5 - Removed JavaScript from unwanted admin pages and added Belorussian translation.
 */
 
 class PostsByTag {
@@ -42,6 +43,8 @@ class PostsByTag {
      * add script to admin page
      */
     function add_script_config() {
+        // Add script only to Widgets page
+        if (substr_compare($_SERVER['REQUEST_URI'], 'widgets.php', -11) == 0) {
     ?>
 
     <script type="text/javascript">
@@ -51,6 +54,7 @@ class PostsByTag {
     }
     </script>
     <?php
+        }
     }
 
     // PHP4 compatibility
