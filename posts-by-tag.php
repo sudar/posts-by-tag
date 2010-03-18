@@ -4,7 +4,7 @@ Plugin Name: Posts By Tag
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
 Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 Author: Sudar
-Version: 0.5
+Version: 0.6
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -14,6 +14,23 @@ Text Domain: posts-by-tag
 2009-08-14 - v0.3 - Better caching and Turkish translation.
 2009-09-16 - v0.4 - Added support for sorting the posts (Thanks to Michael http://mfields.org/).
 2010-01-03 - v0.5 - Removed JavaScript from unwanted admin pages and added Belorussian translation.
+2010-03-18 - v0.6 - Added option to hide author links.
+*/
+
+/*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as
+    published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 class PostsByTag {
@@ -91,6 +108,7 @@ class TagWidget extends WP_Widget {
 
         $tags = $instance['tags'];
         $thumbnail = (bool) $instance['thumbnail'];
+        $author = (bool) $instance['author'];
         $excerpt = (bool) $instance['excerpt'];
         $num = $instance['num']; // Number of posts to show.
         $title = $instance['title'];
@@ -100,7 +118,7 @@ class TagWidget extends WP_Widget {
         echo $before_title;
         echo $title;
         echo $after_title;
-        posts_by_tag($tags, $num, $excerpt, $thumbnail, $order, $widget_id, $order);
+        posts_by_tag($tags, $num, $excerpt, $thumbnail, $order, $author, $widget_id);
         echo $after_widget;
     }
 
@@ -112,6 +130,7 @@ class TagWidget extends WP_Widget {
         $instance['tags'] = strip_tags($new_instance['tags']);
         $instance['number'] = intval($new_instance['number']);
         $instance['thumbnail'] = (bool)$new_instance['thumbnail'];
+        $instance['author'] = (bool)$new_instance['author'];
         $instance['excerpt'] = (bool)$new_instance['excerpt'];
 		$instance['order'] = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
 
@@ -129,6 +148,7 @@ class TagWidget extends WP_Widget {
         $tags = $instance['tags'];
         $number = intval($instance['number']);
         $thumbnail = (bool) $instance['thumbnail'];
+        $author = (bool) $instance['author'];
         $excerpt = (bool) $instance['excerpt'];
 		$order = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc'; 
 ?>
@@ -154,7 +174,13 @@ class TagWidget extends WP_Widget {
         <p>
             <label for="<?php echo $this->get_field_id('thumbnail'); ?>">
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('thumbnail'); ?>" name="<?php echo $this->get_field_name('thumbnail'); ?>" value ="true" <?php checked($thumbnail, true); ?> /></label>
-            <?php _e( 'Show Post thumbnails' , 'posts-by-tag'); ?>
+            <?php _e( 'Show post thumbnails' , 'posts-by-tag'); ?>
+        </p>
+
+        <p>
+            <label for="<?php echo $this->get_field_id('author'); ?>">
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('author'); ?>" name="<?php echo $this->get_field_name('author'); ?>" value ="true" <?php checked($author, true); ?> /></label>
+            <?php _e( 'Show author name' , 'posts-by-tag'); ?>
         </p>
 
         <p>
@@ -185,7 +211,7 @@ class TagWidget extends WP_Widget {
  * @param <string> $widget_id
  * @param <set> $order (asc,desc) defaults to 'desc'
  */
-function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order = 'desc', $widget_id = "0" ) {
+function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order = 'desc', $author = false, $widget_id = "0" ) {
     // first look in cache
     $tag_posts_output = wp_cache_get($widget_id);
     if ($tag_posts_output === false || $widget_id == "0") {
@@ -207,8 +233,13 @@ function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order 
             if ($thumbnail) {
                 $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" /></a>';
             }
-            $output .=  '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a><small>' . __('Posted by: ', 'posts-by-tag');
-            $output .=  get_the_author($post) . '</small>';
+            $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
+
+            if ($author) {
+                $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
+                $output .=  get_the_author($post) . '</small>';
+            }
+
             if( $excerpt ) {
                 $output .=  '<br />';
                 if ($post->post_excerpt!=NULL)

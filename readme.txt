@@ -1,9 +1,9 @@
-﻿=== Posts By Tag ===
+=== Posts By Tag ===
 Contributors: sudar 
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
-Tested up to: 2.9
-Stable tag: 0.5
+Tested up to: 2.9.2
+Stable tag: 0.6
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -27,13 +27,14 @@ Each widget allows you to choose
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order = "desc");
+posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order = "desc", author = false);
 
 *   $tags (string) - set of comma seperated tags
 *   $num (number) - number of posts to display
 *   $excerpt (bool) - To display post excerpts or not
 *   $thumbnail (bool) - To display post thumbnails or not
 *   $order (asc,desc) - To change the order in which the posts are displayed. 
+*   $author (bool) - To display author name or not.
 
 ### Translation
 
@@ -83,6 +84,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 *   Removed JavaScript from unwanted admin pages and added Belorussian translation.
 
+** v0.6 (2010-03-18)
+
+*   Added option to hide author links.
+
 ==Readme Generator== 
 
-This Readme file was generated using <a href = 'http://sudarmuthu.com/projects/wp-readme.php'>wp-readme</a>, which generates readme files for WordPress Plugins.
+This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
