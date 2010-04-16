@@ -3,7 +3,7 @@ Contributors: sudar
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Tested up to: 2.9.2
-Stable tag: 0.6
+Stable tag: 0.7
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -87,6 +87,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ** v0.6 (2010-03-18)
 
 *   Added option to hide author links.
+
+** v0.7 (2010-04-16)
+
+*   Fixed an issue in showing the number of posts.
 
 ==Readme Generator== 
 
