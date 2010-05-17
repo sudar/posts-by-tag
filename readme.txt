@@ -2,18 +2,20 @@
 Contributors: sudar 
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
-Tested up to: 2.9.2
-Stable tag: 0.7
+Tested up to: 2.9.4
+Stable tag: 0.8
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
 == Description ==
 
-Posts By Tag WordPress Plugin, provides sidebar widgets which can be used to display posts from a specific set of tags in the sidebar.
+Posts By Tag WordPress Plugin, provides sidebar widgets which can be used to display posts from a specific set of tags in the sidebar. You can also use shortcode or template function to display the posts.
 
 The Plugin caches the posts of each widget separately, and issues database queries only when needed. This will reduce the amount of database queries involved for each page load and will therefore be light on your server.
 
 ### Features
+
+#### Sidebar Widget
 
 Posts By Tag Plugin provides a sidebar widget which can be configured to display posts from a set of tags in the sidebar. You can have multiple widgets with different set of tags configured for each one of them.
 
@@ -25,16 +27,27 @@ Each widget allows you to choose
 *   Option to display post thumbnail if present.
 *   Choose the order in which the posts should be displayed.
 
+#### Template function
+
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order = "desc", author = false);
+posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order_by = "date", $order = "desc", author = false);
 
 *   $tags (string) - set of comma seperated tags
 *   $num (number) - number of posts to display
 *   $excerpt (bool) - To display post excerpts or not
 *   $thumbnail (bool) - To display post thumbnails or not
-*   $order (asc,desc) - To change the order in which the posts are displayed. 
+*   $order_by (date,title) - Whether to order by date or by title.
+*   $order (asc,desc) - To change the order in which the posts are displayed.
 *   $author (bool) - To display author name or not.
+
+#### Shortcode
+
+You can also include the shortcode, to display the posts from the set of tags
+
+[posts-by-tag tags = "tag1, tag2"][/posts-by-tag]
+
+All the parameters that are accepted by the template tag can also be used in the shortcode
 
 ### Translation
 
@@ -91,6 +104,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ** v0.7 (2010-04-16)
 
 *   Fixed an issue in showing the number of posts.
+
+** v0.8 (2010-05-08)
+
+ *  Added support for shortcode and sorting by title.
 
 ==Readme Generator== 
 

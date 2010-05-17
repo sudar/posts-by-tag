@@ -4,7 +4,7 @@ Plugin Name: Posts By Tag
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
 Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 Author: Sudar
-Version: 0.7
+Version: 0.8
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -16,6 +16,7 @@ Text Domain: posts-by-tag
 2010-01-03 - v0.5 - Removed JavaScript from unwanted admin pages and added Belorussian translation.
 2010-03-18 - v0.6 - Added option to hide author links.
 2010-04-16 - v0.7 - Fixed an issue in showing the number of posts.
+2010-05-08 - v0.8 - Added support for shortcode and sorting by title.
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -47,6 +48,9 @@ class PostsByTag {
         // Register hooks
         add_action('admin_print_scripts', array(&$this, 'add_script'));
         add_action('admin_head', array(&$this, 'add_script_config'));
+
+        //Short code
+        add_shortcode('posts-by-tag', array(&$this, 'shortcode_handler'));
     }
 
     /**
@@ -73,6 +77,26 @@ class PostsByTag {
     </script>
     <?php
         }
+    }
+
+    /**
+     * Expand the shortcode
+     *
+     * @param <array> $attributes
+     */
+    function shortcode_handler($attributes) {
+        extract(shortcode_atts(array(
+            "tags"      => '',   // comma seperated list of tags
+            "number"    => '5',
+            "excerpt"   => FALSE,
+            'thumbnail' => FALSE,
+            'order_by'  => 'date',
+            'order'     => 'desc',
+            'author'    => FALSE
+        ), $attributes));
+
+        // call the template function
+        posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author);
     }
 
     // PHP4 compatibility
@@ -108,18 +132,20 @@ class TagWidget extends WP_Widget {
         extract( $args );
 
         $tags = $instance['tags'];
-        $thumbnail = (bool) $instance['thumbnail'];
-        $author = (bool) $instance['author'];
-        $excerpt = (bool) $instance['excerpt'];
         $number = $instance['number']; // Number of posts to show.
-        $title = $instance['title'];
+        $excerpt = (bool) $instance['excerpt'];
+        $thumbnail = (bool) $instance['thumbnail'];
+		$order_by = $instance['order_by'];
 		$order = $instance['order'];
+        $author = (bool) $instance['author'];
+
+        $title = $instance['title'];
 
         echo $before_widget;
         echo $before_title;
         echo $title;
         echo $after_title;
-        posts_by_tag($tags, $number, $excerpt, $thumbnail, $order, $author, $widget_id);
+        posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $widget_id);
         echo $after_widget;
     }
 
@@ -134,6 +160,7 @@ class TagWidget extends WP_Widget {
         $instance['author'] = (bool)$new_instance['author'];
         $instance['excerpt'] = (bool)$new_instance['excerpt'];
 		$instance['order'] = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
+		$instance['order_by'] = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
 
         return $instance;
     }
@@ -152,6 +179,7 @@ class TagWidget extends WP_Widget {
         $author = (bool) $instance['author'];
         $excerpt = (bool) $instance['excerpt'];
 		$order = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc'; 
+		$order = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
 ?>
         <p>
             <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'posts-by-tag'); ?>
@@ -190,6 +218,16 @@ class TagWidget extends WP_Widget {
 				<?php _e( 'Show post excerpt' , 'posts-by-tag'); ?>
         </p>
 		<p>
+            <label for="<?php echo $this->get_field_id( 'order_by' ); ?>">
+                <input name="<?php echo $this->get_field_name('order_by'); ?>" type="radio" value="date" <?php checked($order_by, 'date'); ?> />
+				<?php _e( 'Date', 'posts-by-tag' ); ?>
+            </label>
+            <label for="<?php echo $this->get_field_id( 'order_by' ); ?>">
+                <input name="<?php echo $this->get_field_name('order_by'); ?>" type="radio" value="title" <?php checked($order_by, 'title'); ?> />
+				<?php _e( 'Title', 'posts-by-tag' ); ?>
+            </label>
+        </p>
+		<p>
             <label for="<?php echo $this->get_field_id( 'order' ); ?>">
                 <input name="<?php echo $this->get_field_name('order'); ?>" type="radio" value="asc" <?php checked($order, 'asc'); ?> />
 				<?php _e( 'Ascending', 'posts-by-tag' ); ?>
@@ -205,17 +243,20 @@ class TagWidget extends WP_Widget {
 
 /**
  * Template function to display posts by tags
+ *
  * @param <string> $tags
- * @param <number> $num
+ * @param <int> $number Number of posts to show
  * @param <bool> $excerpt
  * @param <bool> $thumbnail
- * @param <string> $widget_id
- * @param <set> $order (asc,desc) defaults to 'desc'
+ * @param <set> $order_by (title, date) defaults to 'date'
+ * @param <set> $order (asc, desc) defaults to 'desc'
+ * @param <bool> $author - Whether to show the author name or not
+ * @param <string> $widget_id - widget id (incase of widgets)
  */
-function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order = 'desc', $author = false, $widget_id = "0" ) {
+function posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $order_by = 'date', $order = 'desc', $author = false, $widget_id = "0" ) {
     // first look in cache
-    $tag_posts_output = wp_cache_get($widget_id);
-    if ($tag_posts_output === false || $widget_id == "0") {
+    $output = wp_cache_get($widget_id, 'posts-by-tag');
+    if ($output === false || $widget_id == "0") {
         // Not present in cache so load it
 
         // Get array of post info.
@@ -225,8 +266,10 @@ function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order 
         foreach ($tag_array as $tag) {
             $tag_id_array[] = get_tag_ID(trim($tag));
         }
-		
-        $tag_posts = get_posts( array( 'numberposts'=>$num, 'tag__in' => $tag_id_array, 'order' => $order ) ); 
+
+        // TODO: Need to cache this.
+        $tag_posts = get_posts( array( 'numberposts'=>$number, 'tag__in' => $tag_id_array, 'order_by' => $order_by, 'order' => $order ) );
+
         $output = '<ul>';
         foreach($tag_posts as $post) {
             setup_postdata($post);
@@ -252,13 +295,13 @@ function posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order 
         }
         $output .=  '</ul>';
 
-        echo $output;
-
         // if it is not called from theme, save the output to cache
         if ($widget_id != "0") {
-            wp_cache_set($widget_id, $output);
+            wp_cache_set($widget_id, $output, 'posts-by-tag', 3600);
         }
     }
+    
+    echo $output;
 }
 
 /**
