@@ -4,7 +4,7 @@ Plugin Name: Posts By Tag
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
 Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 Author: Sudar
-Version: 0.8
+Version: 1.0
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -17,6 +17,8 @@ Text Domain: posts-by-tag
 2010-03-18 - v0.6 - Added option to hide author links.
 2010-04-16 - v0.7 - Fixed an issue in showing the number of posts.
 2010-05-08 - v0.8 - Added support for shortcode and sorting by title.
+2010-06-18 - v0.9 - Fixed an issue with the order by option.
+2010-06-19 - v1.0 - Fixed issue with shortcode.
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -96,7 +98,7 @@ class PostsByTag {
         ), $attributes));
 
         // call the template function
-        posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author);
+        return posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author);
     }
 
     // PHP4 compatibility
@@ -254,6 +256,22 @@ class TagWidget extends WP_Widget {
  * @param <string> $widget_id - widget id (incase of widgets)
  */
 function posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $order_by = 'date', $order = 'desc', $author = false, $widget_id = "0" ) {
+    echo get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $widget_id);
+}
+
+/**
+ * Helper function for posts_by_tag
+ *
+ * @param <string> $tags
+ * @param <int> $number Number of posts to show
+ * @param <bool> $excerpt
+ * @param <bool> $thumbnail
+ * @param <set> $order_by (title, date) defaults to 'date'
+ * @param <set> $order (asc, desc) defaults to 'desc'
+ * @param <bool> $author - Whether to show the author name or not
+ * @param <string> $widget_id - widget id (incase of widgets)
+ */
+function get_posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $order_by = 'date', $order = 'desc', $author = false, $widget_id = "0" ) {
     // first look in cache
     $output = wp_cache_get($widget_id, 'posts-by-tag');
     if ($output === false || $widget_id == "0") {
@@ -268,7 +286,7 @@ function posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $ord
         }
 
         // TODO: Need to cache this.
-        $tag_posts = get_posts( array( 'numberposts'=>$number, 'tag__in' => $tag_id_array, 'order_by' => $order_by, 'order' => $order ) );
+        $tag_posts = get_posts( array( 'numberposts'=>$number, 'tag__in' => $tag_id_array, 'orderby' => $order_by, 'order' => $order ) );
 
         $output = '<ul>';
         foreach($tag_posts as $post) {
@@ -300,8 +318,8 @@ function posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $ord
             wp_cache_set($widget_id, $output, 'posts-by-tag', 3600);
         }
     }
-    
-    echo $output;
+
+    return $output;
 }
 
 /**
