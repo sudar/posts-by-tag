@@ -3,7 +3,7 @@ Contributors: sudar
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Tested up to: 3.0
-Stable tag: 1.0
+Stable tag: 1.1
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -116,6 +116,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ** v1.0 (2010-06-19)
 
  *  Fixed issue with shortcode.
+
+** v1.1 (2010-06-23)
+
+ *  Fixed issue with shortcode, which was not fixed properly in 1.0
 
 ==Readme Generator== 
 
