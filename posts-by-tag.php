@@ -4,7 +4,7 @@ Plugin Name: Posts By Tag
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
 Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 Author: Sudar
-Version: 1.1
+Version: 1.2
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -20,6 +20,7 @@ Text Domain: posts-by-tag
 2010-06-18 - v0.9 - Fixed an issue with the order by option.
 2010-06-19 - v1.0 - Fixed issue with shortcode.
 2010-06-23 - v1.1 - Fixed issue with shortcode, which was not fixed properly in 1.0.
+2010-06-25 - v1.2 - Fixed issue with shortcode, which was not fixed properly in 1.0 and 1.1.
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -99,7 +100,7 @@ class PostsByTag {
         ), $attributes));
 
         // call the template function
-        return posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author);
+        return get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author);
     }
 
     // PHP4 compatibility
@@ -148,7 +149,7 @@ class TagWidget extends WP_Widget {
         echo $before_title;
         echo $title;
         echo $after_title;
-        get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $widget_id);
+        posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $widget_id);
         echo $after_widget;
     }
 
