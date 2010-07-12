@@ -3,7 +3,7 @@ Contributors: sudar
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Tested up to: 3.0
-Stable tag: 1.2
+Stable tag: 1.3
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -31,10 +31,10 @@ Each widget allows you to choose
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $num, $excerpt = false, $thumbnail = false, $order_by = "date", $order = "desc", author = false);
+posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $order_by = "date", $order = "desc", author = false);
 
 *   $tags (string) - set of comma seperated tags
-*   $num (number) - number of posts to display
+*   $number (number) - number of posts to display
 *   $excerpt (bool) - To display post excerpts or not
 *   $thumbnail (bool) - To display post thumbnails or not
 *   $order_by (date,title) - Whether to order by date or by title.
@@ -124,6 +124,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ** v1.2 (2010-06-25)
 
  *  Fixed issue with shortcode, which was not fixed properly in 1.0 and 1.1
+
+** v1.3 (2010-07-12)
+
+ *  Fixed some inconsistency in documentation and code
 
 ==Readme Generator== 
 
