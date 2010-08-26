@@ -4,7 +4,7 @@ Plugin Name: Posts By Tag
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
 Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 Author: Sudar
-Version: 1.4
+Version: 1.5
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -23,6 +23,7 @@ Text Domain: posts-by-tag
 2010-06-25 - v1.2 - Fixed issue with shortcode, which was not fixed properly in 1.0 and 1.1.
 2010-07-12 - v1.3 - Fixed some inconsistency in documentation and code.
 2010-08-02 - v1.4 - Added German translations.
+2010-08-26 - v1.4 - Added Dutch translations and fixed typos.
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -92,7 +93,7 @@ class PostsByTag {
      */
     function shortcode_handler($attributes) {
         extract(shortcode_atts(array(
-            "tags"      => '',   // comma seperated list of tags
+            "tags"      => '',   // comma Separated list of tags
             "number"    => '5',
             "excerpt"   => FALSE,
             'thumbnail' => FALSE,
@@ -197,7 +198,7 @@ class TagWidget extends WP_Widget {
 				<?php _e( 'Tags:' , 'posts-by-tag'); ?><br />
                 <input class="widefat" id="<?php echo $this->get_field_id('tags'); ?>" name="<?php echo $this->get_field_name('tags'); ?>" type="text" value="<?php echo $tags; ?>" onfocus ="setSuggest('<?php echo $this->get_field_id('tags'); ?>');" />
 			</label><br />
-            <?php _e('Seperate multiple tags by comma', 'posts-by-tag');?>
+            <?php _e('Separate multiple tags by comma', 'posts-by-tag');?>
 		</p>
         
         <p>
