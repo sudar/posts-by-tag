@@ -54,8 +54,8 @@ All the parameters that are accepted by the template tag can also be used in the
 *   Swedish (Thanks Gunnar Lindberg Årneby)
 *   Turkish (Thanks Yakup Gövler)
 *   Belorussian (Thanks [FatCow][2])
-*   German (Thanks Renate[3])
-*   Dutch (Thanks Rene[4])
+*   German (Thanks [Renate][3])
+*   Dutch (Thanks [Rene][4])
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
 
