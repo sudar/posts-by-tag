@@ -2,8 +2,9 @@
 Contributors: sudar 
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
-Tested up to: 3.0.1
-Stable tag: 1.5
+Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
+Tested up to: 3.0.5
+Stable tag: 1.6
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -61,12 +62,13 @@ The pot file is available with the Plugin. If you are willing to do translation 
 
 ### Support
 
-Support for the Plugin is available from the [Plugin's home page][1]. If you have any questions or suggestions, do leave a comment there.
+Support for the Plugin is available from the [Plugin's home page][1]. If you have any questions or suggestions, do leave a comment there or contact me in [twitter][5].
 
  [1]: http://sudarmuthu.com/wordpress/posts-by-tag
  [2]: http://www.fatcow.com/
  [3]: http://www.heftrucknederland.nl
  [4]: http://wpwebshop.com/premium-wordpress-plugins/
+ [5]: http://twitter.com/sudarmuthu
 
 == Installation ==
 
@@ -140,6 +142,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ** v1.5 (2010-08-26)
 
  *  Added Dutch translations and fixed typos
+
+** v1.6 (2011-02-17)
+
+ *  Fixed an issue in handling boolean in shortcode
 
 ==Readme Generator== 
 
