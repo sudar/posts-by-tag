@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 1.6
+Version: 1.7
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -27,6 +27,7 @@ Text Domain: posts-by-tag
 2010-08-02 - v1.4 - Added German translations.
 2010-08-26 - v1.5 - Added Dutch translations and fixed typos.
 2011-02-17 - v1.6 - Fixed an issue in handling boolean in shortcode.
+2011-05-11 - v1.7 - Added support for displaying dates and fixed a bug which was corrupting the loop.
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -102,7 +103,8 @@ class PostsByTag {
             'thumbnail' => FALSE,
             'order_by'  => 'date',
             'order'     => 'desc',
-            'author'    => FALSE
+            'author'    => FALSE,
+            'date'      => FALSE
         ), $attributes));
 
         if (strtolower($excerpt) == "false") {
@@ -117,8 +119,12 @@ class PostsByTag {
             $author = FALSE;
         }
 
+        if (strtolower($date) == "false") {
+            $date = FALSE;
+        }
+
         // call the template function
-        return get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author);
+        return get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date);
     }
 
     // PHP4 compatibility
@@ -160,6 +166,7 @@ class TagWidget extends WP_Widget {
 		$order_by = $instance['order_by'];
 		$order = $instance['order'];
         $author = (bool) $instance['author'];
+        $date = (bool) $instance['date'];
 
         $title = $instance['title'];
 
@@ -167,7 +174,7 @@ class TagWidget extends WP_Widget {
         echo $before_title;
         echo $title;
         echo $after_title;
-        posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $widget_id);
+        posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date, $widget_id);
         echo $after_widget;
     }
 
@@ -180,6 +187,7 @@ class TagWidget extends WP_Widget {
         $instance['number'] = intval($new_instance['number']);
         $instance['thumbnail'] = (bool)$new_instance['thumbnail'];
         $instance['author'] = (bool)$new_instance['author'];
+        $instance['date'] = (bool)$new_instance['date'];
         $instance['excerpt'] = (bool)$new_instance['excerpt'];
 		$instance['order'] = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
 		$instance['order_by'] = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
@@ -199,6 +207,7 @@ class TagWidget extends WP_Widget {
         $number = intval($instance['number']);
         $thumbnail = (bool) $instance['thumbnail'];
         $author = (bool) $instance['author'];
+        $date = (bool) $instance['date'];
         $excerpt = (bool) $instance['excerpt'];
 		$order = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc'; 
 		$order = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
@@ -232,6 +241,12 @@ class TagWidget extends WP_Widget {
             <label for="<?php echo $this->get_field_id('author'); ?>">
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('author'); ?>" name="<?php echo $this->get_field_name('author'); ?>" value ="true" <?php checked($author, true); ?> /></label>
             <?php _e( 'Show author name' , 'posts-by-tag'); ?>
+        </p>
+
+        <p>
+            <label for="<?php echo $this->get_field_id('date'); ?>">
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('date'); ?>" name="<?php echo $this->get_field_name('date'); ?>" value ="true" <?php checked($date, true); ?> /></label>
+            <?php _e( 'Show post date' , 'posts-by-tag'); ?>
         </p>
 
         <p>
@@ -273,10 +288,11 @@ class TagWidget extends WP_Widget {
  * @param <set> $order_by (title, date) defaults to 'date'
  * @param <set> $order (asc, desc) defaults to 'desc'
  * @param <bool> $author - Whether to show the author name or not
+ * @param <bool> $date - Whether to show the post date or not
  * @param <string> $widget_id - widget id (incase of widgets)
  */
-function posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $order_by = 'date', $order = 'desc', $author = false, $widget_id = "0" ) {
-    echo get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $widget_id);
+function posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $widget_id = "0" ) {
+    echo get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date, $widget_id);
 }
 
 /**
@@ -289,9 +305,12 @@ function posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $ord
  * @param <set> $order_by (title, date) defaults to 'date'
  * @param <set> $order (asc, desc) defaults to 'desc'
  * @param <bool> $author - Whether to show the author name or not
+ * @param <bool> $date - Whether to show the post date or not
  * @param <string> $widget_id - widget id (incase of widgets)
  */
-function get_posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $order_by = 'date', $order = 'desc', $author = false, $widget_id = "0" ) {
+function get_posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $widget_id = "0" ) {
+    global $wp_query;
+
     // first look in cache
     $output = wp_cache_get($widget_id, 'posts-by-tag');
     if ($output === false || $widget_id == "0") {
@@ -305,8 +324,14 @@ function get_posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, 
             $tag_id_array[] = get_tag_ID(trim($tag));
         }
 
+        // saving the query
+        $temp_query = clone $wp_query;
+        
         // TODO: Need to cache this.
         $tag_posts = get_posts( array( 'numberposts'=>$number, 'tag__in' => $tag_id_array, 'orderby' => $order_by, 'order' => $order ) );
+
+        // restoring the query so it can be later used to display our posts
+        $wp_query = clone $temp_query;
 
         $output = '<ul>';
         foreach($tag_posts as $post) {
@@ -320,6 +345,11 @@ function get_posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, 
             if ($author) {
                 $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
                 $output .=  get_the_author($post) . '</small>';
+            }
+
+            if ($date) {
+                $output .= ' <small>' . __('Posted on: ', 'posts-by-tag');
+                $output .=  mysql2date(get_option('date_format'), $post->post_date) . '</small>';
             }
 
             if( $excerpt ) {
@@ -344,8 +374,9 @@ function get_posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, 
 
 /**
  * get tag id from tag name
- * @param <type> $tag_name
- * @return <type>
+ *
+ * @param <string> $tag_name
+ * @return <int> term id. 0 if not found
  */
 if (!function_exists("get_tag_ID")) {
     function get_tag_ID($tag_name) {

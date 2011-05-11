@@ -3,8 +3,8 @@ Contributors: sudar
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
-Tested up to: 3.0.5
-Stable tag: 1.6
+Tested up to: 3.1.2
+Stable tag: 1.7
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -26,13 +26,15 @@ Each widget allows you to choose
 *   The number of posts to be displayed. 
 *   Option to enable post excerpts to be displayed with post titles. 
 *   Option to display post thumbnail if present.
+*   Option to display post author.
+*   Option to display post date.
 *   Choose the order in which the posts should be displayed.
 
 #### Template function
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $order_by = "date", $order = "desc", author = false);
+posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE);
 
 *   $tags (string) - set of comma seperated tags
 *   $number (number) - number of posts to display
@@ -41,12 +43,13 @@ posts_by_tag($tags, $number, $excerpt = false, $thumbnail = false, $order_by = "
 *   $order_by (date,title) - Whether to order by date or by title.
 *   $order (asc,desc) - To change the order in which the posts are displayed.
 *   $author (bool) - To display author name or not.
+*   $date (bool) - To display post date or not.
 
 #### Shortcode
 
 You can also include the shortcode, to display the posts from the set of tags
 
-[posts-by-tag tags = "tag1, tag2"][/posts-by-tag]
+[posts-by-tag tags = "tag1, tag2"]
 
 All the parameters that are accepted by the template tag can also be used in the shortcode
 
@@ -146,6 +149,11 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ** v1.6 (2011-02-17)
 
  *  Fixed an issue in handling boolean in shortcode
+
+** v1.7 (2011-05-11)
+
+ *  Added support for displaying post dates.
+ *  Fixed a bug which was corrupting the loop.
 
 ==Readme Generator== 
 
