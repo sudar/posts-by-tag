@@ -3,8 +3,8 @@ Contributors: sudar
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
-Tested up to: 3.1.2
-Stable tag: 1.7
+Tested up to: 3.2.1
+Stable tag: 1.8
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -28,13 +28,14 @@ Each widget allows you to choose
 *   Option to display post thumbnail if present.
 *   Option to display post author.
 *   Option to display post date.
+*   Option to display post content.
 *   Choose the order in which the posts should be displayed.
 
 #### Template function
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE);
+posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE);
 
 *   $tags (string) - set of comma seperated tags
 *   $number (number) - number of posts to display
@@ -44,6 +45,7 @@ posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "
 *   $order (asc,desc) - To change the order in which the posts are displayed.
 *   $author (bool) - To display author name or not.
 *   $date (bool) - To display post date or not.
+*   $content (bool) - To display post content or not.
 
 #### Shortcode
 
@@ -155,6 +157,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
  *  Added support for displaying post dates.
  *  Fixed a bug which was corrupting the loop.
 
+** v1.8 (2011-09-07)
+
+ *  Added support for displaying content (Thanks rjune)
+ 
 ==Readme Generator== 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.

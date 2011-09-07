@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 1.7
+Version: 1.8
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -28,6 +28,7 @@ Text Domain: posts-by-tag
 2010-08-26 - v1.5 - Added Dutch translations and fixed typos.
 2011-02-17 - v1.6 - Fixed an issue in handling boolean in shortcode.
 2011-05-11 - v1.7 - Added support for displaying dates and fixed a bug which was corrupting the loop.
+2011-09-07 - v1.8 - Added support for displaying content (Thanks rjune).
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -100,6 +101,7 @@ class PostsByTag {
             "tags"      => '',   // comma Separated list of tags
             "number"    => '5',
             "excerpt"   => FALSE,
+            "content"   => FALSE,
             'thumbnail' => FALSE,
             'order_by'  => 'date',
             'order'     => 'desc',
@@ -123,8 +125,12 @@ class PostsByTag {
             $date = FALSE;
         }
 
+        if (strtolower($content) == "false") {
+            $content = FALSE;
+        }
+
         // call the template function
-        return get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date);
+        return get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
     }
 
     // PHP4 compatibility
@@ -162,6 +168,7 @@ class TagWidget extends WP_Widget {
         $tags = $instance['tags'];
         $number = $instance['number']; // Number of posts to show.
         $excerpt = (bool) $instance['excerpt'];
+        $content = (bool) $instance['content'];
         $thumbnail = (bool) $instance['thumbnail'];
 		$order_by = $instance['order_by'];
 		$order = $instance['order'];
@@ -174,13 +181,13 @@ class TagWidget extends WP_Widget {
         echo $before_title;
         echo $title;
         echo $after_title;
-        posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date, $widget_id);
+        posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
         echo $after_widget;
     }
 
     /** @see WP_Widget::update */
     function update($new_instance, $old_instance) {
-		$instance = $old_instance;
+        $instance = $old_instance;
         // validate data
         $instance['title'] = strip_tags($new_instance['title']);
         $instance['tags'] = strip_tags($new_instance['tags']);
@@ -189,18 +196,19 @@ class TagWidget extends WP_Widget {
         $instance['author'] = (bool)$new_instance['author'];
         $instance['date'] = (bool)$new_instance['date'];
         $instance['excerpt'] = (bool)$new_instance['excerpt'];
-		$instance['order'] = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
-		$instance['order_by'] = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
+        $instance['content'] = (bool)$new_instance['content'];
+        $instance['order'] = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
+        $instance['order_by'] = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
 
         return $instance;
     }
 
     /** @see WP_Widget::form */
     function form($instance) {
-
-		/* Set up some default widget settings. */
-		$defaults = array( 'title' => '', 'tags' => '', 'number' => '5', 'thumbnail' => false, 'excerpt' => false );
-		$instance = wp_parse_args( (array) $instance, $defaults );
+        
+        /* Set up some default widget settings. */
+        $defaults = array( 'title' => '', 'tags' => '', 'number' => '5', 'thumbnail' => FALSE, 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE);
+        $instance = wp_parse_args( (array) $instance, $defaults );
 
         $title = esc_attr($instance['title']);
         $tags = $instance['tags'];
@@ -209,19 +217,20 @@ class TagWidget extends WP_Widget {
         $author = (bool) $instance['author'];
         $date = (bool) $instance['date'];
         $excerpt = (bool) $instance['excerpt'];
-		$order = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc'; 
-		$order = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
+        $content = (bool) $instance['content'];
+        $order = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc'; 
+        $order = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
 ?>
         <p>
             <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'posts-by-tag'); ?>
             <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></label>
         </p>
 
-		<p>
-			<label for="<?php echo $this->get_field_id('tags'); ?>">
-				<?php _e( 'Tags:' , 'posts-by-tag'); ?><br />
+        <p>
+        <label for="<?php echo $this->get_field_id('tags'); ?>">
+        <?php _e( 'Tags:' , 'posts-by-tag'); ?><br />
                 <input class="widefat" id="<?php echo $this->get_field_id('tags'); ?>" name="<?php echo $this->get_field_name('tags'); ?>" type="text" value="<?php echo $tags; ?>" onfocus ="setSuggest('<?php echo $this->get_field_id('tags'); ?>');" />
-			</label><br />
+        </label><br />
             <?php _e('Separate multiple tags by comma', 'posts-by-tag');?>
 		</p>
         
@@ -254,6 +263,13 @@ class TagWidget extends WP_Widget {
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('excerpt'); ?>" name="<?php echo $this->get_field_name('excerpt'); ?>" value ="true" <?php checked($excerpt, true); ?> /></label>
 				<?php _e( 'Show post excerpt' , 'posts-by-tag'); ?>
         </p>
+
+        <p>
+            <label for="<?php echo $this->get_field_id('content'); ?>">
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('content'); ?>" name="<?php echo $this->get_field_name('content'); ?>" value ="true" <?php checked($content, true); ?> /></label>
+				<?php _e( 'Show post content' , 'posts-by-tag'); ?>
+        </p>
+        
 		<p>
             <label for="<?php echo $this->get_field_id( 'order_by' ); ?>">
                 <input name="<?php echo $this->get_field_name('order_by'); ?>" type="radio" value="date" <?php checked($order_by, 'date'); ?> />
@@ -264,6 +280,7 @@ class TagWidget extends WP_Widget {
 				<?php _e( 'Title', 'posts-by-tag' ); ?>
             </label>
         </p>
+        
 		<p>
             <label for="<?php echo $this->get_field_id( 'order' ); ?>">
                 <input name="<?php echo $this->get_field_name('order'); ?>" type="radio" value="asc" <?php checked($order, 'asc'); ?> />
@@ -289,10 +306,11 @@ class TagWidget extends WP_Widget {
  * @param <set> $order (asc, desc) defaults to 'desc'
  * @param <bool> $author - Whether to show the author name or not
  * @param <bool> $date - Whether to show the post date or not
+ * @param <bool> $content
  * @param <string> $widget_id - widget id (incase of widgets)
  */
-function posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $widget_id = "0" ) {
-    echo get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date, $widget_id);
+function posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
+    echo get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
 }
 
 /**
@@ -306,9 +324,10 @@ function posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $ord
  * @param <set> $order (asc, desc) defaults to 'desc'
  * @param <bool> $author - Whether to show the author name or not
  * @param <bool> $date - Whether to show the post date or not
+ * @param <bool> $content - Whether to show post content or not
  * @param <string> $widget_id - widget id (incase of widgets)
  */
-function get_posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $widget_id = "0" ) {
+function get_posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
     global $wp_query;
 
     // first look in cache
@@ -341,6 +360,10 @@ function get_posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, 
                 $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" /></a>';
             }
             $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
+
+            if($content) {
+                 $output .= get_the_content();
+            }
 
             if ($author) {
                 $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
