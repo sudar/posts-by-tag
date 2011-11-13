@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 1.8
+Version: 1.9
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
