@@ -29,6 +29,7 @@ Text Domain: posts-by-tag
 2011-02-17 - v1.6 - Fixed an issue in handling boolean in shortcode.
 2011-05-11 - v1.7 - Added support for displaying dates and fixed a bug which was corrupting the loop.
 2011-09-07 - v1.8 - Added support for displaying content (Thanks rjune).
+2011-11-13 - v1.9 - Added Spanish and Hebrew translations.
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)

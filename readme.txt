@@ -4,7 +4,7 @@ Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 Tested up to: 3.2.1
-Stable tag: 1.8
+Stable tag: 1.9
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -62,6 +62,8 @@ All the parameters that are accepted by the template tag can also be used in the
 *   Belorussian (Thanks [FatCow][2])
 *   German (Thanks [Renate][3])
 *   Dutch (Thanks [Rene][4])
+*   Hebrew (Thanks [Sagive SEO][6])
+*   Spanish (Thanks Brian Flores of [InMotion Hosting][7])
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
 
@@ -74,6 +76,8 @@ Support for the Plugin is available from the [Plugin's home page][1]. If you hav
  [3]: http://www.heftrucknederland.nl
  [4]: http://wpwebshop.com/premium-wordpress-plugins/
  [5]: http://twitter.com/sudarmuthu
+ [6]: http://www.sagive.co.il
+ [7]: http://www.inmotionhosting.com/
 
 == Installation ==
 
@@ -161,6 +165,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
  *  Added support for displaying content (Thanks rjune)
  
+** v1.9 (2011-11-13)
+
+ * Added Spanish and Hebrew translations.
+
 ==Readme Generator== 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
