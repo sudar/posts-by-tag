@@ -188,7 +188,7 @@ class TagWidget extends WP_Widget {
 
         $title = $instance['title'];
 
-        $widget_content = posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+        $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
 
         if ($widget_content != '') {
             echo $before_widget;
@@ -336,9 +336,7 @@ class TagWidget extends WP_Widget {
  * @param <string> $widget_id - widget id (incase of widgets)
  */
 function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
-    $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
-    echo $output;
-    return $output;
+    echo get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
 }
 
 /**
