@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 1.9
+Version: 2.0
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -30,6 +30,8 @@ Text Domain: posts-by-tag
 2011-05-11 - v1.7 - Added support for displaying dates and fixed a bug which was corrupting the loop.
 2011-09-07 - v1.8 - Added support for displaying content (Thanks rjune).
 2011-11-13 - v1.9 - Added Spanish and Hebrew translations.
+2011-11-20 - v2.0 - Added option to exclude tags.
+                  - Fixed bug in displaying author name
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -101,6 +103,7 @@ class PostsByTag {
         extract(shortcode_atts(array(
             "tags"      => '',   // comma Separated list of tags
             "number"    => '5',
+            "exclude"   => FALSE,
             "excerpt"   => FALSE,
             "content"   => FALSE,
             'thumbnail' => FALSE,
@@ -109,6 +112,10 @@ class PostsByTag {
             'author'    => FALSE,
             'date'      => FALSE
         ), $attributes));
+
+        if (strtolower($exclude) == "false") {
+            $exclude = FALSE;
+        }
 
         if (strtolower($excerpt) == "false") {
             $excerpt = FALSE;
@@ -131,7 +138,7 @@ class PostsByTag {
         }
 
         // call the template function
-        return get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
+        return get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
     }
 
     // PHP4 compatibility
@@ -168,6 +175,7 @@ class TagWidget extends WP_Widget {
 
         $tags = $instance['tags'];
         $number = $instance['number']; // Number of posts to show.
+        $exclude = (bool) $instance['exclude'];
         $excerpt = (bool) $instance['excerpt'];
         $content = (bool) $instance['content'];
         $thumbnail = (bool) $instance['thumbnail'];
@@ -182,7 +190,7 @@ class TagWidget extends WP_Widget {
         echo $before_title;
         echo $title;
         echo $after_title;
-        posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+        posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
         echo $after_widget;
     }
 
@@ -193,6 +201,7 @@ class TagWidget extends WP_Widget {
         $instance['title'] = strip_tags($new_instance['title']);
         $instance['tags'] = strip_tags($new_instance['tags']);
         $instance['number'] = intval($new_instance['number']);
+        $instance['exclude'] = (bool)$new_instance['exclude'];
         $instance['thumbnail'] = (bool)$new_instance['thumbnail'];
         $instance['author'] = (bool)$new_instance['author'];
         $instance['date'] = (bool)$new_instance['date'];
@@ -208,12 +217,13 @@ class TagWidget extends WP_Widget {
     function form($instance) {
         
         /* Set up some default widget settings. */
-        $defaults = array( 'title' => '', 'tags' => '', 'number' => '5', 'thumbnail' => FALSE, 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE);
+        $defaults = array( 'title' => '', 'tags' => '', 'number' => '5', 'exclude' => FALSE, 'thumbnail' => FALSE, 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE);
         $instance = wp_parse_args( (array) $instance, $defaults );
 
         $title = esc_attr($instance['title']);
         $tags = $instance['tags'];
         $number = intval($instance['number']);
+        $exclude = (bool) $instance['exclude'];
         $thumbnail = (bool) $instance['thumbnail'];
         $author = (bool) $instance['author'];
         $date = (bool) $instance['date'];
@@ -235,6 +245,12 @@ class TagWidget extends WP_Widget {
             <?php _e('Separate multiple tags by comma', 'posts-by-tag');?>
 		</p>
         
+        <p>
+            <label for="<?php echo $this->get_field_id('exclude'); ?>">
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('exclude'); ?>" name="<?php echo $this->get_field_name('exclude'); ?>" value ="true" <?php checked($exclude, true); ?> /></label>
+            <?php _e( 'Exclude these tags' , 'posts-by-tag'); ?>
+        </p>
+
         <p>
             <label for="<?php echo $this->get_field_id('number'); ?>">
 				<?php _e('Number of posts to show:', 'posts-by-tag'); ?>
@@ -301,6 +317,7 @@ class TagWidget extends WP_Widget {
  *
  * @param <string> $tags
  * @param <int> $number Number of posts to show
+ * @param <bool> $exclude Whether to exclude the tags specified. Default is FALSE
  * @param <bool> $excerpt
  * @param <bool> $thumbnail
  * @param <set> $order_by (title, date) defaults to 'date'
@@ -310,8 +327,8 @@ class TagWidget extends WP_Widget {
  * @param <bool> $content
  * @param <string> $widget_id - widget id (incase of widgets)
  */
-function posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
-    echo get_posts_by_tag($tags, $number, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
+    echo get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
 }
 
 /**
@@ -319,6 +336,7 @@ function posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $ord
  *
  * @param <string> $tags
  * @param <int> $number Number of posts to show
+ * @param <bool> $exclude Whether to exclude the tags specified. Default is FALSE
  * @param <bool> $excerpt
  * @param <bool> $thumbnail
  * @param <set> $order_by (title, date) defaults to 'date'
@@ -328,12 +346,12 @@ function posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $ord
  * @param <bool> $content - Whether to show post content or not
  * @param <string> $widget_id - widget id (incase of widgets)
  */
-function get_posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
+function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
     global $wp_query;
 
     // first look in cache
     $output = wp_cache_get($widget_id, 'posts-by-tag');
-    if ($output === false || $widget_id == "0") {
+    if ($output === FALSE || $widget_id == "0") {
         // Not present in cache so load it
 
         // Get array of post info.
@@ -344,22 +362,30 @@ function get_posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, 
             $tag_id_array[] = get_tag_ID(trim($tag));
         }
 
+        $tag_arg = 'tag__in';
+        if ($exclude) {
+            $tag_arg = 'tag__not_in';
+        }
+
         // saving the query
         $temp_query = clone $wp_query;
         
         // TODO: Need to cache this.
-        $tag_posts = get_posts( array( 'numberposts'=>$number, 'tag__in' => $tag_id_array, 'orderby' => $order_by, 'order' => $order ) );
+        $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'orderby' => $order_by, 'order' => $order ) );
 
         // restoring the query so it can be later used to display our posts
         $wp_query = clone $temp_query;
 
-        $output = '<ul>';
+        $output = '<ul class = "posts-by-tag-list">';
         foreach($tag_posts as $post) {
+            print_r($post);
             setup_postdata($post);
-            $output .= '<li class="posts-by-tag-item-' . $post->ID . '">';
+            $output .= '<li class="posts-by-tag" id="posts-by-tag-item-' . $post->ID . '">';
+
             if ($thumbnail) {
-                $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" /></a>';
+                $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" ></a>';
             }
+
             $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
 
             if($content) {
@@ -368,7 +394,7 @@ function get_posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, 
 
             if ($author) {
                 $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
-                $output .=  get_the_author($post) . '</small>';
+                $output .=  get_the_author_meta('display_name', $post->post_author) . '</small>';
             }
 
             if ($date) {
