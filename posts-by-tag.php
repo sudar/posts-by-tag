@@ -34,6 +34,7 @@ Text Domain: posts-by-tag
                   - Fixed bug in displaying author name
                   - Added support for post thumbnails
                   - Don't display widget title if posts are not found
+                  - Added Tag links
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -186,6 +187,8 @@ class TagWidget extends WP_Widget {
         $author = (bool) $instance['author'];
         $date = (bool) $instance['date'];
 
+        $tag_links = (bool) $instance['tag_links'];
+
         $title = $instance['title'];
 
         $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
@@ -197,7 +200,10 @@ class TagWidget extends WP_Widget {
             echo $after_title;
 
             echo $widget_content;
-            
+            if ($tag_links && !$exclude) {
+                echo get_tag_more_links($tags);
+            }
+
             echo $after_widget;
         }
     }
@@ -205,6 +211,7 @@ class TagWidget extends WP_Widget {
     /** @see WP_Widget::update */
     function update($new_instance, $old_instance) {
         $instance = $old_instance;
+        
         // validate data
         $instance['title'] = strip_tags($new_instance['title']);
         $instance['tags'] = strip_tags($new_instance['tags']);
@@ -217,7 +224,8 @@ class TagWidget extends WP_Widget {
         $instance['content'] = (bool)$new_instance['content'];
         $instance['order'] = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
         $instance['order_by'] = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
-
+        $instance['tag_links'] = (bool)$new_instance['tag_links'];
+        
         return $instance;
     }
 
@@ -239,6 +247,7 @@ class TagWidget extends WP_Widget {
         $content = (bool) $instance['content'];
         $order = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc'; 
         $order = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
+        $tag_links = (bool) $instance['tag_links'];
 ?>
         <p>
             <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'posts-by-tag'); ?>
@@ -316,6 +325,13 @@ class TagWidget extends WP_Widget {
 				<?php _e( 'Descending', 'posts-by-tag' ); ?>
             </label>
         </p>
+
+        <p>
+            <label for="<?php echo $this->get_field_id('tag_links'); ?>">
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('tag_links'); ?>" name="<?php echo $this->get_field_name('tag_links'); ?>" value ="true" <?php checked($tag_links, true); ?> /></label>
+				<?php _e( 'Show Tag links' , 'posts-by-tag'); ?>
+        </p>
+
 <?php
     }
 } // class TagWidget
@@ -440,6 +456,35 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
     }
 
     return $output;
+}
+
+/**
+ * Get tag more links for a bunch of tags. Exposed as a template function
+ *
+ * @param <type> $tags
+ * @param <type> $prefix
+ */
+function get_tag_more_links($tags, $prefix = 'More posts: ') {
+    $output = '<p>' . $prefix;
+
+    $tag_array = explode(",", $tags);
+    foreach ($tag_array as $tag) {
+        $output .= get_tag_more_link($tag);
+    }
+
+    $output .= '</p>';
+    
+    return $output;
+}
+
+/**
+ * Get tag more link for a single tag
+ *
+ * @param <type> $tag
+ * @return <type>
+ */
+function get_tag_more_link($tag) {
+    return '<a href = "' . get_tag_link(get_tag_ID($tag)) . '">' . $tag . '</a> ';
 }
 
 /**
