@@ -35,6 +35,7 @@ Text Domain: posts-by-tag
                   - Added support for post thumbnails
                   - Don't display widget title if posts are not found
                   - Added Tag links
+                  - Added the option to take tags from the current post
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -177,6 +178,7 @@ class TagWidget extends WP_Widget {
         extract( $args );
 
         $tags = $instance['tags'];
+        $current_tags = (bool) $instance['current_tags'];
         $number = $instance['number']; // Number of posts to show.
         $exclude = (bool) $instance['exclude'];
         $excerpt = (bool) $instance['excerpt'];
@@ -190,6 +192,11 @@ class TagWidget extends WP_Widget {
         $tag_links = (bool) $instance['tag_links'];
 
         $title = $instance['title'];
+
+        if ($current_tags) {
+            // if current tags is enabled then set tags to empty
+            $tags = '';
+        }
 
         $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
 
@@ -215,6 +222,7 @@ class TagWidget extends WP_Widget {
         // validate data
         $instance['title'] = strip_tags($new_instance['title']);
         $instance['tags'] = strip_tags($new_instance['tags']);
+        $instance['current_tags'] = (bool)$new_instance['current_tags'];
         $instance['number'] = intval($new_instance['number']);
         $instance['exclude'] = (bool)$new_instance['exclude'];
         $instance['thumbnail'] = (bool)$new_instance['thumbnail'];
@@ -233,12 +241,13 @@ class TagWidget extends WP_Widget {
     function form($instance) {
         
         /* Set up some default widget settings. */
-        $defaults = array( 'title' => '', 'tags' => '', 'number' => '5', 'exclude' => FALSE, 'thumbnail' => FALSE, 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE);
+        $defaults = array( 'title' => '', 'tags' => '', 'current_tags' => FALSE, 'number' => '5', 'exclude' => FALSE, 'thumbnail' => FALSE, 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE);
         $instance = wp_parse_args( (array) $instance, $defaults );
 
         $title = esc_attr($instance['title']);
         $tags = $instance['tags'];
         $number = intval($instance['number']);
+        $current_tags = (bool) $instance['current_tags'];
         $exclude = (bool) $instance['exclude'];
         $thumbnail = (bool) $instance['thumbnail'];
         $author = (bool) $instance['author'];
@@ -266,6 +275,12 @@ class TagWidget extends WP_Widget {
             <label for="<?php echo $this->get_field_id('exclude'); ?>">
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('exclude'); ?>" name="<?php echo $this->get_field_name('exclude'); ?>" value ="true" <?php checked($exclude, true); ?> /></label>
             <?php _e( 'Exclude these tags' , 'posts-by-tag'); ?>
+        </p>
+
+        <p>
+            <label for="<?php echo $this->get_field_id('current_tags'); ?>">
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('current_tags'); ?>" name="<?php echo $this->get_field_name('current_tags'); ?>" value ="true" <?php checked($current_tags, true); ?> /></label>
+            <?php _e( 'Get tags from current Post' , 'posts-by-tag'); ?>
         </p>
 
         <p>
@@ -376,19 +391,29 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
     $output = '';
 
     // first look in cache
-    if ($widget_id != '0') {
+    if ($widget_id != '0' && $tags != '') {
         $output = wp_cache_get($widget_id, 'posts-by-tag');
     }
 
-    if ($output === FALSE || $widget_id == "0") {
+    if ($output === FALSE || $output == '') {
         // Not present in cache so load it
-
-        // Get array of post info.
-        $tag_array = explode(",", $tags);
         $tag_id_array = array();
+        
+        if ($tags == '') {
+            // if tags is empty then take from current posts
+            if (is_single()) {
+                $tag_array = wp_get_post_tags($wp_query->post->ID);
+                foreach ($tag_array as $tag) {
+                    $tag_id_array[] = $tag->term_id;
+                }
+            }
+        } else {
+            // Get array of post info.
+            $tag_array = explode(",", $tags);
 
-        foreach ($tag_array as $tag) {
-            $tag_id_array[] = get_tag_ID(trim($tag));
+            foreach ($tag_array as $tag) {
+                $tag_id_array[] = get_tag_ID(trim($tag));
+            }
         }
 
         $tag_arg = 'tag__in';
@@ -465,11 +490,26 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
  * @param <type> $prefix
  */
 function get_tag_more_links($tags, $prefix = 'More posts: ') {
+    global $wp_query;
+    
     $output = '<p>' . $prefix;
 
-    $tag_array = explode(",", $tags);
+    if ($tags == '') {
+        // if tags is empty then take from current posts
+        if (is_single()) {
+            $tag_array = wp_get_post_tags($wp_query->post->ID);
+        }
+    } else {
+        $tag_array = explode(",", $tags);
+    }
+
     foreach ($tag_array as $tag) {
-        $output .= get_tag_more_link($tag);
+        $tag_name = $tag;
+        if (is_object($tag)) {
+            $tag_name = $tag->name;
+        }
+        
+        $output .= get_tag_more_link($tag_name);
     }
 
     $output .= '</p>';
