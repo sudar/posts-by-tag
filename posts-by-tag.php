@@ -32,6 +32,7 @@ Text Domain: posts-by-tag
 2011-11-13 - v1.9 - Added Spanish and Hebrew translations.
 2011-11-20 - v2.0 - Added option to exclude tags.
                   - Fixed bug in displaying author name
+                  - Added support for post thumbnails
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -378,12 +379,17 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
 
         $output = '<ul class = "posts-by-tag-list">';
         foreach($tag_posts as $post) {
-            print_r($post);
             setup_postdata($post);
             $output .= '<li class="posts-by-tag" id="posts-by-tag-item-' . $post->ID . '">';
 
             if ($thumbnail) {
-                $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" ></a>';
+                if (has_post_thumbnail($post->ID)) {
+                    $output .= get_the_post_thumbnail($post->ID, 'thumbnail');
+                } else {
+                    if (get_post_meta($post->ID, 'post_thumbnail', true) != '') {
+                        $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" ></a>';
+                    }
+                }
             }
 
             $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
