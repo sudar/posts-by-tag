@@ -33,6 +33,7 @@ Text Domain: posts-by-tag
 2011-11-20 - v2.0 - Added option to exclude tags.
                   - Fixed bug in displaying author name
                   - Added support for post thumbnails
+                  - Don't display widget title if posts are not found
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -187,12 +188,18 @@ class TagWidget extends WP_Widget {
 
         $title = $instance['title'];
 
-        echo $before_widget;
-        echo $before_title;
-        echo $title;
-        echo $after_title;
-        posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
-        echo $after_widget;
+        $widget_content = posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+
+        if ($widget_content != '') {
+            echo $before_widget;
+            echo $before_title;
+            echo $title;
+            echo $after_title;
+
+            echo $widget_content;
+            
+            echo $after_widget;
+        }
     }
 
     /** @see WP_Widget::update */
@@ -329,7 +336,9 @@ class TagWidget extends WP_Widget {
  * @param <string> $widget_id - widget id (incase of widgets)
  */
 function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
-    echo get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+    $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+    echo $output;
+    return $output;
 }
 
 /**
@@ -350,8 +359,13 @@ function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumb
 function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
     global $wp_query;
 
+    $output = '';
+
     // first look in cache
-    $output = wp_cache_get($widget_id, 'posts-by-tag');
+    if ($widget_id != '0') {
+        $output = wp_cache_get($widget_id, 'posts-by-tag');
+    }
+
     if ($output === FALSE || $widget_id == "0") {
         // Not present in cache so load it
 
@@ -377,47 +391,49 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
         // restoring the query so it can be later used to display our posts
         $wp_query = clone $temp_query;
 
-        $output = '<ul class = "posts-by-tag-list">';
-        foreach($tag_posts as $post) {
-            setup_postdata($post);
-            $output .= '<li class="posts-by-tag" id="posts-by-tag-item-' . $post->ID . '">';
+        if (count($tag_posts) > 0) {
+            $output = '<ul class = "posts-by-tag-list">';
+            foreach($tag_posts as $post) {
+                setup_postdata($post);
+                $output .= '<li class="posts-by-tag" id="posts-by-tag-item-' . $post->ID . '">';
 
-            if ($thumbnail) {
-                if (has_post_thumbnail($post->ID)) {
-                    $output .= get_the_post_thumbnail($post->ID, 'thumbnail');
-                } else {
-                    if (get_post_meta($post->ID, 'post_thumbnail', true) != '') {
-                        $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" ></a>';
+                if ($thumbnail) {
+                    if (has_post_thumbnail($post->ID)) {
+                        $output .= get_the_post_thumbnail($post->ID, 'thumbnail');
+                    } else {
+                        if (get_post_meta($post->ID, 'post_thumbnail', true) != '') {
+                            $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" ></a>';
+                        }
                     }
                 }
-            }
 
-            $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
+                $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
 
-            if($content) {
-                 $output .= get_the_content();
-            }
+                if($content) {
+                     $output .= get_the_content();
+                }
 
-            if ($author) {
-                $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
-                $output .=  get_the_author_meta('display_name', $post->post_author) . '</small>';
-            }
+                if ($author) {
+                    $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
+                    $output .=  get_the_author_meta('display_name', $post->post_author) . '</small>';
+                }
 
-            if ($date) {
-                $output .= ' <small>' . __('Posted on: ', 'posts-by-tag');
-                $output .=  mysql2date(get_option('date_format'), $post->post_date) . '</small>';
-            }
+                if ($date) {
+                    $output .= ' <small>' . __('Posted on: ', 'posts-by-tag');
+                    $output .=  mysql2date(get_option('date_format'), $post->post_date) . '</small>';
+                }
 
-            if( $excerpt ) {
-                $output .=  '<br />';
-                if ($post->post_excerpt!=NULL)
-                    $output .= apply_filters('the_excerpt', $post->post_excerpt);
-                else
-                    $output .= get_the_excerpt();
+                if( $excerpt ) {
+                    $output .=  '<br />';
+                    if ($post->post_excerpt!=NULL)
+                        $output .= apply_filters('the_excerpt', $post->post_excerpt);
+                    else
+                        $output .= get_the_excerpt();
+                }
+                $output .=  '</li>';
             }
-            $output .=  '</li>';
+            $output .=  '</ul>';
         }
-        $output .=  '</ul>';
 
         // if it is not called from theme, save the output to cache
         if ($widget_id != "0") {
