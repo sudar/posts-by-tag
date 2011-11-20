@@ -36,6 +36,7 @@ Text Domain: posts-by-tag
                   - Don't display widget title if posts are not found
                   - Added Tag links
                   - Added the option to take tags from the current post
+                  - Added the option to take tags from the custom fields of current page
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -67,6 +68,12 @@ class PostsByTag {
         // Register hooks
         add_action('admin_print_scripts', array(&$this, 'add_script'));
         add_action('admin_head', array(&$this, 'add_script_config'));
+        
+        /* Use the admin_menu action to define the custom boxes */
+        add_action('admin_menu', array(&$this, 'add_custom_box'));
+
+        /* Use the save_post action to do something with the data entered */
+        add_action('save_post', array(&$this, 'save_postdata'));
 
         //Short code
         add_shortcode('posts-by-tag', array(&$this, 'shortcode_handler'));
@@ -96,6 +103,84 @@ class PostsByTag {
     </script>
     <?php
         }
+    }
+
+    /**
+     * Adds the custom section in the Post and Page edit screens
+     */
+    function add_custom_box() {
+
+        add_meta_box( 'posts_by_tag_page_box', __( 'Posts By Tag Page Fields', 'posts-by-tag' ),
+                    array(&$this, 'inner_custom_box'), 'page', 'side' );
+    }
+
+    /**
+     * Prints the inner fields for the custom post/page section
+     */
+    function inner_custom_box() {
+        global $post;
+        $post_id = $post->ID;
+
+        $widget_title = '';
+        $widget_tags = '';
+
+        if ($post_id > 0) {
+            $posts_by_tag_page_fields = get_post_meta($post_id, 'posts_by_tag_page_fields', TRUE);
+
+            if (isset($posts_by_tag_page_fields) && is_array($posts_by_tag_page_fields)) {
+                $widget_title = $posts_by_tag_page_fields['widget_title'];
+                $widget_tags = $posts_by_tag_page_fields['widget_tags'];
+            }
+        }
+        // Use nonce for verification
+?>
+        <input type="hidden" name="posts_by_tag_noncename" id="posts_by_tag_noncename" value="<?php echo wp_create_nonce( plugin_basename(__FILE__) );?>" />
+        <p>
+            <label> <?php _e('Widget Title', 'posts-by-tag'); ?> <input type="text" name="widget_title" value ="<?php echo $widget_title; ?>" ></label><br>
+            <label> <?php _e('Widget Tags', 'posts-by-tag'); ?> <input type="text" name="widget_tags" value ="<?php echo $widget_tags; ?>" ></label>
+        </p>
+<?php
+    }
+
+    /**
+     * When the post is saved, saves our custom data
+     * @param string $post_id
+     * @return string return post id if nothing is saved
+     */
+    function save_postdata( $post_id ) {
+
+        // verify this came from the our screen and with proper authorization,
+        // because save_post can be triggered at other times
+
+        if ( !wp_verify_nonce( $_POST['posts_by_tag_noncename'], plugin_basename(__FILE__) )) {
+            return $post_id;
+        }
+
+        if ( 'page' == $_POST['post_type'] ) {
+            if ( !current_user_can( 'edit_page', $post_id ))
+                return $post_id;
+        } else {
+            return $post_id;
+        }
+
+        // OK, we're authenticated: we need to find and save the data
+
+        $fields = array();
+
+        if (isset($_POST['widget_title'])) {
+            $fields['widget_title'] = $_POST['widget_title'];
+        } else {
+            $fields['widget_title'] = '';
+        }
+
+        if (isset($_POST['widget_tags'])) {
+            $fields['widget_tags'] = $_POST['widget_tags'];
+        } else {
+            $fields['widget_tags'] = '';
+        }
+
+        update_post_meta($post_id, 'posts_by_tag_page_fields', $fields);
+
     }
 
     /**
@@ -175,10 +260,13 @@ class TagWidget extends WP_Widget {
 
     /** @see WP_Widget::widget */
     function widget($args, $instance) {
+        global $post;
+
         extract( $args );
 
         $tags = $instance['tags'];
         $current_tags = (bool) $instance['current_tags'];
+        $current_page_tags = (bool) $instance['current_page_tags'];
         $number = $instance['number']; // Number of posts to show.
         $exclude = (bool) $instance['exclude'];
         $excerpt = (bool) $instance['excerpt'];
@@ -192,13 +280,49 @@ class TagWidget extends WP_Widget {
         $tag_links = (bool) $instance['tag_links'];
 
         $title = $instance['title'];
+        $post_id = $post->ID;
 
         if ($current_tags) {
             // if current tags is enabled then set tags to empty
             $tags = '';
         }
 
-        $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+        if ($current_page_tags) {
+            $tags = ''; // reset the tags
+            // get tags and title from page custom fields
+
+            if ($post_id > 0) {
+                $posts_by_tag_page_fields = get_post_meta($post_id, 'posts_by_tag_page_fields', TRUE);
+
+                if (isset($posts_by_tag_page_fields) && is_array($posts_by_tag_page_fields)) {
+                    if ($posts_by_tag_page_fields['widget_title'] != '') {
+                        $title = $posts_by_tag_page_fields['widget_title'];
+                    }
+                    if ($posts_by_tag_page_fields['widget_tags'] != '') {
+                        $tags = $posts_by_tag_page_fields['widget_tags'];
+                    }
+                }
+            }
+        }
+
+        if (($current_tags || $current_page_tags) && !is_singular()) {
+            $widget_content = '';
+        } else {
+            if ($current_page_tags && $tags == '') {
+                $widget_content = '';
+            } else {
+                if (($current_tags || $current_page_tags) && is_singular() && $post_id > 0) {
+                    $key = "posts-by-tag-$widget_id-$post_id";
+                    if ( false === ( $widget_content = get_transient( $key ) ) ) {
+                        $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+                        // store in cache
+                        set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
+                    }
+                } else {
+                    $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+                }
+            }
+        }
 
         if ($widget_content != '') {
             echo $before_widget;
@@ -223,6 +347,7 @@ class TagWidget extends WP_Widget {
         $instance['title'] = strip_tags($new_instance['title']);
         $instance['tags'] = strip_tags($new_instance['tags']);
         $instance['current_tags'] = (bool)$new_instance['current_tags'];
+        $instance['current_page_tags'] = (bool)$new_instance['current_page_tags'];
         $instance['number'] = intval($new_instance['number']);
         $instance['exclude'] = (bool)$new_instance['exclude'];
         $instance['thumbnail'] = (bool)$new_instance['thumbnail'];
@@ -248,6 +373,7 @@ class TagWidget extends WP_Widget {
         $tags = $instance['tags'];
         $number = intval($instance['number']);
         $current_tags = (bool) $instance['current_tags'];
+        $current_page_tags = (bool) $instance['current_page_tags'];
         $exclude = (bool) $instance['exclude'];
         $thumbnail = (bool) $instance['thumbnail'];
         $author = (bool) $instance['author'];
@@ -257,6 +383,10 @@ class TagWidget extends WP_Widget {
         $order = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc'; 
         $order = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
         $tag_links = (bool) $instance['tag_links'];
+?>
+
+<?php
+    // TODO: Use JavaScript to disable mutually exclusive fields
 ?>
         <p>
             <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'posts-by-tag'); ?>
@@ -281,6 +411,12 @@ class TagWidget extends WP_Widget {
             <label for="<?php echo $this->get_field_id('current_tags'); ?>">
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('current_tags'); ?>" name="<?php echo $this->get_field_name('current_tags'); ?>" value ="true" <?php checked($current_tags, true); ?> /></label>
             <?php _e( 'Get tags from current Post' , 'posts-by-tag'); ?>
+        </p>
+
+        <p>
+            <label for="<?php echo $this->get_field_id('current_page_tags'); ?>">
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('current_page_tags'); ?>" name="<?php echo $this->get_field_name('current_page_tags'); ?>" value ="true" <?php checked($current_page_tags, true); ?> /></label>
+            <?php _e( 'Get tags and title from custom fields in current Page' , 'posts-by-tag'); ?>
         </p>
 
         <p>
@@ -320,6 +456,7 @@ class TagWidget extends WP_Widget {
         </p>
         
 		<p>
+            <?php _e('Sort by: ', 'posts-by-tag'); ?>
             <label for="<?php echo $this->get_field_id( 'order_by' ); ?>">
                 <input name="<?php echo $this->get_field_name('order_by'); ?>" type="radio" value="date" <?php checked($order_by, 'date'); ?> />
 				<?php _e( 'Date', 'posts-by-tag' ); ?>
@@ -331,6 +468,7 @@ class TagWidget extends WP_Widget {
         </p>
         
 		<p>
+            <?php _e('Order by: ', 'posts-by-tag'); ?>
             <label for="<?php echo $this->get_field_id( 'order' ); ?>">
                 <input name="<?php echo $this->get_field_name('order'); ?>" type="radio" value="asc" <?php checked($order, 'asc'); ?> />
 				<?php _e( 'Ascending', 'posts-by-tag' ); ?>
@@ -416,62 +554,65 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
             }
         }
 
-        $tag_arg = 'tag__in';
-        if ($exclude) {
-            $tag_arg = 'tag__not_in';
-        }
+        if (count($tag_id_array) > 0) {
+            // only if we have atleast one tag. get_posts has a bug. If empty array is passed, it returns all posts. That's why we need this condition
+            $tag_arg = 'tag__in';
+            if ($exclude) {
+                $tag_arg = 'tag__not_in';
+            }
 
-        // saving the query
-        $temp_query = clone $wp_query;
-        
-        // TODO: Need to cache this.
-        $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'orderby' => $order_by, 'order' => $order ) );
+            // saving the query
+            $temp_query = clone $wp_query;
 
-        // restoring the query so it can be later used to display our posts
-        $wp_query = clone $temp_query;
+            // TODO: Need to cache this.
+            $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'orderby' => $order_by, 'order' => $order ) );
 
-        if (count($tag_posts) > 0) {
-            $output = '<ul class = "posts-by-tag-list">';
-            foreach($tag_posts as $post) {
-                setup_postdata($post);
-                $output .= '<li class="posts-by-tag" id="posts-by-tag-item-' . $post->ID . '">';
+            // restoring the query so it can be later used to display our posts
+            $wp_query = clone $temp_query;
 
-                if ($thumbnail) {
-                    if (has_post_thumbnail($post->ID)) {
-                        $output .= get_the_post_thumbnail($post->ID, 'thumbnail');
-                    } else {
-                        if (get_post_meta($post->ID, 'post_thumbnail', true) != '') {
-                            $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" ></a>';
+            if (count($tag_posts) > 0) {
+                $output = '<ul class = "posts-by-tag-list">';
+                foreach($tag_posts as $post) {
+                    setup_postdata($post);
+                    $output .= '<li class="posts-by-tag" id="posts-by-tag-item-' . $post->ID . '">';
+
+                    if ($thumbnail) {
+                        if (has_post_thumbnail($post->ID)) {
+                            $output .= get_the_post_thumbnail($post->ID, 'thumbnail');
+                        } else {
+                            if (get_post_meta($post->ID, 'post_thumbnail', true) != '') {
+                                $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" ></a>';
+                            }
                         }
                     }
-                }
 
-                $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
+                    $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
 
-                if($content) {
-                     $output .= get_the_content();
-                }
+                    if($content) {
+                         $output .= get_the_content();
+                    }
 
-                if ($author) {
-                    $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
-                    $output .=  get_the_author_meta('display_name', $post->post_author) . '</small>';
-                }
+                    if ($author) {
+                        $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
+                        $output .=  get_the_author_meta('display_name', $post->post_author) . '</small>';
+                    }
 
-                if ($date) {
-                    $output .= ' <small>' . __('Posted on: ', 'posts-by-tag');
-                    $output .=  mysql2date(get_option('date_format'), $post->post_date) . '</small>';
-                }
+                    if ($date) {
+                        $output .= ' <small>' . __('Posted on: ', 'posts-by-tag');
+                        $output .=  mysql2date(get_option('date_format'), $post->post_date) . '</small>';
+                    }
 
-                if( $excerpt ) {
-                    $output .=  '<br />';
-                    if ($post->post_excerpt!=NULL)
-                        $output .= apply_filters('the_excerpt', $post->post_excerpt);
-                    else
-                        $output .= get_the_excerpt();
+                    if( $excerpt ) {
+                        $output .=  '<br />';
+                        if ($post->post_excerpt!=NULL)
+                            $output .= apply_filters('the_excerpt', $post->post_excerpt);
+                        else
+                            $output .= get_the_excerpt();
+                    }
+                    $output .=  '</li>';
                 }
-                $output .=  '</li>';
+                $output .=  '</ul>';
             }
-            $output .=  '</ul>';
         }
 
         // if it is not called from theme, save the output to cache
@@ -492,8 +633,9 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
 function get_tag_more_links($tags, $prefix = 'More posts: ') {
     global $wp_query;
     
-    $output = '<p>' . $prefix;
-
+    $tag_array = array();
+    $output = '';
+    
     if ($tags == '') {
         // if tags is empty then take from current posts
         if (is_single()) {
@@ -503,17 +645,21 @@ function get_tag_more_links($tags, $prefix = 'More posts: ') {
         $tag_array = explode(",", $tags);
     }
 
-    foreach ($tag_array as $tag) {
-        $tag_name = $tag;
-        if (is_object($tag)) {
-            $tag_name = $tag->name;
-        }
+    if (count($tag_array) > 0) {
+        $output = '<p>' . $prefix;
         
-        $output .= get_tag_more_link($tag_name);
+        foreach ($tag_array as $tag) {
+            $tag_name = $tag;
+            if (is_object($tag)) {
+                $tag_name = $tag->name;
+            }
+
+            $output .= get_tag_more_link($tag_name);
+        }
+
+        $output .= '</p>';
     }
 
-    $output .= '</p>';
-    
     return $output;
 }
 
