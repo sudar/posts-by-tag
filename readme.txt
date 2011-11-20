@@ -4,13 +4,17 @@ Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 Tested up to: 3.2.1
-Stable tag: 1.9
+Stable tag: 2.0
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
 == Description ==
 
-Posts By Tag WordPress Plugin, provides sidebar widgets which can be used to display posts from a specific set of tags in the sidebar. You can also use shortcode or template function to display the posts.
+Posts By Tag WordPress Plugin, provides sidebar widgets which can be used to display posts from a specific set of tags in the sidebar.
+
+These tags can be specified in the widget or the Plugin can automatically retrieve them from the current post.
+
+You can also use shortcode or template function to display the posts.
 
 The Plugin caches the posts of each widget separately, and issues database queries only when needed. This will reduce the amount of database queries involved for each page load and will therefore be light on your server.
 
@@ -22,7 +26,7 @@ Posts By Tag Plugin provides a sidebar widget which can be configured to display
 
 Each widget allows you to choose
 
-*   The set of tags whose posts should be displayed 
+*   The set of tags from where posts should be selected (or excluded)
 *   The number of posts to be displayed. 
 *   Option to enable post excerpts to be displayed with post titles. 
 *   Option to display post thumbnail if present.
@@ -35,10 +39,11 @@ Each widget allows you to choose
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $number, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE);
+posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE);
 
 *   $tags (string) - set of comma seperated tags
 *   $number (number) - number of posts to display
+*   $exclude (bool) - Where to include the tags or exclude the tags
 *   $excerpt (bool) - To display post excerpts or not
 *   $thumbnail (bool) - To display post thumbnails or not
 *   $order_by (date,title) - Whether to order by date or by title.
@@ -168,6 +173,16 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ** v1.9 (2011-11-13)
 
  * Added Spanish and Hebrew translations.
+
+** v2.0 (2011-11-20)
+
+  * Added option to exclude tags.
+  * Fixed bug in displaying author name
+  * Added support for post thumbnails
+  * Don't display widget title if posts are not found
+  * Added Tag links
+  * Added the option to take tags from the current post
+  * Added the option to take tags from the custom fields of current page
 
 ==Readme Generator== 
 
