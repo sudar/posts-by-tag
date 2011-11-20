@@ -574,7 +574,7 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
                 $output = '<ul class = "posts-by-tag-list">';
                 foreach($tag_posts as $post) {
                     setup_postdata($post);
-                    $output .= '<li class="posts-by-tag" id="posts-by-tag-item-' . $post->ID . '">';
+                    $output .= '<li class="posts-by-tag-item" id="posts-by-tag-item-' . $post->ID . '">';
 
                     if ($thumbnail) {
                         if (has_post_thumbnail($post->ID)) {
