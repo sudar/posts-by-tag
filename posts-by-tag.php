@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.0
+Version: 2.1
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -37,6 +37,7 @@ Text Domain: posts-by-tag
                   - Added Tag links
                   - Added the option to take tags from the current post
                   - Added the option to take tags from the custom fields of current page
+2011-11-22 - v2.1 - Added option to include tag links from shortcode and template function.
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -199,7 +200,8 @@ class PostsByTag {
             'order_by'  => 'date',
             'order'     => 'desc',
             'author'    => FALSE,
-            'date'      => FALSE
+            'date'      => FALSE,
+            'tag_links' => FALSE
         ), $attributes));
 
         if (strtolower($exclude) == "false") {
@@ -226,8 +228,18 @@ class PostsByTag {
             $content = FALSE;
         }
 
+        if (strtolower($tag_links) == "false") {
+            $tag_links = FALSE;
+        }
+
         // call the template function
-        return get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
+        $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
+
+        if ($tag_links && !$exclude) {
+            $output .= get_tag_more_links($tags);
+        }
+
+        return $output;
     }
 
     // PHP4 compatibility
@@ -502,10 +514,17 @@ class TagWidget extends WP_Widget {
  * @param <bool> $author - Whether to show the author name or not
  * @param <bool> $date - Whether to show the post date or not
  * @param <bool> $content
+ * @param <bool> $tag_links Whether to display tag links at the end
  * @param <string> $widget_id - widget id (incase of widgets)
  */
-function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
-    echo get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $tag_links = FALSE, $widget_id = "0" ) {
+    $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+
+    if ($tag_links && !$exclude) {
+        $output .= get_tag_more_links($tags);
+    }
+
+    echo $output;
 }
 
 /**

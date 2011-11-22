@@ -4,7 +4,7 @@ Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 Tested up to: 3.2.1
-Stable tag: 2.0
+Stable tag: 2.1
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -34,14 +34,15 @@ Each widget allows you to choose
 *   Option to display post date.
 *   Option to display post content.
 *   Choose the order in which the posts should be displayed.
+*   Option to display links to tag archive pages.
 
 #### Template function
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE);
+posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE, $tag_links = FALSE);
 
-*   $tags (string) - set of comma seperated tags
+*   $tags (string) - set of comma seperated tags. If you leave this empty, then the tags from the current post will be used.
 *   $number (number) - number of posts to display
 *   $exclude (bool) - Where to include the tags or exclude the tags
 *   $excerpt (bool) - To display post excerpts or not
@@ -51,6 +52,7 @@ posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FA
 *   $author (bool) - To display author name or not.
 *   $date (bool) - To display post date or not.
 *   $content (bool) - To display post content or not.
+*   $tag_links (bool) - To display link to tag archive page or not.
 
 #### Shortcode
 
@@ -76,6 +78,16 @@ The pot file is available with the Plugin. If you are willing to do translation 
 
 Support for the Plugin is available from the [Plugin's home page][1]. If you have any questions or suggestions, do leave a comment there or contact me in [twitter][5].
 
+### Stay updated
+
+I would be posting updates about this Plugin in my [blog][8] and in [Twitter][5]. If you want to be informed when new version of this Plugin is released, then you can either subscribe to this [blog's RSS feed][9] or [follow me in Twitter][5].
+
+### Links
+
+*   [Plugin home page][1]
+*   [Author's Blog][8]
+*   [Other Plugins by the author][10]
+
  [1]: http://sudarmuthu.com/wordpress/posts-by-tag
  [2]: http://www.fatcow.com/
  [3]: http://www.heftrucknederland.nl
@@ -83,6 +95,9 @@ Support for the Plugin is available from the [Plugin's home page][1]. If you hav
  [5]: http://twitter.com/sudarmuthu
  [6]: http://www.sagive.co.il
  [7]: http://www.inmotionhosting.com/
+ [8]: http://sudarmuthu.com/blog
+ [9]: http://sudarmuthu.com/feed
+ [9]: http://sudarmuthu.com/wordpress
 
 == Installation ==
 
@@ -183,6 +198,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
   * Added Tag links
   * Added the option to take tags from the current post
   * Added the option to take tags from the custom fields of current page
+
+** v2.1 (2011-11-22)
+
+ * Added option to include tag links from shortcode and template function.
 
 ==Readme Generator== 
 
