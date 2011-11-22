@@ -62,6 +62,14 @@ You can also include the shortcode, to display the posts from the set of tags
 
 All the parameters that are accepted by the template tag can also be used in the shortcode
 
+#### Styling using CSS
+
+The Plugin adds the following CSS classes. If you want to customize the look of the widget then can change it by adding custom styles to these CSS classes and ids.
+
+*   The UL tag has the class posts-by-tag-list
+*   Every LI tag has the class posts-by-tag-item
+*   Each LI tag also has the id posts-by-tag-item-{id}, where id is the post id.
+
 ### Translation
 
 *   Swedish (Thanks Gunnar Lindberg Årneby)
