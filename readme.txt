@@ -3,8 +3,8 @@ Contributors: sudar
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
-Tested up to: 3.2.1
-Stable tag: 2.1
+Tested up to: 3.3
+Stable tag: 2.1.1
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -210,6 +210,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ** v2.1 (2011-11-22)
 
  * Added option to include tag links from shortcode and template function.
+
+** v2.1.1 (2011-12-31)
+
+ *  Fixed undefined notices for nouncename while creating new posts
 
 ==Readme Generator== 
 

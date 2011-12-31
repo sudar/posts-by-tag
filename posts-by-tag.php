@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.1
+Version: 2.1.1
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -38,6 +38,7 @@ Text Domain: posts-by-tag
                   - Added the option to take tags from the current post
                   - Added the option to take tags from the custom fields of current page
 2011-11-22 - v2.1 - Added option to include tag links from shortcode and template function.
+2011-12-31 - v2.1.1 - Fixed undefined notices for nouncename while creating new posts
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -152,6 +153,10 @@ class PostsByTag {
 
         // verify this came from the our screen and with proper authorization,
         // because save_post can be triggered at other times
+
+		if ( !array_key_exists('posts_by_tag_noncename', $_POST)) {
+			return $post_id;
+		}
 
         if ( !wp_verify_nonce( $_POST['posts_by_tag_noncename'], plugin_basename(__FILE__) )) {
             return $post_id;
