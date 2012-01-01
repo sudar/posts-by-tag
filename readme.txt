@@ -105,7 +105,7 @@ I would be posting updates about this Plugin in my [blog][8] and in [Twitter][5]
  [7]: http://www.inmotionhosting.com/
  [8]: http://sudarmuthu.com/blog
  [9]: http://sudarmuthu.com/feed
- [9]: http://sudarmuthu.com/wordpress
+ [10]: http://sudarmuthu.com/wordpress
 
 == Installation ==
 
