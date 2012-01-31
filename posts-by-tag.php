@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.1.1
+Version: 2.2
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -39,6 +39,7 @@ Text Domain: posts-by-tag
                   - Added the option to take tags from the custom fields of current page
 2011-11-22 - v2.1 - Added option to include tag links from shortcode and template function.
 2011-12-31 - v2.1.1 - Fixed undefined notices for nouncename while creating new posts
+2012-01-31 - v2.2 - Fixed issues with order by option. Added Bulgarian translations
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -398,7 +399,7 @@ class TagWidget extends WP_Widget {
         $excerpt = (bool) $instance['excerpt'];
         $content = (bool) $instance['content'];
         $order = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc'; 
-        $order = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
+        $order_by = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
         $tag_links = (bool) $instance['tag_links'];
 ?>
 
@@ -589,7 +590,7 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
             $temp_query = clone $wp_query;
 
             // TODO: Need to cache this.
-            $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'orderby' => $order_by, 'order' => $order ) );
+            $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'order_by' => $order_by, 'order' => $order ) );
 
             // restoring the query so it can be later used to display our posts
             $wp_query = clone $temp_query;
