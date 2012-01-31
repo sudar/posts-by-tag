@@ -79,6 +79,7 @@ The Plugin adds the following CSS classes. If you want to customize the look of 
 *   Dutch (Thanks [Rene][4])
 *   Hebrew (Thanks [Sagive SEO][6])
 *   Spanish (Thanks Brian Flores of [InMotion Hosting][7])
+*   Bulgarian (Thanks Nikolay Nikolov of [IQ Test][11])
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
 
@@ -106,6 +107,7 @@ I would be posting updates about this Plugin in my [blog][8] and in [Twitter][5]
  [8]: http://sudarmuthu.com/blog
  [9]: http://sudarmuthu.com/feed
  [10]: http://sudarmuthu.com/wordpress
+ [11]: http://umenlisam.com/
 
 == Installation ==
 
