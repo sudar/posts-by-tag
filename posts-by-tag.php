@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.2
+Version: 2.3
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -40,6 +40,8 @@ Text Domain: posts-by-tag
 2011-11-22 - v2.1 - Added option to include tag links from shortcode and template function.
 2011-12-31 - v2.1.1 - Fixed undefined notices for nouncename while creating new posts
 2012-01-31 - v2.2 - Fixed issues with order by option. Added Bulgarian translations
+2012-04-08 - v2.3 - ()
+                  - Added filter to the get_the_content() call
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -614,7 +616,7 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
                     $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
 
                     if($content) {
-                         $output .= get_the_content();
+                         $output .= get_the_content_with_formatting();
                     }
 
                     if ($author) {
@@ -713,5 +715,17 @@ if (!function_exists("get_tag_ID")) {
             return 0;
         }
     }
+}
+
+/**
+ * Get the content of a post with formatting.
+ * Calls the filter before returning the content
+ *
+ */
+function get_the_content_with_formatting ($more_link_text = '(more...)', $stripteaser = 0, $more_file = '') {
+	$content = get_the_content($more_link_text, $stripteaser, $more_file);
+	$content = apply_filters('the_content', $content);
+	$content = str_replace(']]>', ']]&gt;', $content);
+	return $content;
 }
 ?>
