@@ -203,6 +203,7 @@ class PostsByTag {
             "tags"      => '',   // comma Separated list of tags
             "number"    => '5',
             "exclude"   => FALSE,
+            "exclude_current_post"   => FALSE,
             "excerpt"   => FALSE,
             "content"   => FALSE,
             'thumbnail' => FALSE,
@@ -215,6 +216,10 @@ class PostsByTag {
 
         if (strtolower($exclude) == "false") {
             $exclude = FALSE;
+        }
+
+        if (strtolower($exclude_current_post) == "false") {
+            $exclude_current_post = FALSE;
         }
 
         if (strtolower($excerpt) == "false") {
@@ -242,7 +247,7 @@ class PostsByTag {
         }
 
         // call the template function
-        $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
+        $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $exclude_current_post);
 
         if ($tag_links && !$exclude) {
             $output .= get_tag_more_links($tags);
@@ -290,6 +295,7 @@ class TagWidget extends WP_Widget {
         $current_page_tags = (bool) $instance['current_page_tags'];
         $number = $instance['number']; // Number of posts to show.
         $exclude = (bool) $instance['exclude'];
+        $exclude_current_post = (bool) $instance['exclude_current_post'];
         $excerpt = (bool) $instance['excerpt'];
         $content = (bool) $instance['content'];
         $thumbnail = (bool) $instance['thumbnail'];
@@ -335,18 +341,14 @@ class TagWidget extends WP_Widget {
             } else {
                 if (($current_tags || $current_page_tags) && is_singular() && $post_id > 0) {
                     $key = "posts-by-tag-$widget_id-$post_id";
-                    if ( false === ( $widget_content = get_transient( $key ) ) ) {
-                        $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
-                        // store in cache
-                        set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
-                    }
                 } else {
                     $key = "posts-by-tag-$widget_id";
-                    if ( false === ( $widget_content = get_transient( $key ) ) ) {
-                        $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
-                        // store in cache
-                        set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
-                    }
+                }
+
+                if ( false === ( $widget_content = get_transient( $key ) ) ) {
+                    $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $exclude_current_post);
+                    // store in cache
+                    set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
                 }
             }
         }
@@ -377,6 +379,7 @@ class TagWidget extends WP_Widget {
         $instance['current_page_tags'] = (bool)$new_instance['current_page_tags'];
         $instance['number'] = intval($new_instance['number']);
         $instance['exclude'] = (bool)$new_instance['exclude'];
+        $instance['exclude_current_post'] = (bool)$new_instance['exclude_current_post'];
         $instance['thumbnail'] = (bool)$new_instance['thumbnail'];
         $instance['author'] = (bool)$new_instance['author'];
         $instance['date'] = (bool)$new_instance['date'];
@@ -393,7 +396,7 @@ class TagWidget extends WP_Widget {
     function form($instance) {
         
         /* Set up some default widget settings. */
-        $defaults = array( 'title' => '', 'tags' => '', 'current_tags' => FALSE, 'number' => '5', 'exclude' => FALSE, 'thumbnail' => FALSE, 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE);
+        $defaults = array( 'title' => '', 'tags' => '', 'current_tags' => FALSE, 'number' => '5', 'exclude' => FALSE, 'exclude_current_post' => FALSE, 'thumbnail' => FALSE, 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE);
         $instance = wp_parse_args( (array) $instance, $defaults );
 
         $title = esc_attr($instance['title']);
@@ -402,6 +405,7 @@ class TagWidget extends WP_Widget {
         $current_tags = (bool) $instance['current_tags'];
         $current_page_tags = (bool) $instance['current_page_tags'];
         $exclude = (bool) $instance['exclude'];
+        $exclude_current_post = (bool) $instance['exclude_current_post'];
         $thumbnail = (bool) $instance['thumbnail'];
         $author = (bool) $instance['author'];
         $date = (bool) $instance['date'];
@@ -432,6 +436,12 @@ class TagWidget extends WP_Widget {
             <label for="<?php echo $this->get_field_id('exclude'); ?>">
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('exclude'); ?>" name="<?php echo $this->get_field_name('exclude'); ?>" value ="true" <?php checked($exclude, true); ?> /></label>
             <?php _e( 'Exclude these tags' , 'posts-by-tag'); ?>
+        </p>
+
+        <p>
+            <label for="<?php echo $this->get_field_id('exclude_current_post'); ?>">
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('exclude_current_post'); ?>" name="<?php echo $this->get_field_name('exclude_current_post'); ?>" value ="true" <?php checked($exclude_current_post, true); ?> /></label>
+            <?php _e( 'Exclude current post/page' , 'posts-by-tag'); ?>
         </p>
 
         <p>
@@ -529,10 +539,11 @@ class TagWidget extends WP_Widget {
  * @param <bool> $author - Whether to show the author name or not
  * @param <bool> $date - Whether to show the post date or not
  * @param <bool> $content
+ * @param <bool> $exclude_current_post Whether to exclude the current post/page. Default is FALSE
  * @param <bool> $tag_links Whether to display tag links at the end
  */
-function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $tag_links = FALSE) {
-    $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
+function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE) {
+    $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $exclude_current_post);
 
     if ($tag_links && !$exclude) {
         $output .= get_tag_more_links($tags);
@@ -554,9 +565,11 @@ function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumb
  * @param <bool> $author - Whether to show the author name or not
  * @param <bool> $date - Whether to show the post date or not
  * @param <bool> $content - Whether to show post content or not
+ * @param <bool> $exclude_current_post Whether to exclude the current post/page. Default is FALSE
  */
-function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE) {
+function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE) {
     global $wp_query;
+    $current_post_id = $wp_query->post->ID;
 
     $output = '';
 
@@ -565,7 +578,7 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
     if ($tags == '') {
         // if tags is empty then take from current posts
         if (is_single()) {
-            $tag_array = wp_get_post_tags($wp_query->post->ID);
+            $tag_array = wp_get_post_tags($current_post_id);
             foreach ($tag_array as $tag) {
                 $tag_id_array[] = $tag->term_id;
             }
@@ -598,6 +611,11 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
         if (count($tag_posts) > 0) {
             $output = '<ul class = "posts-by-tag-list">';
             foreach($tag_posts as $post) {
+                if ($exclude_current_post && $current_post_id == $post->ID) {
+                    // exclude currrent post/page
+                    continue;
+                }
+
                 setup_postdata($post);
                 $output .= '<li class="posts-by-tag-item" id="posts-by-tag-item-' . $post->ID . '">';
 
