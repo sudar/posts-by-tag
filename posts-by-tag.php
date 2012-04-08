@@ -42,6 +42,7 @@ Text Domain: posts-by-tag
 2012-01-31 - v2.2 - Fixed issues with order by option. Added Bulgarian translations
 2012-04-08 - v2.3 - ()
                   - Added filter to the get_the_content() call
+                  - Moved caching logic to widget
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -326,6 +327,7 @@ class TagWidget extends WP_Widget {
         }
 
         if (($current_tags || $current_page_tags) && !is_singular()) {
+            // either current post tags or page custom tags is enabled and it is not a singular page
             $widget_content = '';
         } else {
             if ($current_page_tags && $tags == '') {
@@ -334,12 +336,17 @@ class TagWidget extends WP_Widget {
                 if (($current_tags || $current_page_tags) && is_singular() && $post_id > 0) {
                     $key = "posts-by-tag-$widget_id-$post_id";
                     if ( false === ( $widget_content = get_transient( $key ) ) ) {
-                        $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+                        $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
                         // store in cache
                         set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
                     }
                 } else {
-                    $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+                    $key = "posts-by-tag-$widget_id";
+                    if ( false === ( $widget_content = get_transient( $key ) ) ) {
+                        $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
+                        // store in cache
+                        set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
+                    }
                 }
             }
         }
@@ -523,10 +530,9 @@ class TagWidget extends WP_Widget {
  * @param <bool> $date - Whether to show the post date or not
  * @param <bool> $content
  * @param <bool> $tag_links Whether to display tag links at the end
- * @param <string> $widget_id - widget id (incase of widgets)
  */
-function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $tag_links = FALSE, $widget_id = "0" ) {
-    $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $widget_id);
+function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $tag_links = FALSE) {
+    $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content);
 
     if ($tag_links && !$exclude) {
         $output .= get_tag_more_links($tags);
@@ -548,103 +554,89 @@ function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumb
  * @param <bool> $author - Whether to show the author name or not
  * @param <bool> $date - Whether to show the post date or not
  * @param <bool> $content - Whether to show post content or not
- * @param <string> $widget_id - widget id (incase of widgets)
  */
-function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $widget_id = "0" ) {
+function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE) {
     global $wp_query;
 
     $output = '';
 
-    // first look in cache
-    if ($widget_id != '0' && $tags != '') {
-        $output = wp_cache_get($widget_id, 'posts-by-tag');
+    $tag_id_array = array();
+    
+    if ($tags == '') {
+        // if tags is empty then take from current posts
+        if (is_single()) {
+            $tag_array = wp_get_post_tags($wp_query->post->ID);
+            foreach ($tag_array as $tag) {
+                $tag_id_array[] = $tag->term_id;
+            }
+        }
+    } else {
+        // Get array of post info.
+        $tag_array = explode(",", $tags);
+
+        foreach ($tag_array as $tag) {
+            $tag_id_array[] = get_tag_ID(trim($tag));
+        }
     }
 
-    if ($output === FALSE || $output == '') {
-        // Not present in cache so load it
-        $tag_id_array = array();
-        
-        if ($tags == '') {
-            // if tags is empty then take from current posts
-            if (is_single()) {
-                $tag_array = wp_get_post_tags($wp_query->post->ID);
-                foreach ($tag_array as $tag) {
-                    $tag_id_array[] = $tag->term_id;
-                }
-            }
-        } else {
-            // Get array of post info.
-            $tag_array = explode(",", $tags);
-
-            foreach ($tag_array as $tag) {
-                $tag_id_array[] = get_tag_ID(trim($tag));
-            }
+    if (count($tag_id_array) > 0) {
+        // only if we have atleast one tag. get_posts has a bug. If empty array is passed, it returns all posts. That's why we need this condition
+        $tag_arg = 'tag__in';
+        if ($exclude) {
+            $tag_arg = 'tag__not_in';
         }
 
-        if (count($tag_id_array) > 0) {
-            // only if we have atleast one tag. get_posts has a bug. If empty array is passed, it returns all posts. That's why we need this condition
-            $tag_arg = 'tag__in';
-            if ($exclude) {
-                $tag_arg = 'tag__not_in';
-            }
+        // saving the query
+        $temp_query = clone $wp_query;
 
-            // saving the query
-            $temp_query = clone $wp_query;
+        // TODO: Need to cache this.
+        $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'order_by' => $order_by, 'order' => $order ) );
 
-            // TODO: Need to cache this.
-            $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'order_by' => $order_by, 'order' => $order ) );
+        // restoring the query so it can be later used to display our posts
+        $wp_query = clone $temp_query;
 
-            // restoring the query so it can be later used to display our posts
-            $wp_query = clone $temp_query;
+        if (count($tag_posts) > 0) {
+            $output = '<ul class = "posts-by-tag-list">';
+            foreach($tag_posts as $post) {
+                setup_postdata($post);
+                $output .= '<li class="posts-by-tag-item" id="posts-by-tag-item-' . $post->ID . '">';
 
-            if (count($tag_posts) > 0) {
-                $output = '<ul class = "posts-by-tag-list">';
-                foreach($tag_posts as $post) {
-                    setup_postdata($post);
-                    $output .= '<li class="posts-by-tag-item" id="posts-by-tag-item-' . $post->ID . '">';
-
-                    if ($thumbnail) {
-                        if (has_post_thumbnail($post->ID)) {
-                            $output .= get_the_post_thumbnail($post->ID, 'thumbnail');
-                        } else {
-                            if (get_post_meta($post->ID, 'post_thumbnail', true) != '') {
-                                $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" ></a>';
-                            }
+                if ($thumbnail) {
+                    if (has_post_thumbnail($post->ID)) {
+                        $output .= get_the_post_thumbnail($post->ID, 'thumbnail');
+                    } else {
+                        if (get_post_meta($post->ID, 'post_thumbnail', true) != '') {
+                            $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" ></a>';
                         }
                     }
-
-                    $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
-
-                    if($content) {
-                         $output .= get_the_content_with_formatting();
-                    }
-
-                    if ($author) {
-                        $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
-                        $output .=  get_the_author_meta('display_name', $post->post_author) . '</small>';
-                    }
-
-                    if ($date) {
-                        $output .= ' <small>' . __('Posted on: ', 'posts-by-tag');
-                        $output .=  mysql2date(get_option('date_format'), $post->post_date) . '</small>';
-                    }
-
-                    if( $excerpt ) {
-                        $output .=  '<br />';
-                        if ($post->post_excerpt!=NULL)
-                            $output .= apply_filters('the_excerpt', $post->post_excerpt);
-                        else
-                            $output .= get_the_excerpt();
-                    }
-                    $output .=  '</li>';
                 }
-                $output .=  '</ul>';
-            }
-        }
 
-        // if it is not called from theme, save the output to cache
-        if ($widget_id != "0") {
-            wp_cache_set($widget_id, $output, 'posts-by-tag', 3600);
+                $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
+
+                if($content) {
+                        $output .= get_the_content_with_formatting();
+                }
+
+                if ($author) {
+                    $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
+                    $output .=  get_the_author_meta('display_name', $post->post_author) . '</small>';
+                }
+
+                if ($date) {
+                    $output .= ' <small>' . __('Posted on: ', 'posts-by-tag');
+                    $output .=  mysql2date(get_option('date_format'), $post->post_date) . '</small>';
+                }
+
+                if( $excerpt ) {
+                    $output .=  '<br />';
+                    if ($post->post_excerpt!=NULL)
+                        $output .= apply_filters('the_excerpt', $post->post_excerpt);
+                    else
+                        $output .= get_the_excerpt();
+                }
+                $output .=  '</li>';
+            }
+            $output .=  '</ul>';
         }
     }
 
