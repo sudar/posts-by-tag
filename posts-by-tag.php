@@ -44,6 +44,7 @@ Text Domain: posts-by-tag
                   - Added filter to the get_the_content() call
                   - Moved caching logic to widget
                   - Added the option to exclude current post/page
+                  - Added Lithuanian translations
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -454,7 +455,7 @@ class TagWidget extends WP_Widget {
         <p>
             <label for="<?php echo $this->get_field_id('current_page_tags'); ?>">
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('current_page_tags'); ?>" name="<?php echo $this->get_field_name('current_page_tags'); ?>" value ="true" <?php checked($current_page_tags, true); ?> /></label>
-            <?php _e( 'Get tags and title from custom fields in current Page' , 'posts-by-tag'); ?>
+            <?php _e( 'Get tags and title from custom fields. You need to set the custom field for each post/page.' , 'posts-by-tag'); ?>
         </p>
 
         <p>
