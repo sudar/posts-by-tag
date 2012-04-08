@@ -43,6 +43,7 @@ Text Domain: posts-by-tag
 2012-04-08 - v2.3 - ()
                   - Added filter to the get_the_content() call
                   - Moved caching logic to widget
+                  - Added the option to exclude current post/page
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
