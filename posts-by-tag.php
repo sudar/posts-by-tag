@@ -40,7 +40,7 @@ Text Domain: posts-by-tag
 2011-11-22 - v2.1 - Added option to include tag links from shortcode and template function.
 2011-12-31 - v2.1.1 - Fixed undefined notices for nouncename while creating new posts
 2012-01-31 - v2.2 - Fixed issues with order by option. Added Bulgarian translations
-2012-04-08 - v2.3 - ()
+2012-04-08 - v2.3 - (Dev time: 3 hours)
                   - Added filter to the get_the_content() call
                   - Moved caching logic to widget
                   - Added the option to exclude current post/page
