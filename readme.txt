@@ -4,7 +4,7 @@ Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 Tested up to: 3.3.1
-Stable tag: 2.2
+Stable tag: 2.3
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -34,13 +34,14 @@ Each widget allows you to choose
 *   Option to display post date.
 *   Option to display post content.
 *   Choose the order in which the posts should be displayed.
+*   Option to exclude current post/page.
 *   Option to display links to tag archive pages.
 
 #### Template function
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE, $tag_links = FALSE);
+posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE);
 
 *   $tags (string) - set of comma seperated tags. If you leave this empty, then the tags from the current post will be used.
 *   $number (number) - number of posts to display
@@ -52,6 +53,7 @@ posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FA
 *   $author (bool) - To display author name or not.
 *   $date (bool) - To display post date or not.
 *   $content (bool) - To display post content or not.
+*   $exclude_current_post (bool) - To exclude current post/page.
 *   $tag_links (bool) - To display link to tag archive page or not.
 
 #### Shortcode
@@ -61,6 +63,10 @@ You can also include the shortcode, to display the posts from the set of tags
 [posts-by-tag tags = "tag1, tag2"]
 
 All the parameters that are accepted by the template tag can also be used in the shortcode
+
+#### Caching
+
+Note that the Plugin caches the db queries only when it is used as a widget. If you are going to use the template tag or use shortcode, then you have to cache it yourself.
 
 #### Styling using CSS
 
@@ -80,6 +86,7 @@ The Plugin adds the following CSS classes. If you want to customize the look of 
 *   Hebrew (Thanks [Sagive SEO][6])
 *   Spanish (Thanks Brian Flores of [InMotion Hosting][7])
 *   Bulgarian (Thanks Nikolay Nikolov of [IQ Test][11])
+*   Lithuanian (Thanks  Vincent G , from [http://www.host1free.com][12])
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
 
@@ -108,6 +115,7 @@ I would be posting updates about this Plugin in my [blog][8] and in [Twitter][5]
  [9]: http://sudarmuthu.com/feed
  [10]: http://sudarmuthu.com/wordpress
  [11]: http://umenlisam.com/
+ [12]: http://www.host1free.com
 
 == Installation ==
 
@@ -222,6 +230,12 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
  *  Fixed issues with order by option.
  *  Added Bulgarian translations
 
+** v2.3 (2012-04-04) (Dev time - 3 hours)
+    - Added filter to the get_the_content() call
+    - Moved caching logic to widget
+    - Added the option to exclude current post/page
+    - Added Lithuanian translations
+     
 ==Readme Generator== 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
