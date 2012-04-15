@@ -4,7 +4,7 @@ Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 Tested up to: 3.3.1
-Stable tag: 2.3
+Stable tag: 2.4
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -16,7 +16,7 @@ These tags can be specified in the widget or the Plugin can automatically retrie
 
 You can also use shortcode or template function to display the posts.
 
-The Plugin caches the posts of each widget separately, and issues database queries only when needed. This will reduce the amount of database queries involved for each page load and will therefore be light on your server.
+The Plugin caches the posts of each widget separately, and issues database queries only when needed. This will reduce the amount of database queries involved for each page load and will therefore be light on your server. If this clashes with other Plugins, you also have an option to disable it.
 
 ### Features
 
@@ -36,6 +36,7 @@ Each widget allows you to choose
 *   Choose the order in which the posts should be displayed.
 *   Option to exclude current post/page.
 *   Option to display links to tag archive pages.
+*   Option to disable the cache if needed.
 
 #### Template function
 
@@ -66,7 +67,8 @@ All the parameters that are accepted by the template tag can also be used in the
 
 #### Caching
 
-Note that the Plugin caches the db queries only when it is used as a widget. If you are going to use the template tag or use shortcode, then you have to cache it yourself.
+Note that the Plugin caches the db queries only when it is used as a widget. If you are going to use the template tag or use shortcode, then you have to cache it yourself. 
+Even while using the widget, you have the option of disabling the cache if needed.
 
 #### Styling using CSS
 
@@ -128,86 +130,86 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 == Changelog ==
 ### Changelog
 
-** v0.1 (2009-07-26)  
+#### v0.1 (2009-07-26)  
 
 *   Initial Version
 
-** v0.2 (2009-08-02)  
+#### v0.2 (2009-08-02)  
 
 *   Added template functions
 *   Added Swedish translation (Thanks Gunnar Lindberg Årneby)
 
-** v0.3 (2009-08-14)  
+#### v0.3 (2009-08-14)  
 
 *   Improved caching performance
 *   Added Turkish translation (Thanks Yakup Gövler)
 
-** v0.4 (2009-09-16)  
+#### v0.4 (2009-09-16)  
 
 *   Added support for sorting the posts (Thanks to Michael http://mfields.org/)
 
-** v0.5 (2010-01-03)
+#### v0.5 (2010-01-03)
 
 *   Removed JavaScript from unwanted admin pages and added Belorussian translation.
 
-** v0.6 (2010-03-18)
+#### v0.6 (2010-03-18)
 
 *   Added option to hide author links.
 
-** v0.7 (2010-04-16)
+#### v0.7 (2010-04-16)
 
 *   Fixed an issue in showing the number of posts.
 
-** v0.8 (2010-05-08)
+#### v0.8 (2010-05-08)
 
  *  Added support for shortcode and sorting by title.
 
-** v0.9 (2010-06-18)
+#### v0.9 (2010-06-18)
 
  *  Fixed an issue with the order by option.
 
-** v1.0 (2010-06-19)
+#### v1.0 (2010-06-19)
 
  *  Fixed issue with shortcode.
 
-** v1.1 (2010-06-23)
+#### v1.1 (2010-06-23)
 
  *  Fixed issue with shortcode, which was not fixed properly in 1.0
 
-** v1.2 (2010-06-25)
+#### v1.2 (2010-06-25)
 
  *  Fixed issue with shortcode, which was not fixed properly in 1.0 and 1.1
 
-** v1.3 (2010-07-12)
+#### v1.3 (2010-07-12)
 
  *  Fixed some inconsistency in documentation and code
 
-** v1.4 (2010-08-04)
+#### v1.4 (2010-08-04)
 
  *  Added German translations
 
-** v1.5 (2010-08-26)
+#### v1.5 (2010-08-26)
 
  *  Added Dutch translations and fixed typos
 
-** v1.6 (2011-02-17)
+#### v1.6 (2011-02-17)
 
  *  Fixed an issue in handling boolean in shortcode
 
-** v1.7 (2011-05-11)
+#### v1.7 (2011-05-11)
 
  *  Added support for displaying post dates.
  *  Fixed a bug which was corrupting the loop.
 
-** v1.8 (2011-09-07)
+#### v1.8 (2011-09-07)
 
  *  Added support for displaying content (Thanks rjune)
  
-** v1.9 (2011-11-13)
+#### v1.9 (2011-11-13)
 
  * Added Spanish and Hebrew translations.
 
-** v2.0 (2011-11-20)
+#### v2.0 (2011-11-20)
 
   * Added option to exclude tags.
   * Fixed bug in displaying author name
@@ -217,25 +219,28 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
   * Added the option to take tags from the current post
   * Added the option to take tags from the custom fields of current page
 
-** v2.1 (2011-11-22)
+#### v2.1 (2011-11-22)
 
  * Added option to include tag links from shortcode and template function.
 
-** v2.1.1 (2011-12-31)
+#### v2.1.1 (2011-12-31)
 
  *  Fixed undefined notices for nouncename while creating new posts
 
-** v2.2 (2012-01-31)
+#### v2.2 (2012-01-31)
 
  *  Fixed issues with order by option.
  *  Added Bulgarian translations
 
-** v2.3 (2012-04-04) (Dev time - 3 hours)
+#### v2.3 (2012-04-04) (Dev time - 3 hours)
     - Added filter to the get_the_content() call
     - Moved caching logic to widget
     - Added the option to exclude current post/page
     - Added Lithuanian translations
-     
+
+#### v2.4 (2012-04-15) (Dev time - 0.5 hours)
+    - Added option to disable cache if needed
+
 ==Readme Generator== 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.

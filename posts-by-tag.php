@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.3
+Version: 2.4
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -45,6 +45,8 @@ Text Domain: posts-by-tag
                   - Moved caching logic to widget
                   - Added the option to exclude current post/page
                   - Added Lithuanian translations
+2012-04-15 - v2.4 - (Dev time: 0.5 hours)
+                  - Added otpion to disable cache if needed
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -63,6 +65,13 @@ Text Domain: posts-by-tag
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/**
+ * The main Plugin class
+ *
+ * @package PostsByTag
+ * @subpackage default
+ * @author Sudar
+ */
 class PostsByTag {
 
     /**
@@ -271,7 +280,11 @@ add_action( 'init', 'PostsByTag' ); function PostsByTag() { global $PostsByTag; 
 add_action('widgets_init', create_function('', 'return register_widget("TagWidget");'));
 
 /**
- * TagWidget Class
+ * TagWidget Class - Wrapper for the widget
+ *
+ * @package PostsByTag
+ * @subpackage Widgets
+ * @author Sudar
  */
 class TagWidget extends WP_Widget {
     /** constructor */
@@ -292,24 +305,25 @@ class TagWidget extends WP_Widget {
 
         extract( $args );
 
-        $tags = $instance['tags'];
-        $current_tags = (bool) $instance['current_tags'];
-        $current_page_tags = (bool) $instance['current_page_tags'];
-        $number = $instance['number']; // Number of posts to show.
-        $exclude = (bool) $instance['exclude'];
+        $tags                 = $instance['tags'];
+        $current_tags         = (bool) $instance['current_tags'];
+        $current_page_tags    = (bool) $instance['current_page_tags'];
+        $number               = $instance['number']; // Number of posts to show.
+        $exclude              = (bool) $instance['exclude'];
         $exclude_current_post = (bool) $instance['exclude_current_post'];
-        $excerpt = (bool) $instance['excerpt'];
-        $content = (bool) $instance['content'];
-        $thumbnail = (bool) $instance['thumbnail'];
-		$order_by = $instance['order_by'];
-		$order = $instance['order'];
-        $author = (bool) $instance['author'];
-        $date = (bool) $instance['date'];
+        $excerpt              = (bool) $instance['excerpt'];
+        $content              = (bool) $instance['content'];
+        $thumbnail            = (bool) $instance['thumbnail'];
+        $order_by             = $instance['order_by'];
+        $order                = $instance['order'];
+        $author               = (bool) $instance['author'];
+        $date                 = (bool) $instance['date'];
 
-        $tag_links = (bool) $instance['tag_links'];
+        $tag_links            = (bool) $instance['tag_links'];
+        $disable_cache        = (bool) $instance['disable_cache'];
 
-        $title = $instance['title'];
-        $post_id = $post->ID;
+        $title                = $instance['title'];
+        $post_id              = $post->ID;
 
         if ($current_tags) {
             // if current tags is enabled then set tags to empty
@@ -347,10 +361,14 @@ class TagWidget extends WP_Widget {
                     $key = "posts-by-tag-$widget_id";
                 }
 
-                if ( false === ( $widget_content = get_transient( $key ) ) ) {
+                if ($disable_cache || (false === ( $widget_content = get_transient( $key ) ) )) {
+
                     $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $exclude_current_post);
-                    // store in cache
-                    set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
+
+                    if (!disable_cache) {
+                        // store in cache
+                        set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
+                    }
                 }
             }
         }
@@ -375,21 +393,23 @@ class TagWidget extends WP_Widget {
         $instance = $old_instance;
         
         // validate data
-        $instance['title'] = strip_tags($new_instance['title']);
-        $instance['tags'] = strip_tags($new_instance['tags']);
-        $instance['current_tags'] = (bool)$new_instance['current_tags'];
-        $instance['current_page_tags'] = (bool)$new_instance['current_page_tags'];
-        $instance['number'] = intval($new_instance['number']);
-        $instance['exclude'] = (bool)$new_instance['exclude'];
+        $instance['title']                = strip_tags($new_instance['title']);
+        $instance['tags']                 = strip_tags($new_instance['tags']);
+        $instance['current_tags']         = (bool)$new_instance['current_tags'];
+        $instance['current_page_tags']    = (bool)$new_instance['current_page_tags'];
+        $instance['number']               = intval($new_instance['number']);
+        $instance['exclude']              = (bool)$new_instance['exclude'];
         $instance['exclude_current_post'] = (bool)$new_instance['exclude_current_post'];
-        $instance['thumbnail'] = (bool)$new_instance['thumbnail'];
-        $instance['author'] = (bool)$new_instance['author'];
-        $instance['date'] = (bool)$new_instance['date'];
-        $instance['excerpt'] = (bool)$new_instance['excerpt'];
-        $instance['content'] = (bool)$new_instance['content'];
-        $instance['order'] = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
-        $instance['order_by'] = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
-        $instance['tag_links'] = (bool)$new_instance['tag_links'];
+        $instance['thumbnail']            = (bool)$new_instance['thumbnail'];
+        $instance['author']               = (bool)$new_instance['author'];
+        $instance['date']                 = (bool)$new_instance['date'];
+        $instance['excerpt']              = (bool)$new_instance['excerpt'];
+        $instance['content']              = (bool)$new_instance['content'];
+        $instance['order']                = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
+        $instance['order_by']             = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
+
+        $instance['tag_links']            = (bool)$new_instance['tag_links'];
+        $instance['disable_cache']        = (bool)$new_instance['disable_cache'];
         
         return $instance;
     }
@@ -401,21 +421,23 @@ class TagWidget extends WP_Widget {
         $defaults = array( 'title' => '', 'tags' => '', 'current_tags' => FALSE, 'number' => '5', 'exclude' => FALSE, 'exclude_current_post' => FALSE, 'thumbnail' => FALSE, 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE);
         $instance = wp_parse_args( (array) $instance, $defaults );
 
-        $title = esc_attr($instance['title']);
-        $tags = $instance['tags'];
-        $number = intval($instance['number']);
-        $current_tags = (bool) $instance['current_tags'];
-        $current_page_tags = (bool) $instance['current_page_tags'];
-        $exclude = (bool) $instance['exclude'];
+        $title                = esc_attr($instance['title']);
+        $tags                 = $instance['tags'];
+        $number               = intval($instance['number']);
+        $current_tags         = (bool) $instance['current_tags'];
+        $current_page_tags    = (bool) $instance['current_page_tags'];
+        $exclude              = (bool) $instance['exclude'];
         $exclude_current_post = (bool) $instance['exclude_current_post'];
-        $thumbnail = (bool) $instance['thumbnail'];
-        $author = (bool) $instance['author'];
-        $date = (bool) $instance['date'];
-        $excerpt = (bool) $instance['excerpt'];
-        $content = (bool) $instance['content'];
-        $order = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc'; 
-        $order_by = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
-        $tag_links = (bool) $instance['tag_links'];
+        $thumbnail            = (bool) $instance['thumbnail'];
+        $author               = (bool) $instance['author'];
+        $date                 = (bool) $instance['date'];
+        $excerpt              = (bool) $instance['excerpt'];
+        $content              = (bool) $instance['content'];
+        $order                = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc';
+        $order_by             = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
+
+        $tag_links            = (bool) $instance['tag_links'];
+        $disable_cache        = (bool) $instance['disable_cache'];
 ?>
 
 <?php
@@ -524,6 +546,12 @@ class TagWidget extends WP_Widget {
 				<?php _e( 'Show Tag links' , 'posts-by-tag'); ?>
         </p>
 
+        <p>
+            <label for="<?php echo $this->get_field_id('disable_cache'); ?>">
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('disable_cache'); ?>" name="<?php echo $this->get_field_name('disable_cache'); ?>" value ="true" <?php checked($disable_cache, true); ?> /></label>
+				<?php _e( 'Disable Cache' , 'posts-by-tag'); ?>
+        </p>
+
 <?php
     }
 } // class TagWidget
@@ -604,7 +632,6 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
         // saving the query
         $temp_query = clone $wp_query;
 
-        // TODO: Need to cache this.
         $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'order_by' => $order_by, 'order' => $order ) );
 
         // restoring the query so it can be later used to display our posts
