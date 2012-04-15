@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Posts By Tag package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Posts By Tag 2.3\n"
+"Project-Id-Version: Posts By Tag 2.4\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/posts-by-tag\n"
-"POT-Creation-Date: 2012-04-08 10:11:41+00:00\n"
+"POT-Creation-Date: 2012-04-15 05:25:53+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,115 +12,119 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: posts-by-tag.php:121
+#: posts-by-tag.php:130
 msgid "Posts By Tag Page Fields"
 msgstr ""
 
-#: posts-by-tag.php:147
+#: posts-by-tag.php:156
 msgid "Widget Title"
 msgstr ""
 
-#: posts-by-tag.php:148
+#: posts-by-tag.php:157
 msgid "Widget Tags"
 msgstr ""
 
-#: posts-by-tag.php:280
+#: posts-by-tag.php:293
 msgid "Widget that shows posts from a set of tags"
 msgstr ""
 
-#. #-#-#-#-#  plugin.pot (Posts By Tag 2.3)  #-#-#-#-#
+#. #-#-#-#-#  plugin.pot (Posts By Tag 2.4)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
-#: posts-by-tag.php:286
+#: posts-by-tag.php:299
 msgid "Posts By Tag"
 msgstr ""
 
-#: posts-by-tag.php:425
+#: posts-by-tag.php:447
 msgid "Title:"
 msgstr ""
 
-#: posts-by-tag.php:431
+#: posts-by-tag.php:453
 msgid "Tags:"
 msgstr ""
 
-#: posts-by-tag.php:434
+#: posts-by-tag.php:456
 msgid "Separate multiple tags by comma"
 msgstr ""
 
-#: posts-by-tag.php:440
+#: posts-by-tag.php:462
 msgid "Exclude these tags"
 msgstr ""
 
-#: posts-by-tag.php:446
+#: posts-by-tag.php:468
 msgid "Exclude current post/page"
 msgstr ""
 
-#: posts-by-tag.php:452
+#: posts-by-tag.php:474
 msgid "Get tags from current Post"
 msgstr ""
 
-#: posts-by-tag.php:458
+#: posts-by-tag.php:480
 msgid ""
 "Get tags and title from custom fields. You need to set the custom field for "
 "each post/page."
 msgstr ""
 
-#: posts-by-tag.php:463
+#: posts-by-tag.php:485
 msgid "Number of posts to show:"
 msgstr ""
 
-#: posts-by-tag.php:470
+#: posts-by-tag.php:492
 msgid "Show post thumbnails"
 msgstr ""
 
-#: posts-by-tag.php:476
+#: posts-by-tag.php:498
 msgid "Show author name"
 msgstr ""
 
-#: posts-by-tag.php:482
+#: posts-by-tag.php:504
 msgid "Show post date"
 msgstr ""
 
-#: posts-by-tag.php:488
+#: posts-by-tag.php:510
 msgid "Show post excerpt"
 msgstr ""
 
-#: posts-by-tag.php:494
+#: posts-by-tag.php:516
 msgid "Show post content"
 msgstr ""
 
-#: posts-by-tag.php:498
+#: posts-by-tag.php:520
 msgid "Sort by: "
 msgstr ""
 
-#: posts-by-tag.php:501
+#: posts-by-tag.php:523
 msgid "Date"
 msgstr ""
 
-#: posts-by-tag.php:505
+#: posts-by-tag.php:527
 msgid "Title"
 msgstr ""
 
-#: posts-by-tag.php:510
+#: posts-by-tag.php:532
 msgid "Order by: "
 msgstr ""
 
-#: posts-by-tag.php:513
+#: posts-by-tag.php:535
 msgid "Ascending"
 msgstr ""
 
-#: posts-by-tag.php:517
+#: posts-by-tag.php:539
 msgid "Descending"
 msgstr ""
 
-#: posts-by-tag.php:524
+#: posts-by-tag.php:546
 msgid "Show Tag links"
 msgstr ""
 
-#: posts-by-tag.php:641
+#: posts-by-tag.php:552
+msgid "Disable Cache"
+msgstr ""
+
+#: posts-by-tag.php:668
 msgid "Posted by: "
 msgstr ""
 
-#: posts-by-tag.php:646
+#: posts-by-tag.php:673
 msgid "Posted on: "
 msgstr ""
 
