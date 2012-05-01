@@ -3,8 +3,8 @@ Contributors: sudar
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
-Tested up to: 3.3.1
-Stable tag: 2.4
+Tested up to: 3.3.2
+Stable tag: 2.5
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -44,7 +44,7 @@ In addition to using the widget, you can also use the following template functio
 
 posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE);
 
-*   $tags (string) - set of comma seperated tags. If you leave this empty, then the tags from the current post will be used.
+*   $tags (string) - set of comma separated tags. If you leave this empty, then the tags from the current post will be used.
 *   $number (number) - number of posts to display
 *   $exclude (bool) - Where to include the tags or exclude the tags
 *   $excerpt (bool) - To display post excerpts or not
@@ -233,13 +233,16 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
  *  Added Bulgarian translations
 
 #### v2.3 (2012-04-04) (Dev time - 3 hours)
-    - Added filter to the get_the_content() call
-    - Moved caching logic to widget
-    - Added the option to exclude current post/page
-    - Added Lithuanian translations
+    * Added filter to the get_the_content() call
+    * Moved caching logic to widget
+    * Added the option to exclude current post/page
+    * Added Lithuanian translations
 
 #### v2.4 (2012-04-15) (Dev time - 0.5 hours)
-    - Added option to disable cache if needed
+    * Added option to disable cache if needed
+
+#### v2.5 (2012-04-30) (Dev time - 0.5 hours)
+    * Fixed the sorting by title issue 
 
 ==Readme Generator== 
 

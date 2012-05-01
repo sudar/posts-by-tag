@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.4
+Version: 2.5
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -47,6 +47,9 @@ Text Domain: posts-by-tag
                   - Added Lithuanian translations
 2012-04-15 - v2.4 - (Dev time: 0.5 hours)
                   - Added otpion to disable cache if needed
+2012-04-30 - v2.5 - (Dev time: 0.5 hours)
+                  - Fixed the sorting by title issue (http://wordpress.org/support/topic/plugin-posts-by-tag-order_by-not-working)
+
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -632,7 +635,7 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
         // saving the query
         $temp_query = clone $wp_query;
 
-        $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'order_by' => $order_by, 'order' => $order ) );
+        $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'orderby' => $order_by, 'order' => $order ) );
 
         // restoring the query so it can be later used to display our posts
         $wp_query = clone $temp_query;
