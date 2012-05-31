@@ -49,6 +49,9 @@ Text Domain: posts-by-tag
                   - Added otpion to disable cache if needed
 2012-04-30 - v2.5 - (Dev time: 0.5 hours)
                   - Fixed the sorting by title issue (http://wordpress.org/support/topic/plugin-posts-by-tag-order_by-not-working)
+2012-05-31 - v2.6 - (Dev time: 0.5 hours)
+                  - Added support for specifying link targets
+                  - Changed the arugment list for the posts_by_tag template functions
 
 */
 
@@ -563,22 +566,45 @@ class TagWidget extends WP_Widget {
  * Template function to display posts by tags
  *
  * @param <string> $tags
- * @param <int> $number Number of posts to show
- * @param <bool> $exclude Whether to exclude the tags specified. Default is FALSE
- * @param <bool> $excerpt
- * @param <bool> $thumbnail
- * @param <set> $order_by (title, date) defaults to 'date'
- * @param <set> $order (asc, desc) defaults to 'desc'
- * @param <bool> $author - Whether to show the author name or not
- * @param <bool> $date - Whether to show the post date or not
- * @param <bool> $content
- * @param <bool> $exclude_current_post Whether to exclude the current post/page. Default is FALSE
- * @param <bool> $tag_links Whether to display tag links at the end
+ * @param <array> $options. An array which has the following values
+ *         <int> number Number of posts to show
+ *         <bool> exclude Whether to exclude the tags specified. Default is FALSE
+ *         <bool> excerpt
+ *         <bool> thumbnail
+ *         <set> order_by (title, date) defaults to 'date'
+ *         <set> order (asc, desc) defaults to 'desc'
+ *         <bool> author - Whether to show the author name or not
+ *         <bool> date - Whether to show the post date or not
+ *         <bool> content
+ *         <bool> exclude_current_post Whether to exclude the current post/page. Default is FALSE
+ *         <bool> tag_links Whether to display tag links at the end
+ *         <string> link_target the value to the target attribute of each links that needs to be added
  */
-function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE) {
-    $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $exclude_current_post);
+function posts_by_tag($tags, $options, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE) {
+    $output = '';
 
-    if ($tag_links && !$exclude) {
+    // compatibility with older versions
+    if (!is_array($options)) {
+        // build the array
+        $number = $options;
+        $options = array(
+            'number' => $number,
+            'excerpt' => $excerpt, 
+            'thumbnail' => $thumbnail, 
+            'order_by' => $order_by, 
+            'order' => $order,
+            'author' => $author, 
+            'date' => $date, 
+            'content' => $content, 
+            'exclude_current_post' => $exclude_current_post, 
+            'tag_links' => $tag_links,
+            'link_target' => $link_target
+        );
+    }
+
+    $output = get_posts_by_tag($tags, $options);
+
+    if ($options['tag_links'] && !$option['exclude']) {
         $output .= get_tag_more_links($tags);
     }
 
@@ -589,22 +615,45 @@ function posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumb
  * Helper function for posts_by_tag
  *
  * @param <string> $tags
- * @param <int> $number Number of posts to show
- * @param <bool> $exclude Whether to exclude the tags specified. Default is FALSE
- * @param <bool> $excerpt
- * @param <bool> $thumbnail
- * @param <set> $order_by (title, date) defaults to 'date'
- * @param <set> $order (asc, desc) defaults to 'desc'
- * @param <bool> $author - Whether to show the author name or not
- * @param <bool> $date - Whether to show the post date or not
- * @param <bool> $content - Whether to show post content or not
- * @param <bool> $exclude_current_post Whether to exclude the current post/page. Default is FALSE
+ * @param <array> $options. An array which has the following values
+ *         <int> number Number of posts to show
+ *         <bool> exclude Whether to exclude the tags specified. Default is FALSE
+ *         <bool> excerpt
+ *         <bool> thumbnail
+ *         <set> order_by (title, date) defaults to 'date'
+ *         <set> order (asc, desc) defaults to 'desc'
+ *         <bool> author - Whether to show the author name or not
+ *         <bool> date - Whether to show the post date or not
+ *         <bool> content
+ *         <bool> exclude_current_post Whether to exclude the current post/page. Default is FALSE
+ *         <string> link_target the value to the target attribute of each links that needs to be added
  */
-function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE) {
+function get_posts_by_tag($tags, $options, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $link_target = '') {
     global $wp_query;
     $current_post_id = $wp_query->post->ID;
-
     $output = '';
+
+    if (is_array($options)) {
+
+        wp_parse_args($options, array(
+                                'number' => 5,
+                                'exclude' => FALSE,
+                                'excerpt' => FALSE, 
+                                'thumbnail' => FALSE, 
+                                'order_by' => 'date', 
+                                'order' => 'desc', 
+                                'author' => FALSE, 
+                                'date' => FALSE, 
+                                'content' => FALSE, 
+                                'exclude_current_post' => FALSE, 
+                                'tag_links' => FALSE,
+                                'link_target' => '' 
+                            )
+                     );
+        extract( $options, EXTR_SKIP );
+    } else {
+        $number = $options;
+    }
 
     $tag_id_array = array();
     
@@ -661,7 +710,14 @@ function get_posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $t
                     }
                 }
 
-                $output .= '<a href="' . get_permalink($post) . '">' . $post->post_title . '</a>';
+                // add permalink
+                $output .= '<a href="' . get_permalink($post) . '"';
+               
+                if ($link_target != '') {
+                    $output .= ' target = "' . $link_target . '"';
+                }
+
+                $output .= '>' . $post->post_title . '</a>';
 
                 if($content) {
                         $output .= get_the_content_with_formatting();
