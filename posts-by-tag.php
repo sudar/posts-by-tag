@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.5
+Version: 2.6
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -49,9 +49,9 @@ Text Domain: posts-by-tag
                   - Added otpion to disable cache if needed
 2012-04-30 - v2.5 - (Dev time: 0.5 hours)
                   - Fixed the sorting by title issue (http://wordpress.org/support/topic/plugin-posts-by-tag-order_by-not-working)
-2012-05-31 - v2.6 - (Dev time: 0.5 hours)
+2012-05-31 - v2.6 - (Dev time: 2 hours)
                   - Added support for specifying link targets
-                  - Changed the arugment list for the posts_by_tag template functions
+                  - Changed the argument list for the posts_by_tag template functions
 
 */
 
@@ -79,6 +79,9 @@ Text Domain: posts-by-tag
  * @author Sudar
  */
 class PostsByTag {
+
+    // boolean fields that needs to be validated
+    private $boolean_fields = array( 'exclude', 'exclude_current_post', 'excerpt', 'content', 'thumbnail', 'author', 'date', 'tag_links');
 
     /**
      * Initalize the plugin by registering the hooks
@@ -216,9 +219,9 @@ class PostsByTag {
      * @param <array> $attributes
      */
     function shortcode_handler($attributes) {
-        extract(shortcode_atts(array(
+        $options = shortcode_atts(array(
             "tags"      => '',   // comma Separated list of tags
-            "number"    => '5',
+            "number"    => 5,
             "exclude"   => FALSE,
             "exclude_current_post"   => FALSE,
             "excerpt"   => FALSE,
@@ -228,45 +231,17 @@ class PostsByTag {
             'order'     => 'desc',
             'author'    => FALSE,
             'date'      => FALSE,
-            'tag_links' => FALSE
-        ), $attributes));
+            'tag_links' => FALSE,
+            'link_target' => ''
+        ), $attributes);
 
-        if (strtolower($exclude) == "false") {
-            $exclude = FALSE;
-        }
-
-        if (strtolower($exclude_current_post) == "false") {
-            $exclude_current_post = FALSE;
-        }
-
-        if (strtolower($excerpt) == "false") {
-            $excerpt = FALSE;
-        }
-
-        if (strtolower($thumbnail) == "false") {
-            $thumbnail = FALSE;
-        }
-        
-        if (strtolower($author) == "false") {
-            $author = FALSE;
-        }
-
-        if (strtolower($date) == "false") {
-            $date = FALSE;
-        }
-
-        if (strtolower($content) == "false") {
-            $content = FALSE;
-        }
-
-        if (strtolower($tag_links) == "false") {
-            $tag_links = FALSE;
-        }
+        $options = validate_boolean_options($options, $this->boolean_fields);
+        $tags = $options['tags'];
 
         // call the template function
-        $output = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $exclude_current_post);
+        $output = get_posts_by_tag($tags, $options);
 
-        if ($tag_links && !$exclude) {
+        if ($options['tag_links'] && !$options['exclude']) {
             $output .= get_tag_more_links($tags);
         }
 
@@ -327,6 +302,7 @@ class TagWidget extends WP_Widget {
 
         $tag_links            = (bool) $instance['tag_links'];
         $disable_cache        = (bool) $instance['disable_cache'];
+        $link_target          = $instance['link_target'];
 
         $title                = $instance['title'];
         $post_id              = $post->ID;
@@ -369,7 +345,7 @@ class TagWidget extends WP_Widget {
 
                 if ($disable_cache || (false === ( $widget_content = get_transient( $key ) ) )) {
 
-                    $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $exclude_current_post);
+                    $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $exclude_current_post, $link_target);
 
                     if (!disable_cache) {
                         // store in cache
@@ -415,6 +391,7 @@ class TagWidget extends WP_Widget {
         $instance['order_by']             = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
 
         $instance['tag_links']            = (bool)$new_instance['tag_links'];
+        $instance['link_target']          = $new_instance['link_target'];
         $instance['disable_cache']        = (bool)$new_instance['disable_cache'];
         
         return $instance;
@@ -443,6 +420,7 @@ class TagWidget extends WP_Widget {
         $order_by             = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
 
         $tag_links            = (bool) $instance['tag_links'];
+        $link_target          = $instance['link_target'];
         $disable_cache        = (bool) $instance['disable_cache'];
 ?>
 
@@ -553,6 +531,12 @@ class TagWidget extends WP_Widget {
         </p>
 
         <p>
+            <label for="<?php echo $this->get_field_id('link_target'); ?>">
+				<?php _e('Target attribute for links', 'posts-by-tag'); ?>
+            <input style="width: 75px; text-align: center;" id="<?php echo $this->get_field_id('link_target'); ?>" name="<?php echo $this->get_field_name('link_target'); ?>" type="text" value="<?php echo $link_target; ?>" /></label>
+        </p>
+
+        <p>
             <label for="<?php echo $this->get_field_id('disable_cache'); ?>">
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('disable_cache'); ?>" name="<?php echo $this->get_field_name('disable_cache'); ?>" value ="true" <?php checked($disable_cache, true); ?> /></label>
 				<?php _e( 'Disable Cache' , 'posts-by-tag'); ?>
@@ -650,7 +634,7 @@ function get_posts_by_tag($tags, $options, $exclude = FALSE, $excerpt = FALSE, $
                                 'link_target' => '' 
                             )
                      );
-        extract( $options, EXTR_SKIP );
+        extract( $options, EXTR_OVERWRITE);
     } else {
         $number = $options;
     }
@@ -826,4 +810,28 @@ function get_the_content_with_formatting ($more_link_text = '(more...)', $stript
 	$content = str_replace(']]>', ']]&gt;', $content);
 	return $content;
 }
+
+/**
+ * Validate Boolean options
+ *
+ * @param <array> - $options to validate
+ * @param <array> - List of boolean fields
+ *
+ * @return <array> - Validated Options
+ * @author Sudar
+ */
+function validate_boolean_options($options, $fields) {
+    $validated_options = array();
+
+    foreach($options as $key => $value) {
+        if (in_array($key, $fields)) {
+            $validated_options[$key] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        } else {
+            $validated_options[$key] = $value; 
+        }
+    }
+
+    return $validated_options;
+}
+
 ?>

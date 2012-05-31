@@ -4,7 +4,7 @@ Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.8
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 Tested up to: 3.3.2
-Stable tag: 2.5
+Stable tag: 2.6
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -35,6 +35,7 @@ Each widget allows you to choose
 *   Option to display post content.
 *   Choose the order in which the posts should be displayed.
 *   Option to exclude current post/page.
+*   Option to specify the target attribute for links
 *   Option to display links to tag archive pages.
 *   Option to disable the cache if needed.
 
@@ -42,20 +43,24 @@ Each widget allows you to choose
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE);
+posts_by_tag($tags, $options);
 
-*   $tags (string) - set of comma separated tags. If you leave this empty, then the tags from the current post will be used.
-*   $number (number) - number of posts to display
-*   $exclude (bool) - Where to include the tags or exclude the tags
-*   $excerpt (bool) - To display post excerpts or not
-*   $thumbnail (bool) - To display post thumbnails or not
-*   $order_by (date,title) - Whether to order by date or by title.
-*   $order (asc,desc) - To change the order in which the posts are displayed.
-*   $author (bool) - To display author name or not.
-*   $date (bool) - To display post date or not.
-*   $content (bool) - To display post content or not.
-*   $exclude_current_post (bool) - To exclude current post/page.
-*   $tag_links (bool) - To display link to tag archive page or not.
+$number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE);
+
+- $tags (string) - set of comma separated tags. If you leave this empty, then the tags from the current post will be used.
+- $options (array) - set of options. The following are the fields that are allowed
+  - $number (number) - default 5 - number of posts to display
+  - $exclude (bool) - default FALSE - Where to include the tags or exclude the tags
+  - $excerpt (bool)  - default FALSE - To display post excerpts or not
+  - $thumbnail (bool) - default FALSE  - To display post thumbnails or not
+  - $order_by (date,title) - default title - Whether to order by date or by title.
+  - $order (asc,desc) - default desc - To change the order in which the posts are displayed.
+  - $author (bool) - default FALSE - To display author name or not.
+  - $date (bool) - default FALSE - To display post date or not.
+  - $content (bool) - default FALSE - To display post content or not.
+  - $exclude_current_post (bool) - default FALSE - To exclude current post/page.
+  - $tag_links (bool) - default FALSE - To display link to tag archive page or not.
+  - $link_target (string) - default empty - target attribute for the permalink links.
 
 #### Shortcode
 
@@ -243,6 +248,10 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 #### v2.5 (2012-04-30) (Dev time - 0.5 hours)
     * Fixed the sorting by title issue 
+
+#### v2.6 (2012-05-31) (Dev time: 2 hours)
+    - Added support for specifying link targets
+    - Changed the argument list for the posts_by_tag template functions
 
 ==Readme Generator== 
 
