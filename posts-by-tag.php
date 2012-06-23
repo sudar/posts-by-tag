@@ -54,6 +54,7 @@ Text Domain: posts-by-tag
                   - Changed the argument list for the posts_by_tag template functions
 2012-06-23 - v2.7 - (Dev time: 1 hour)
                   - Added support for custom fields to all post types
+                  - Added autocomplete for tag fields
 
 */
 
@@ -111,8 +112,10 @@ class PostsByTag {
      * Add script to admin page
      */
     function add_script() {
-        // Build in tag auto complete script
-        wp_enqueue_script( 'suggest' );
+        if ($this->is_on_plugin_page()) {
+            // Build in tag auto complete script
+            wp_enqueue_script( 'suggest' );
+        }
     }
 
     /**
@@ -120,8 +123,8 @@ class PostsByTag {
      */
     function add_script_config() {
         // Add script only to Widgets page
-        if (substr_compare($_SERVER['REQUEST_URI'], 'widgets.php', -11) == 0) {
-    ?>
+        if ($this->is_on_plugin_page()) {
+?>
 
     <script type="text/javascript">
     // Function to add auto suggest
@@ -129,7 +132,24 @@ class PostsByTag {
         jQuery('#' + id).suggest("<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin-ajax.php?action=ajax-tag-search&tax=post_tag", {multiple:true, multipleSep: ","});
     }
     </script>
-    <?php
+<?php
+        }
+    }
+
+    /**
+     * Check whether you are on a Plugin page
+     *
+     * @return boolean
+     * @author Sudar
+     */
+    private function is_on_plugin_page() {
+        if( strstr($_SERVER['REQUEST_URI'], 'wp-admin/post-new.php') || 
+                strstr($_SERVER['REQUEST_URI'], 'wp-admin/post.php') ||
+                strstr($_SERVER['REQUEST_URI'], 'wp-admin/widgets.php') ||
+                strstr($_SERVER['REQUEST_URI'], 'wp-admin/edit.php')) {
+            return TRUE; 
+        } else {
+            return FALSE;
         }
     }
 
@@ -168,8 +188,8 @@ class PostsByTag {
 ?>
         <input type="hidden" name="posts_by_tag_noncename" id="posts_by_tag_noncename" value="<?php echo wp_create_nonce( plugin_basename(__FILE__) );?>" />
         <p>
-            <label> <?php _e('Widget Title', 'posts-by-tag'); ?> <input type="text" name="widget_title" value ="<?php echo $widget_title; ?>" ></label><br>
-            <label> <?php _e('Widget Tags', 'posts-by-tag'); ?> <input type="text" name="widget_tags" value ="<?php echo $widget_tags; ?>" ></label>
+            <label> <?php _e('Widget Title', 'posts-by-tag'); ?> <input type="text" name="widget_title" value ="<?php echo $widget_title; ?>"></label><br>
+            <label> <?php _e('Widget Tags', 'posts-by-tag'); ?> <input type="text" name="widget_tags" id = "widget_tags" value ="<?php echo $widget_tags; ?>" onfocus ="setSuggest('widget_tags');"></label>
         </p>
 <?php
     }
