@@ -1,10 +1,10 @@
 === Posts By Tag ===
 Contributors: sudar 
 Tags: posts, sidebar, widget, tag, cache
-Requires at least: 2.8
+Requires at least: 2.9
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
-Tested up to: 3.3.2
-Stable tag: 2.6
+Tested up to: 3.4
+Stable tag: 2.7
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -12,7 +12,7 @@ Provide sidebar widgets that can be used to display posts from a set of tags in 
 
 Posts By Tag WordPress Plugin, provides sidebar widgets which can be used to display posts from a specific set of tags in the sidebar.
 
-These tags can be specified in the widget or the Plugin can automatically retrieve them from the current post.
+These tags can be specified in the widget or the Plugin can automatically retrieve them from the current post. You can also specify the tags using custom fields in the edit post of page screen.
 
 You can also use shortcode or template function to display the posts.
 
@@ -70,6 +70,10 @@ You can also include the shortcode, to display the posts from the set of tags
 
 All the parameters that are accepted by the template tag can also be used in the shortcode
 
+#### Custom field
+
+You can also specify the tags for each post or page as a custom field also.
+
 #### Caching
 
 Note that the Plugin caches the db queries only when it is used as a widget. If you are going to use the template tag or use shortcode, then you have to cache it yourself. 
@@ -94,6 +98,7 @@ The Plugin adds the following CSS classes. If you want to customize the look of 
 *   Spanish (Thanks Brian Flores of [InMotion Hosting][7])
 *   Bulgarian (Thanks Nikolay Nikolov of [IQ Test][11])
 *   Lithuanian (Thanks  Vincent G , from [http://www.host1free.com][12])
+*   Hindi (Thanks Love Chandel)
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
 
@@ -252,6 +257,11 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 #### v2.6 (2012-05-31) (Dev time: 2 hours)
     - Added support for specifying link targets
     - Changed the argument list for the posts_by_tag template functions
+
+#### v2.7 (2012-06-23) (Dev time: 1 hour)
+    - Added support for custom fields to all post types
+    - Added autocomplete for tag fields in custom field boxes
+    - Added Hindi translations
 
 ==Readme Generator== 
 
