@@ -52,6 +52,8 @@ Text Domain: posts-by-tag
 2012-05-31 - v2.6 - (Dev time: 2 hours)
                   - Added support for specifying link targets
                   - Changed the argument list for the posts_by_tag template functions
+2012-06-23 - v2.7 - (Dev time: 1 hour)
+                  - Added support for custom fields to all post types
 
 */
 
@@ -132,12 +134,16 @@ class PostsByTag {
     }
 
     /**
-     * Adds the custom section in the Post and Page edit screens
+     * Adds the custom section in the edit screens for all post types
      */
     function add_custom_box() {
-
-        add_meta_box( 'posts_by_tag_page_box', __( 'Posts By Tag Page Fields', 'posts-by-tag' ),
-                    array(&$this, 'inner_custom_box'), 'page', 'side' );
+		$post_types = get_post_types( array(), 'objects' );
+		foreach ( $post_types as $post_type ) {
+			if ( $post_type->show_ui ) {
+                add_meta_box( 'posts_by_tag_page_box', __( 'Posts By Tag Page Fields', 'posts-by-tag' ),
+                    array(&$this, 'inner_custom_box'), $post_type->name, 'side' );
+			}
+        }
     }
 
     /**
@@ -175,6 +181,11 @@ class PostsByTag {
      */
     function save_postdata( $post_id ) {
 
+        // Don't do anything during Autosave
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return $post_id;
+        }
+
         // verify this came from the our screen and with proper authorization,
         // because save_post can be triggered at other times
 
@@ -187,9 +198,10 @@ class PostsByTag {
         }
 
         if ( 'page' == $_POST['post_type'] ) {
-            if ( !current_user_can( 'edit_page', $post_id ))
+            if ( !current_user_can( 'edit_page', $post_id )) {
                 return $post_id;
-        } else {
+            }
+        } elseif (!current_user_can('edit_post', $post_id)) { 
             return $post_id;
         }
 
