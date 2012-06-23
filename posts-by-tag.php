@@ -54,7 +54,8 @@ Text Domain: posts-by-tag
                   - Changed the argument list for the posts_by_tag template functions
 2012-06-23 - v2.7 - (Dev time: 1 hour)
                   - Added support for custom fields to all post types
-                  - Added autocomplete for tag fields
+                  - Added autocomplete for tag fields in custom field boxes
+                  - Added Hindi translations
 
 */
 
