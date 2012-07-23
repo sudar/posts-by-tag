@@ -3,8 +3,8 @@ Contributors: sudar
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.9
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
-Tested up to: 3.4
-Stable tag: 2.7
+Tested up to: 3.4.1
+Stable tag: 2.7.1
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -243,25 +243,28 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
  *  Added Bulgarian translations
 
 #### v2.3 (2012-04-04) (Dev time - 3 hours)
-    * Added filter to the get_the_content() call
-    * Moved caching logic to widget
-    * Added the option to exclude current post/page
-    * Added Lithuanian translations
+* Added filter to the get_the_content() call
+* Moved caching logic to widget
+* Added the option to exclude current post/page
+* Added Lithuanian translations
 
 #### v2.4 (2012-04-15) (Dev time - 0.5 hours)
-    * Added option to disable cache if needed
+* Added option to disable cache if needed
 
 #### v2.5 (2012-04-30) (Dev time - 0.5 hours)
-    * Fixed the sorting by title issue 
+* Fixed the sorting by title issue 
 
 #### v2.6 (2012-05-31) (Dev time: 2 hours)
-    - Added support for specifying link targets
-    - Changed the argument list for the posts_by_tag template functions
+* Added support for specifying link targets
+* Changed the argument list for the posts_by_tag template functions
 
 #### v2.7 (2012-06-23) (Dev time: 1 hour)
-    - Added support for custom fields to all post types
-    - Added autocomplete for tag fields in custom field boxes
-    - Added Hindi translations
+* Added support for custom fields to all post types
+* Added autocomplete for tag fields in custom field boxes
+* Added Hindi translations
+
+#### v2.7.1 (2012-07-23) (Dev time: 0.5 hour)
+* Renamed all template functions with a prefix to avoid clash with other plugins
 
 ==Readme Generator== 
 

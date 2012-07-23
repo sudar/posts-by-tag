@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.7
+Version: 2.7.1
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -56,6 +56,8 @@ Text Domain: posts-by-tag
                   - Added support for custom fields to all post types
                   - Added autocomplete for tag fields in custom field boxes
                   - Added Hindi translations
+2012-07-23 - v2.7.1 - (Dev time: 0.5 hour)
+                  - Renamed all template functions with a prefix to avoid clash with other plugins
 
 */
 
@@ -268,14 +270,14 @@ class PostsByTag {
             'link_target' => ''
         ), $attributes);
 
-        $options = validate_boolean_options($options, $this->boolean_fields);
+        $options = pbt_validate_boolean_options($options, $this->boolean_fields);
         $tags = $options['tags'];
 
         // call the template function
         $output = get_posts_by_tag($tags, $options);
 
         if ($options['tag_links'] && !$options['exclude']) {
-            $output .= get_tag_more_links($tags);
+            $output .= pbt_get_tag_more_links($tags);
         }
 
         return $output;
@@ -396,7 +398,7 @@ class TagWidget extends WP_Widget {
 
             echo $widget_content;
             if ($tag_links && !$exclude) {
-                echo get_tag_more_links($tags);
+                echo pbt_get_tag_more_links($tags);
             }
 
             echo $after_widget;
@@ -597,7 +599,7 @@ class TagWidget extends WP_Widget {
  *         <bool> tag_links Whether to display tag links at the end
  *         <string> link_target the value to the target attribute of each links that needs to be added
  */
-function posts_by_tag($tags, $options, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE) {
+function posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE) {
     $output = '';
 
     // compatibility with older versions
@@ -622,7 +624,7 @@ function posts_by_tag($tags, $options, $exclude = FALSE, $excerpt = FALSE, $thum
     $output = get_posts_by_tag($tags, $options);
 
     if ($options['tag_links'] && !$option['exclude']) {
-        $output .= get_tag_more_links($tags);
+        $output .= pbt_get_tag_more_links($tags);
     }
 
     echo $output;
@@ -645,7 +647,7 @@ function posts_by_tag($tags, $options, $exclude = FALSE, $excerpt = FALSE, $thum
  *         <bool> exclude_current_post Whether to exclude the current post/page. Default is FALSE
  *         <string> link_target the value to the target attribute of each links that needs to be added
  */
-function get_posts_by_tag($tags, $options, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $link_target = '') {
+function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $link_target = '') {
     global $wp_query;
     $current_post_id = $wp_query->post->ID;
     $output = '';
@@ -687,7 +689,7 @@ function get_posts_by_tag($tags, $options, $exclude = FALSE, $excerpt = FALSE, $
         $tag_array = explode(",", $tags);
 
         foreach ($tag_array as $tag) {
-            $tag_id_array[] = get_tag_ID(trim($tag));
+            $tag_id_array[] = pbt_get_tag_ID(trim($tag));
         }
     }
 
@@ -737,7 +739,7 @@ function get_posts_by_tag($tags, $options, $exclude = FALSE, $excerpt = FALSE, $
                 $output .= '>' . $post->post_title . '</a>';
 
                 if($content) {
-                        $output .= get_the_content_with_formatting();
+                    $output .= pbt_get_the_content_with_formatting();
                 }
 
                 if ($author) {
@@ -772,7 +774,7 @@ function get_posts_by_tag($tags, $options, $exclude = FALSE, $excerpt = FALSE, $
  * @param <type> $tags
  * @param <type> $prefix
  */
-function get_tag_more_links($tags, $prefix = 'More posts: ') {
+function pbt_get_tag_more_links($tags, $prefix = 'More posts: ') {
     global $wp_query;
     
     $tag_array = array();
@@ -796,7 +798,7 @@ function get_tag_more_links($tags, $prefix = 'More posts: ') {
                 $tag_name = $tag->name;
             }
 
-            $output .= get_tag_more_link($tag_name);
+            $output .= pbt_get_tag_more_link($tag_name);
         }
 
         $output .= '</p>';
@@ -811,8 +813,8 @@ function get_tag_more_links($tags, $prefix = 'More posts: ') {
  * @param <type> $tag
  * @return <type>
  */
-function get_tag_more_link($tag) {
-    return '<a href = "' . get_tag_link(get_tag_ID($tag)) . '">' . $tag . '</a> ';
+function pbt_get_tag_more_link($tag) {
+    return '<a href = "' . get_tag_link(pbt_get_tag_ID($tag)) . '">' . $tag . '</a> ';
 }
 
 /**
@@ -821,14 +823,12 @@ function get_tag_more_link($tag) {
  * @param <string> $tag_name
  * @return <int> term id. 0 if not found
  */
-if (!function_exists("get_tag_ID")) {
-    function get_tag_ID($tag_name) {
-        $tag = get_term_by('name', $tag_name, 'post_tag');
-        if ($tag) {
-            return $tag->term_id;
-        } else {
-            return 0;
-        }
+function pbt_get_tag_ID($tag_name) {
+    $tag = get_term_by('name', $tag_name, 'post_tag');
+    if ($tag) {
+        return $tag->term_id;
+    } else {
+        return 0;
     }
 }
 
@@ -837,7 +837,7 @@ if (!function_exists("get_tag_ID")) {
  * Calls the filter before returning the content
  *
  */
-function get_the_content_with_formatting ($more_link_text = '(more...)', $stripteaser = 0, $more_file = '') {
+function pbt_get_the_content_with_formatting ($more_link_text = '(more...)', $stripteaser = 0, $more_file = '') {
 	$content = get_the_content($more_link_text, $stripteaser, $more_file);
 	$content = apply_filters('the_content', $content);
 	$content = str_replace(']]>', ']]&gt;', $content);
@@ -853,7 +853,7 @@ function get_the_content_with_formatting ($more_link_text = '(more...)', $stript
  * @return <array> - Validated Options
  * @author Sudar
  */
-function validate_boolean_options($options, $fields) {
+function pbt_validate_boolean_options($options, $fields) {
     $validated_options = array();
 
     foreach($options as $key => $value) {
