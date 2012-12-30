@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.7.1
+Version: 2.7.2
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -58,6 +58,8 @@ Text Domain: posts-by-tag
                   - Added Hindi translations
 2012-07-23 - v2.7.1 - (Dev time: 0.5 hour)
                   - Renamed all template functions with a prefix to avoid clash with other plugins
+2012-12-30 - v2.7.2 - (Dev time: 1 hour)
+                  - Fixed the bug which caused the comment to be posted to another post
 
 */
 
@@ -649,6 +651,8 @@ function posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt
  */
 function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $link_target = '') {
     global $wp_query;
+    global $post;
+
     $current_post_id = $wp_query->post->ID;
     $output = '';
 
@@ -702,41 +706,38 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
 
         // saving the query
         $temp_query = clone $wp_query;
+        $temp_post = $post;
 
         $tag_posts = get_posts( array( 'numberposts' => $number, $tag_arg => $tag_id_array, 'orderby' => $order_by, 'order' => $order ) );
 
-        // restoring the query so it can be later used to display our posts
-        $wp_query = clone $temp_query;
-
         if (count($tag_posts) > 0) {
             $output = '<ul class = "posts-by-tag-list">';
-            foreach($tag_posts as $post) {
-                if ($exclude_current_post && $current_post_id == $post->ID) {
+            foreach($tag_posts as $tag_post) {
+                if ($exclude_current_post && $current_post_id == $tag_post->ID) {
                     // exclude currrent post/page
                     continue;
                 }
 
-                setup_postdata($post);
-                $output .= '<li class="posts-by-tag-item" id="posts-by-tag-item-' . $post->ID . '">';
+                $output .= '<li class="posts-by-tag-item" id="posts-by-tag-item-' . $tag_post->ID . '">';
 
                 if ($thumbnail) {
-                    if (has_post_thumbnail($post->ID)) {
-                        $output .= get_the_post_thumbnail($post->ID, 'thumbnail');
+                    if (has_post_thumbnail($tag_post->ID)) {
+                        $output .= get_the_post_thumbnail($tag_post->ID, 'thumbnail');
                     } else {
-                        if (get_post_meta($post->ID, 'post_thumbnail', true) != '') {
-                            $output .=  '<a class="thumb" href="' . get_permalink($post) . '" title="' . get_the_title($post->ID) . '"><img src="' . esc_url(get_post_meta($post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($post->ID) . '" ></a>';
+                        if (get_post_meta($tag_post->ID, 'post_thumbnail', true) != '') {
+                            $output .=  '<a class="thumb" href="' . get_permalink($tag_post) . '" title="' . get_the_title($tag_post->ID) . '"><img src="' . esc_url(get_post_meta($tag_post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($tag_post->ID) . '" ></a>';
                         }
                     }
                 }
 
                 // add permalink
-                $output .= '<a href="' . get_permalink($post) . '"';
+                $output .= '<a href="' . get_permalink($tag_post) . '"';
                
                 if ($link_target != '') {
                     $output .= ' target = "' . $link_target . '"';
                 }
 
-                $output .= '>' . $post->post_title . '</a>';
+                $output .= '>' . $tag_post->post_title . '</a>';
 
                 if($content) {
                     $output .= pbt_get_the_content_with_formatting();
@@ -744,18 +745,18 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
 
                 if ($author) {
                     $output .= ' <small>' . __('Posted by: ', 'posts-by-tag');
-                    $output .=  get_the_author_meta('display_name', $post->post_author) . '</small>';
+                    $output .=  get_the_author_meta('display_name', $tag_post->post_author) . '</small>';
                 }
 
                 if ($date) {
                     $output .= ' <small>' . __('Posted on: ', 'posts-by-tag');
-                    $output .=  mysql2date(get_option('date_format'), $post->post_date) . '</small>';
+                    $output .=  mysql2date(get_option('date_format'), $tag_post->post_date) . '</small>';
                 }
 
                 if( $excerpt ) {
                     $output .=  '<br />';
-                    if ($post->post_excerpt!=NULL)
-                        $output .= apply_filters('the_excerpt', $post->post_excerpt);
+                    if ($tag_post->post_excerpt!=NULL)
+                        $output .= apply_filters('the_excerpt', $tag_post->post_excerpt);
                     else
                         $output .= get_the_excerpt();
                 }
@@ -763,6 +764,11 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
             }
             $output .=  '</ul>';
         }
+
+        // restoring the query so it can be later used to display our posts
+        $wp_query = clone $temp_query;
+        $post = $temp_post;
+
     }
 
     return $output;
