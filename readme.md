@@ -18,9 +18,9 @@ You can also use shortcode or template function to display the posts.
 
 The Plugin caches the posts of each widget separately, and issues database queries only when needed. This will reduce the amount of database queries involved for each page load and will therefore be light on your server. If this clashes with other Plugins, you also have an option to disable it.
 
-## Features
+### Features
 
-### Sidebar Widget
+#### Sidebar Widget
 
 Posts By Tag Plugin provides a sidebar widget which can be configured to display posts from a set of tags in the sidebar. You can have multiple widgets with different set of tags configured for each one of them.
 
@@ -39,7 +39,7 @@ Each widget allows you to choose
 *   Option to display links to tag archive pages.
 *   Option to disable the cache if needed.
 
-### Template function
+#### Template function
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
@@ -62,7 +62,7 @@ $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "da
   - $tag_links (bool) - default FALSE - To display link to tag archive page or not.
   - $link_target (string) - default empty - target attribute for the permalink links.
 
-### Shortcode
+#### Shortcode
 
 You can also include the shortcode, to display the posts from the set of tags
 
@@ -70,16 +70,16 @@ You can also include the shortcode, to display the posts from the set of tags
 
 All the parameters that are accepted by the template tag can also be used in the shortcode
 
-### Custom field
+#### Custom field
 
 You can also specify the tags for each post or page as a custom field also.
 
-### Caching
+#### Caching
 
 Note that the Plugin caches the db queries only when it is used as a widget. If you are going to use the template tag or use shortcode, then you have to cache it yourself. 
 Even while using the widget, you have the option of disabling the cache if needed.
 
-### Styling using CSS
+#### Styling using CSS
 
 The Plugin adds the following CSS classes. If you want to customize the look of the widget then can change it by adding custom styles to these CSS classes and ids.
 
@@ -87,7 +87,7 @@ The Plugin adds the following CSS classes. If you want to customize the look of 
 *   Every LI tag has the class posts-by-tag-item
 *   Each LI tag also has the id posts-by-tag-item-{id}, where id is the post id.
 
-## Translation
+### Translation
 
 *   Swedish (Thanks Gunnar Lindberg Årneby)
 *   Turkish (Thanks Yakup Gövler)
@@ -102,17 +102,19 @@ The Plugin adds the following CSS classes. If you want to customize the look of 
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
 
-## Development and Support
+### Development and Support
 
 The development of the Plugin happens over at [github][13]. If you want to contribute to the Plugin, fork the [project at github][13] and send me a pull request.
 
+If you are not familiar with either git or Github then refer to this [guide to see how fork and send pull request](http://sudarmuthu.com/blog/contributing-to-project-hosted-in-github).
+
 Support for the Plugin is available from the [Plugin's home page][1]. If you have any questions or suggestions, do leave a comment there or contact me in [twitter][5].
 
-## Stay updated
+### Stay updated
 
 I would be posting updates about this Plugin in my [blog][8] and in [Twitter][5]. If you want to be informed when new version of this Plugin is released, then you can either subscribe to this [blog's RSS feed][9] or [follow me in Twitter][5].
 
-## Links
+### Links
 
 *   [Plugin home page][1]
 *   [Author's Blog][8]
@@ -142,7 +144,7 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 == Changelog ==
 
-## Changelog
+### Changelog
 
 ### v0.1 (2009-07-26)  
 
