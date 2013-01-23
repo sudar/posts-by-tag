@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.7.2
+Version: 2.7.3
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -60,6 +60,8 @@ Text Domain: posts-by-tag
                   - Renamed all template functions with a prefix to avoid clash with other plugins
 2012-12-30 - v2.7.2 - (Dev time: 1 hour)
                   - Fixed the bug which caused the comment to be posted to another post
+2013-01-23 - v2.7.3 - (Dev time: 1 hour)
+                  - Fixed the bug which caused PHP to timeout when content option is set to true
 
 */
 
@@ -718,6 +720,7 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
                     continue;
                 }
 
+                setup_postdata($tag_post);
                 $output .= '<li class="posts-by-tag-item" id="posts-by-tag-item-' . $tag_post->ID . '">';
 
                 if ($thumbnail) {
@@ -740,7 +743,12 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
                 $output .= '>' . $tag_post->post_title . '</a>';
 
                 if($content) {
-                    $output .= pbt_get_the_content_with_formatting();
+                    $more_link_text = '(more...)'; $stripteaser = 0; $more_file = '';
+                    $post_content = get_the_content($more_link_text, $stripteaser, $more_file);
+                    $post_content = apply_filters('the_content', $post_content);
+                    $post_content = str_replace(']]>', ']]&gt;', $post_content);
+
+                    $output .= $post_content;
                 }
 
                 if ($author) {
@@ -839,18 +847,6 @@ function pbt_get_tag_ID($tag_name) {
 }
 
 /**
- * Get the content of a post with formatting.
- * Calls the filter before returning the content
- *
- */
-function pbt_get_the_content_with_formatting ($more_link_text = '(more...)', $stripteaser = 0, $more_file = '') {
-	$content = get_the_content($more_link_text, $stripteaser, $more_file);
-	$content = apply_filters('the_content', $content);
-	$content = str_replace(']]>', ']]&gt;', $content);
-	return $content;
-}
-
-/**
  * Validate Boolean options
  *
  * @param <array> - $options to validate
@@ -872,5 +868,4 @@ function pbt_validate_boolean_options($options, $fields) {
 
     return $validated_options;
 }
-
 ?>

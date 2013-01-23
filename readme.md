@@ -4,7 +4,7 @@ Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.9
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 Tested up to: 3.5
-Stable tag: 2.7.2
+Stable tag: 2.7.3
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -144,8 +144,6 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 == Changelog ==
 
-### Changelog
-
 ### v0.1 (2009-07-26)  
 
 *   Initial Version
@@ -274,6 +272,9 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 ### v2.7.2 (2012-12-30) (Dev time: 1 hour)
 * Fixed the bug which caused the comment to be posted to another post
+
+### v2.7.3 (2013-01-23) - (Dev time: 1 hour)
+* Fixed the bug which caused PHP to timeout when content option is set to true
 
 ==Readme Generator== 
 
