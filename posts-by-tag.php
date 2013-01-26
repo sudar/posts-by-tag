@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.7.3
+Version: 2.7.4
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -62,6 +62,8 @@ Text Domain: posts-by-tag
                   - Fixed the bug which caused the comment to be posted to another post
 2013-01-23 - v2.7.3 - (Dev time: 1 hour)
                   - Fixed the bug which caused PHP to timeout when content option is set to true
+2013-01-26 - v2.7.4 - (Dev time: 0.5 hour)
+                  - Exclude current post by default
 
 */
 
@@ -603,7 +605,7 @@ class TagWidget extends WP_Widget {
  *         <bool> tag_links Whether to display tag links at the end
  *         <string> link_target the value to the target attribute of each links that needs to be added
  */
-function posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE) {
+function posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $tag_links = FALSE) {
     $output = '';
 
     // compatibility with older versions
@@ -651,7 +653,7 @@ function posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt
  *         <bool> exclude_current_post Whether to exclude the current post/page. Default is FALSE
  *         <string> link_target the value to the target attribute of each links that needs to be added
  */
-function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $link_target = '') {
+function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $link_target = '') {
     global $wp_query;
     global $post;
 

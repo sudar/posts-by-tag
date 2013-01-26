@@ -3,8 +3,8 @@ Contributors: sudar
 Tags: posts, sidebar, widget, tag, cache
 Requires at least: 2.9
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
-Tested up to: 3.5
-Stable tag: 2.7.3
+Tested up to: 3.5.1
+Stable tag: 2.7.4
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -43,9 +43,9 @@ Each widget allows you to choose
 
 In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
 
-posts_by_tag($tags, $options);
+`posts_by_tag($tags, $options);`
 
-$number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "date", $order = "desc", author = FALSE, date = FALSE, $content = FALSE, $exclude_current_post = FALSE, $tag_links = FALSE);
+The following options can be passed in the $options array
 
 - $tags (string) - set of comma separated tags. If you leave this empty, then the tags from the current post will be used.
 - $options (array) - set of options. The following are the fields that are allowed
@@ -58,7 +58,7 @@ $number, $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = "da
   - $author (bool) - default FALSE - To display author name or not.
   - $date (bool) - default FALSE - To display post date or not.
   - $content (bool) - default FALSE - To display post content or not.
-  - $exclude_current_post (bool) - default FALSE - To exclude current post/page.
+  - $exclude_current_post (bool) - default TRUE - To exclude current post/page.
   - $tag_links (bool) - default FALSE - To display link to tag archive page or not.
   - $link_target (string) - default empty - target attribute for the permalink links.
 
@@ -268,13 +268,16 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 * Added Hindi translations
 
 ### v2.7.1 (2012-07-23) (Dev time: 0.5 hour)
-* Renamed all template functions with a prefix to avoid clash with other plugins
+* Renamed all template functions with a prefix to avoid clash with other Plugins
 
 ### v2.7.2 (2012-12-30) (Dev time: 1 hour)
 * Fixed the bug which caused the comment to be posted to another post
 
 ### v2.7.3 (2013-01-23) - (Dev time: 1 hour)
 * Fixed the bug which caused PHP to timeout when content option is set to true
+
+### v2.7.4 (2013-01-26) - (Dev time: 0.5 hour)
+* Exclude current post by default
 
 ==Readme Generator== 
 
