@@ -186,7 +186,7 @@ class PostsByTag {
         $widget_tags = '';
 
         if ($post_id > 0) {
-            $posts_by_tag_page_fields = get_post_meta($post_id, 'posts_by_tag_page_fields', TRUE);
+            $posts_by_tag_page_fields = get_post_meta($post_id, '_posts_by_tag_page_fields', TRUE);
 
             if (isset($posts_by_tag_page_fields) && is_array($posts_by_tag_page_fields)) {
                 $widget_title = $posts_by_tag_page_fields['widget_title'];
@@ -250,7 +250,7 @@ class PostsByTag {
             $fields['widget_tags'] = '';
         }
 
-        update_post_meta($post_id, 'posts_by_tag_page_fields', $fields);
+        update_post_meta($post_id, '_posts_by_tag_page_fields', $fields);
 
     }
 
@@ -358,7 +358,7 @@ class TagWidget extends WP_Widget {
             // get tags and title from page custom fields
 
             if ($post_id > 0) {
-                $posts_by_tag_page_fields = get_post_meta($post_id, 'posts_by_tag_page_fields', TRUE);
+                $posts_by_tag_page_fields = get_post_meta($post_id, '_posts_by_tag_page_fields', TRUE);
 
                 if (isset($posts_by_tag_page_fields) && is_array($posts_by_tag_page_fields)) {
                     if ($posts_by_tag_page_fields['widget_title'] != '') {
