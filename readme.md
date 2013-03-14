@@ -1,14 +1,14 @@
-=== Posts By Tag ===
-Contributors: sudar 
-Tags: posts, sidebar, widget, tag, cache
-Requires at least: 2.9
-Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
-Tested up to: 3.5.1
-Stable tag: 2.7.4
+# Posts By Tag #
+**Contributors:** sudar 
+**Tags:** posts, sidebar, widget, tag, cache
+**Requires at least:** 2.9
+**Donate Link:** http://sudarmuthu.com/if-you-wanna-thank-me
+**Tested up to:** 3.5.1
+**Stable tag:** 2.7.4
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
-== Description ==
+## Description ##
 
 Posts By Tag WordPress Plugin, provides sidebar widgets which can be used to display posts from a specific set of tags in the sidebar.
 
@@ -134,15 +134,15 @@ I would be posting updates about this Plugin in my [blog][8] and in [Twitter][5]
  [12]: http://www.host1free.com
  [13]: http://github.com/sudar/posts-by-tag
 
-== Installation ==
+## Installation ##
 
 Extract the zip file and just drop the contents in the wp-content/plugins/ directory of your WordPress installation and then activate the Plugin from Plugins page. You should see a new widget called "Tag Posts" in the widgets pages, which you can drag and drop in the sidebar of your theme.
 
-== Screenshots ==
+## Screenshots ##
 
 1. Widget settings page
 
-== Changelog ==
+## Changelog ##
 
 ### v0.1 (2009-07-26)  
 
@@ -279,6 +279,6 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ### v2.7.4 (2013-01-26) - (Dev time: 0.5 hour)
 * Exclude current post by default
 
-==Readme Generator== 
+##Readme Generator## 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
