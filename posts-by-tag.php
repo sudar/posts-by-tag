@@ -6,7 +6,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.7.4
+Version: 2.8
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 
@@ -95,6 +95,10 @@ class PostsByTag {
     // boolean fields that needs to be validated
     private $boolean_fields = array( 'exclude', 'exclude_current_post', 'excerpt', 'content', 'thumbnail', 'author', 'date', 'tag_links');
 
+    // constants 
+    const CUSTOM_POST_FIELD_OLD = 'posts_by_tag_page_fields'; // till v 2.7.4
+    const CUSTOM_POST_FIELD = '_posts_by_tag_page_fields';
+
     /**
      * Initalize the plugin by registering the hooks
      */
@@ -133,6 +137,7 @@ class PostsByTag {
     function add_script_config() {
         // Add script only to Widgets page
         if ($this->is_on_plugin_page()) {
+            //TODO: Move this to a seperate js file
 ?>
 
     <script type="text/javascript">
@@ -186,7 +191,8 @@ class PostsByTag {
         $widget_tags = '';
 
         if ($post_id > 0) {
-            $posts_by_tag_page_fields = get_post_meta($post_id, '_posts_by_tag_page_fields', TRUE);
+            $this->update_postmeta_key($post_id);
+            $posts_by_tag_page_fields = get_post_meta($post_id, self::CUSTOM_POST_FIELD, TRUE);
 
             if (isset($posts_by_tag_page_fields) && is_array($posts_by_tag_page_fields)) {
                 $widget_title = $posts_by_tag_page_fields['widget_title'];
@@ -250,7 +256,7 @@ class PostsByTag {
             $fields['widget_tags'] = '';
         }
 
-        update_post_meta($post_id, '_posts_by_tag_page_fields', $fields);
+        update_post_meta($post_id, self::CUSTOM_POST_FIELD, $fields);
 
     }
 
@@ -289,9 +295,21 @@ class PostsByTag {
         return $output;
     }
 
-    // PHP4 compatibility
-    function PostsByTag() {
-        $this->__construct();
+    /**
+     * Update postmeta key.
+     *
+     * Uptill v2.7.4 the Plugin was using a old postmeta key without '_'. 
+     * This function updates the postmeta key. Eventually this function will be removed.
+     *
+     * @return void
+     */
+    private function update_postmeta_key($post_id) {
+        $old_value = get_post_meta($post_id, self::CUSTOM_POST_FIELD_OLD, TRUE);
+
+        if (isset($old_value) && is_array($old_value)) {
+            update_post_meta($post_id, self::CUSTOM_POST_FIELD, $old_value);
+            delete_post_meta($post_id, self::CUSTOM_POST_FIELD_OLD);
+        }
     }
 }
 
@@ -358,7 +376,8 @@ class TagWidget extends WP_Widget {
             // get tags and title from page custom fields
 
             if ($post_id > 0) {
-                $posts_by_tag_page_fields = get_post_meta($post_id, '_posts_by_tag_page_fields', TRUE);
+                $this->update_postmeta_key($post_id);
+                $posts_by_tag_page_fields = get_post_meta($post_id, self::CUSTOM_POST_FIELD, TRUE);
 
                 if (isset($posts_by_tag_page_fields) && is_array($posts_by_tag_page_fields)) {
                     if ($posts_by_tag_page_fields['widget_title'] != '') {
