@@ -64,7 +64,10 @@ Text Domain: posts-by-tag
                   - Fixed the bug which caused PHP to timeout when content option is set to true
 2013-01-26 - v2.7.4 - (Dev time: 0.5 hour)
                   - Exclude current post by default
-
+2013-03-13 - v2.8 - (Dev time: 2.5 hour)
+                  - Added underscore to meta key so it is protected and also code to migrate date from old key
+                  - Added an option to disable content filter
+                  - Added an option to disable excerpt filter
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -93,7 +96,7 @@ Text Domain: posts-by-tag
 class PostsByTag {
 
     // boolean fields that needs to be validated
-    private $boolean_fields = array( 'exclude', 'exclude_current_post', 'excerpt', 'content', 'thumbnail', 'author', 'date', 'tag_links');
+    private $boolean_fields = array( 'exclude', 'exclude_current_post', 'excerpt', 'excerpt_filter', 'content', 'content_filter', 'thumbnail', 'author', 'date', 'tag_links');
 
     // constants 
     const CUSTOM_POST_FIELD_OLD = 'posts_by_tag_page_fields'; // till v 2.7.4
@@ -267,19 +270,21 @@ class PostsByTag {
      */
     function shortcode_handler($attributes) {
         $options = shortcode_atts(array(
-            "tags"      => '',   // comma Separated list of tags
-            "number"    => 5,
-            "exclude"   => FALSE,
-            "exclude_current_post"   => FALSE,
-            "excerpt"   => FALSE,
-            "content"   => FALSE,
-            'thumbnail' => FALSE,
-            'order_by'  => 'date',
-            'order'     => 'desc',
-            'author'    => FALSE,
-            'date'      => FALSE,
-            'tag_links' => FALSE,
-            'link_target' => ''
+            "tags"                 => '',   // comma Separated list of tags
+            "number"               => 5,
+            "exclude"              => FALSE,
+            "exclude_current_post" => FALSE,
+            "excerpt"              => FALSE,
+            "excerpt_filter"       => TRUE,
+            "content"              => FALSE,
+            "content_filter"       => TRUE,
+            'thumbnail'            => FALSE,
+            'order_by'             => 'date',
+            'order'                => 'desc',
+            'author'               => FALSE,
+            'date'                 => FALSE,
+            'tag_links'            => FALSE,
+            'link_target'          => ''
         ), $attributes);
 
         $options = pbt_validate_boolean_options($options, $this->boolean_fields);
@@ -613,13 +618,15 @@ class TagWidget extends WP_Widget {
  * @param <array> $options. An array which has the following values
  *         <int> number Number of posts to show
  *         <bool> exclude Whether to exclude the tags specified. Default is FALSE
- *         <bool> excerpt
- *         <bool> thumbnail
+ *         <bool> excerpt - Whether to display excerpts or not
+ *         <bool> excerpt_filter - Whether to enable or disable excerpt filter
+ *         <bool> thumbnail - Whether to display thumbnail or not
  *         <set> order_by (title, date) defaults to 'date'
  *         <set> order (asc, desc) defaults to 'desc'
  *         <bool> author - Whether to show the author name or not
  *         <bool> date - Whether to show the post date or not
- *         <bool> content
+ *         <bool> content - Whether to display content or not
+ *         <bool> content_filter - Whether to enable or disable content filter
  *         <bool> exclude_current_post Whether to exclude the current post/page. Default is FALSE
  *         <bool> tag_links Whether to display tag links at the end
  *         <string> link_target the value to the target attribute of each links that needs to be added
@@ -662,14 +669,17 @@ function posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt
  * @param <array> $options. An array which has the following values
  *         <int> number Number of posts to show
  *         <bool> exclude Whether to exclude the tags specified. Default is FALSE
- *         <bool> excerpt
- *         <bool> thumbnail
+ *         <bool> excerpt - Whether to display excerpts or not
+ *         <bool> excerpt_filter - Whether to enable or disable excerpt filter
+ *         <bool> thumbnail - Whether to display thumbnail or not
  *         <set> order_by (title, date) defaults to 'date'
  *         <set> order (asc, desc) defaults to 'desc'
  *         <bool> author - Whether to show the author name or not
  *         <bool> date - Whether to show the post date or not
- *         <bool> content
+ *         <bool> content - Whether to display content or not
+ *         <bool> content_filter - Whether to enable or disable content filter
  *         <bool> exclude_current_post Whether to exclude the current post/page. Default is FALSE
+ *         <bool> tag_links Whether to display tag links at the end
  *         <string> link_target the value to the target attribute of each links that needs to be added
  */
 function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $link_target = '') {
@@ -691,6 +701,7 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
                                 'author' => FALSE, 
                                 'date' => FALSE, 
                                 'content' => FALSE, 
+                                'content_filter' => TRUE, 
                                 'exclude_current_post' => FALSE, 
                                 'tag_links' => FALSE,
                                 'link_target' => '' 
@@ -766,7 +777,12 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
                 if($content) {
                     $more_link_text = '(more...)'; $stripteaser = 0; $more_file = '';
                     $post_content = get_the_content($more_link_text, $stripteaser, $more_file);
-                    $post_content = apply_filters('the_content', $post_content);
+
+                    if ($content_filter) {
+                        // apply the content filters
+                        $post_content = apply_filters('the_content', $post_content);
+                    }
+
                     $post_content = str_replace(']]>', ']]&gt;', $post_content);
 
                     $output .= $post_content;
@@ -784,8 +800,12 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
 
                 if( $excerpt ) {
                     $output .=  '<br />';
-                    if ($tag_post->post_excerpt!=NULL)
-                        $output .= apply_filters('the_excerpt', $tag_post->post_excerpt);
+                    if ($tag_post->post_excerpt != NULL)
+                        if ($excerpt_filter) {
+                            $output .= apply_filters('the_excerpt', $tag_post->post_excerpt);
+                        } else {
+                            $output .= $tag_post->post_excerpt;
+                        }
                     else
                         $output .= get_the_excerpt();
                 }
