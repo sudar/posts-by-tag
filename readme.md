@@ -1,10 +1,10 @@
 # Posts By Tag #
-**Contributors:** sudar 
-**Tags:** posts, sidebar, widget, tag, cache
-**Requires at least:** 2.9
-**Donate Link:** http://sudarmuthu.com/if-you-wanna-thank-me
-**Tested up to:** 3.5.1
-**Stable tag:** 2.7.4
+**Contributors:** sudar  
+**Tags:** posts, sidebar, widget, tag, cache  
+**Requires at least:** 2.9  
+**Donate Link:** http://sudarmuthu.com/if-you-wanna-thank-me  
+**Tested up to:** 3.5.1  
+**Stable tag:** 2.7.4  
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -39,9 +39,11 @@ Each widget allows you to choose
 *   Option to display links to tag archive pages.
 *   Option to disable the cache if needed.
 
+To add the widget, log into your WordPress admin console and go to Appearances -> Widgets. You will find the widget with the title "Posts By Tag".
+
 #### Template function
 
-In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme
+In addition to using the widget, you can also use the following template function to display posts from a set of tags, anywhere in the theme.
 
 `posts_by_tag($tags, $options);`
 
@@ -64,20 +66,15 @@ The following options can be passed in the $options array
 
 #### Shortcode
 
-You can also include the shortcode, to display the posts from the set of tags
+You can also include the following shortcode in your blog posts or WordPress page, to display the posts from the set of tags.
 
 `posts-by-tag tags = "tag1, tag2"]`
 
-All the parameters that are accepted by the template tag can also be used in the shortcode
+All the parameters that are accepted by the template tag can also be used in the shortcode.
 
 #### Custom field
 
-You can also specify the tags for each post or page as a custom field also.
-
-#### Caching
-
-Note that the Plugin caches the db queries only when it is used as a widget. If you are going to use the template tag or use shortcode, then you have to cache it yourself. 
-Even while using the widget, you have the option of disabling the cache if needed.
+You can also specify the tags for each post or page and a custom title using custom field. The UI for the custom field is available on the right side of the add/edit post/page screen in WordPress admin console.
 
 #### Styling using CSS
 
@@ -86,6 +83,11 @@ The Plugin adds the following CSS classes. If you want to customize the look of 
 *   The UL tag has the class posts-by-tag-list
 *   Every LI tag has the class posts-by-tag-item
 *   Each LI tag also has the id posts-by-tag-item-{id}, where id is the post id.
+
+#### Caching
+
+Note that the Plugin caches the db queries only when it is used as a widget. If you are going to use the template tag or use shortcode, then you have to cache it yourself. 
+Even while using the widget, you have the option of disabling the cache if needed.
 
 ### Translation
 
@@ -101,6 +103,11 @@ The Plugin adds the following CSS classes. If you want to customize the look of 
 *   Hindi (Thanks Love Chandel)
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
+
+### TODO
+
+- Provide template tags for widget title, that will be dynamically expanded.
+- Ability to pull posts randomly.
 
 ### Development and Support
 
@@ -279,6 +286,6 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ### v2.7.4 (2013-01-26) - (Dev time: 0.5 hour)
 * Exclude current post by default
 
-## Readme Generator ## 
+## Readme Generator ##
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
