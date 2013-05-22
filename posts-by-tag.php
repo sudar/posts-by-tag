@@ -64,12 +64,13 @@ Text Domain: posts-by-tag
                   - Fixed the bug which caused PHP to timeout when content option is set to true
 2013-01-26 - v2.7.4 - (Dev time: 0.5 hour)
                   - Exclude current post by default
-2013-03-13 - v2.8 - (Dev time: 5 hour)
+2013-05-23 - v2.8 - (Dev time: 10 hour)
                   - Added underscore to meta key so it is protected and also code to migrate date from old key
                   - Added an option to disable content filter
                   - Added an option to disable excerpt filter
                   - Make thumbnail to link to post
                   - Added tag names as class in <li> to additional styling
+                  - Added the ability to specify the size of thumbnail
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -145,12 +146,29 @@ class PostsByTag {
             //TODO: Move this to a seperate js file
 ?>
 
-    <script type="text/javascript">
+<script type="text/javascript">
     // Function to add auto suggest
     function setSuggest(id) {
         jQuery('#' + id).suggest("<?php echo get_bloginfo('wpurl'); ?>/wp-admin/admin-ajax.php?action=ajax-tag-search&tax=post_tag", {multiple:true, multipleSep: ","});
     }
-    </script>
+
+    function thumbnailChanged(id, size_id) {
+        if (jQuery('#' + id).is(':checked')) {
+            jQuery('#'  + size_id).parents('p').show();
+            thumbnailSizeChanged(size_id);
+        } else {
+            jQuery('#' + size_id).parents('p').hide();
+        }
+    }
+
+    function thumbnailSizeChanged(id) {
+        if (jQuery('#' + id).val() === 'custom') {
+            jQuery('#' + id + '-span').show();
+        } else {
+            jQuery('#' + id + '-span').hide();
+        }
+    }
+</script>
 <?php
         }
     }
@@ -272,21 +290,24 @@ class PostsByTag {
      */
     function shortcode_handler($attributes) {
         $options = shortcode_atts(array(
-            "tags"                 => '',   // comma Separated list of tags
-            "number"               => 5,
-            "exclude"              => FALSE,
-            "exclude_current_post" => FALSE,
-            "excerpt"              => FALSE,
-            "excerpt_filter"       => TRUE,
-            "content"              => FALSE,
-            "content_filter"       => TRUE,
-            'thumbnail'            => FALSE,
-            'order_by'             => 'date',
-            'order'                => 'desc',
-            'author'               => FALSE,
-            'date'                 => FALSE,
-            'tag_links'            => FALSE,
-            'link_target'          => ''
+            "tags"                  => '',   // comma Separated list of tags
+            "number"                => 5,
+            "exclude"               => FALSE,
+            "exclude_current_post"  => FALSE,
+            "excerpt"               => FALSE,
+            "excerpt_filter"        => TRUE,
+            "content"               => FALSE,
+            "content_filter"        => TRUE,
+            'thumbnail'             => FALSE,
+            'thumbnail_size'        => 'thumbnail',
+            'thumbnail_size_width'  => 100,
+            'thumbnail_size_height' => 100,
+            'order_by'              => 'date',
+            'order'                 => 'desc',
+            'author'                => FALSE,
+            'date'                  => FALSE,
+            'tag_links'             => FALSE,
+            'link_target'           => ''
         ), $attributes);
 
         $options = pbt_validate_boolean_options($options, $this->boolean_fields);
@@ -355,16 +376,6 @@ class TagWidget extends WP_Widget {
         $tags                 = $instance['tags'];
         $current_tags         = (bool) $instance['current_tags'];
         $current_page_tags    = (bool) $instance['current_page_tags'];
-        $number               = $instance['number']; // Number of posts to show.
-        $exclude              = (bool) $instance['exclude'];
-        $exclude_current_post = (bool) $instance['exclude_current_post'];
-        $excerpt              = (bool) $instance['excerpt'];
-        $content              = (bool) $instance['content'];
-        $thumbnail            = (bool) $instance['thumbnail'];
-        $order_by             = $instance['order_by'];
-        $order                = $instance['order'];
-        $author               = (bool) $instance['author'];
-        $date                 = (bool) $instance['date'];
 
         $tag_links            = (bool) $instance['tag_links'];
         $disable_cache        = (bool) $instance['disable_cache'];
@@ -412,7 +423,7 @@ class TagWidget extends WP_Widget {
 
                 if ($disable_cache || (false === ( $widget_content = get_transient( $key ) ) )) {
 
-                    $widget_content = get_posts_by_tag($tags, $number, $exclude, $excerpt, $thumbnail, $order_by, $order, $author, $date, $content, $exclude_current_post, $link_target);
+                    $widget_content = get_posts_by_tag( $tags, $instance );
 
                     if (!disable_cache) {
                         // store in cache
@@ -442,24 +453,27 @@ class TagWidget extends WP_Widget {
         $instance = $old_instance;
         
         // validate data
-        $instance['title']                = strip_tags($new_instance['title']);
-        $instance['tags']                 = strip_tags($new_instance['tags']);
-        $instance['current_tags']         = (bool)$new_instance['current_tags'];
-        $instance['current_page_tags']    = (bool)$new_instance['current_page_tags'];
-        $instance['number']               = intval($new_instance['number']);
-        $instance['exclude']              = (bool)$new_instance['exclude'];
-        $instance['exclude_current_post'] = (bool)$new_instance['exclude_current_post'];
-        $instance['thumbnail']            = (bool)$new_instance['thumbnail'];
-        $instance['author']               = (bool)$new_instance['author'];
-        $instance['date']                 = (bool)$new_instance['date'];
-        $instance['excerpt']              = (bool)$new_instance['excerpt'];
-        $instance['content']              = (bool)$new_instance['content'];
-        $instance['order']                = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
-        $instance['order_by']             = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
+        $instance['title']                 = strip_tags($new_instance['title']);
+        $instance['tags']                  = strip_tags($new_instance['tags']);
+        $instance['current_tags']          = (bool)$new_instance['current_tags'];
+        $instance['current_page_tags']     = (bool)$new_instance['current_page_tags'];
+        $instance['number']                = intval($new_instance['number']);
+        $instance['exclude']               = (bool)$new_instance['exclude'];
+        $instance['exclude_current_post']  = (bool)$new_instance['exclude_current_post'];
+        $instance['thumbnail']             = (bool)$new_instance['thumbnail'];
+        $instance['thumbnail_size']        = strip_tags( $new_instance['thumbnail_size'] );
+        $instance['thumbnail_size_width']  = intval( $new_instance['thumbnail_size_width'] );
+        $instance['thumbnail_size_height'] = intval( $new_instance['thumbnail_size_height'] );
+        $instance['author']                = (bool)$new_instance['author'];
+        $instance['date']                  = (bool)$new_instance['date'];
+        $instance['excerpt']               = (bool)$new_instance['excerpt'];
+        $instance['content']               = (bool)$new_instance['content'];
+        $instance['order']                 = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
+        $instance['order_by']              = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
 
-        $instance['tag_links']            = (bool)$new_instance['tag_links'];
-        $instance['link_target']          = $new_instance['link_target'];
-        $instance['disable_cache']        = (bool)$new_instance['disable_cache'];
+        $instance['tag_links']             = (bool)$new_instance['tag_links'];
+        $instance['link_target']           = $new_instance['link_target'];
+        $instance['disable_cache']         = (bool)$new_instance['disable_cache'];
         
         return $instance;
     }
@@ -468,31 +482,44 @@ class TagWidget extends WP_Widget {
     function form($instance) {
         
         /* Set up some default widget settings. */
-        $defaults = array( 'title' => '', 'tags' => '', 'current_tags' => FALSE, 'number' => '5', 'exclude' => FALSE, 'exclude_current_post' => FALSE, 'thumbnail' => FALSE, 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE);
+        $defaults = array( 'title' => '', 'tags' => '', 'current_tags' => FALSE, 'number' => '5', 'exclude' => FALSE, 'exclude_current_post' => FALSE, 'thumbnail' => FALSE, 'thumbnail_size' => 'thumbnail', 'thumbnail_size_width' => '100', 'thumbnail_size_height' => '100', 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE );
         $instance = wp_parse_args( (array) $instance, $defaults );
 
-        $title                = esc_attr($instance['title']);
-        $tags                 = $instance['tags'];
-        $number               = intval($instance['number']);
-        $current_tags         = (bool) $instance['current_tags'];
-        $current_page_tags    = (bool) $instance['current_page_tags'];
-        $exclude              = (bool) $instance['exclude'];
-        $exclude_current_post = (bool) $instance['exclude_current_post'];
-        $thumbnail            = (bool) $instance['thumbnail'];
-        $author               = (bool) $instance['author'];
-        $date                 = (bool) $instance['date'];
-        $excerpt              = (bool) $instance['excerpt'];
-        $content              = (bool) $instance['content'];
-        $order                = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc';
-        $order_by             = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
+        $title                 = esc_attr($instance['title']);
+        $tags                  = $instance['tags'];
+        $number                = intval($instance['number']);
+        $current_tags          = (bool) $instance['current_tags'];
+        $current_page_tags     = (bool) $instance['current_page_tags'];
+        $exclude               = (bool) $instance['exclude'];
+        $exclude_current_post  = (bool) $instance['exclude_current_post'];
+        $thumbnail             = (bool) $instance['thumbnail'];
+        $thumbnail_size        = esc_attr( $instance['thumbnail_size'] );
+        $thumbnail_size_width  = intval( $instance['thumbnail_size_width'] );
+        $thumbnail_size_height = intval( $instance['thumbnail_size_height'] );
+        $author                = (bool) $instance['author'];
+        $date                  = (bool) $instance['date'];
+        $excerpt               = (bool) $instance['excerpt'];
+        $content               = (bool) $instance['content'];
+        $order                 = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc';
+        $order_by              = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
 
-        $tag_links            = (bool) $instance['tag_links'];
-        $link_target          = $instance['link_target'];
-        $disable_cache        = (bool) $instance['disable_cache'];
-?>
+        $tag_links             = (bool) $instance['tag_links'];
+        $link_target           = $instance['link_target'];
+        $disable_cache         = (bool) $instance['disable_cache'];
 
-<?php
-    // TODO: Use JavaScript to disable mutually exclusive fields
+        // show/hide logic
+        if ( $thumbnail ) {
+            $thumbnail_size_style = 'block';
+            if ( $thumbnail_size == 'custom' ) {
+                $thumbnail_size_custom_style = 'block';
+            } else {
+                $thumbnail_size_custom_style = 'none';
+            }
+        } else {
+            $thumbnail_size_style = 'none';
+        }
+
+        // TODO: Use JavaScript to disable mutually exclusive fields
 ?>
         <p>
             <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'posts-by-tag'); ?>
@@ -500,10 +527,10 @@ class TagWidget extends WP_Widget {
         </p>
 
         <p>
-        <label for="<?php echo $this->get_field_id('tags'); ?>">
-        <?php _e( 'Tags:' , 'posts-by-tag'); ?><br />
-                <input class="widefat" id="<?php echo $this->get_field_id('tags'); ?>" name="<?php echo $this->get_field_name('tags'); ?>" type="text" value="<?php echo $tags; ?>" onfocus ="setSuggest('<?php echo $this->get_field_id('tags'); ?>');" />
-        </label><br />
+            <label for="<?php echo $this->get_field_id('tags'); ?>">
+            <?php _e( 'Tags:' , 'posts-by-tag'); ?><br />
+                    <input class="widefat" id="<?php echo $this->get_field_id('tags'); ?>" name="<?php echo $this->get_field_name('tags'); ?>" type="text" value="<?php echo $tags; ?>" onfocus ="setSuggest('<?php echo $this->get_field_id('tags'); ?>');" />
+            </label><br />
             <?php _e('Separate multiple tags by comma', 'posts-by-tag');?>
 		</p>
         
@@ -539,8 +566,25 @@ class TagWidget extends WP_Widget {
 
         <p>
             <label for="<?php echo $this->get_field_id('thumbnail'); ?>">
-            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('thumbnail'); ?>" name="<?php echo $this->get_field_name('thumbnail'); ?>" value ="true" <?php checked($thumbnail, true); ?> /></label>
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('thumbnail'); ?>" name="<?php echo $this->get_field_name('thumbnail'); ?>" value ="true" <?php checked($thumbnail, true); ?> onchange = "thumbnailChanged(<?php echo "'", $this->get_field_id( 'thumbnail' ), "','", $this->get_field_id( 'thumbnail_size' ) , "'" ?>);" ></label>
             <?php _e( 'Show post thumbnails' , 'posts-by-tag'); ?>
+        </p>
+
+        <p style = "display: <?php echo $thumbnail_size_style; ?> ;">
+            <label for="<?php echo $this->get_field_id('thumbnail_size'); ?>"><?php _e( 'Select thumbnail size' ) ?></label>
+            <select id = "<?php echo $this->get_field_id( 'thumbnail_size' ); ?>" name = "<?php echo $this->get_field_name( 'thumbnail_size' ); ?>" onchange = "thumbnailSizeChanged(<?php echo "'", $this->get_field_id( 'thumbnail_size' ), "'"; ?>);">
+                <option value = "thumbnail" <?php selected( $thumbnail_size, 'thumbnail' ); ?> ><?php _e( 'Thumbnail', 'posts-by-tag' ); ?></option>
+                <option value = "medium" <?php selected( $thumbnail_size, 'medium' ); ?> ><?php _e( 'Medium', 'posts-by-tag' ); ?></option>
+                <option value = "large" <?php selected( $thumbnail_size, 'large' ); ?> ><?php _e( 'Large', 'posts-by-tag' ); ?></option>
+                <option value = "full" <?php selected( $thumbnail_size, 'full' ); ?> ><?php _e( 'Full', 'posts-by-tag' ); ?></option>
+                <option value = "custom" <?php selected( $thumbnail_size, 'custom' ); ?> ><?php _e( 'Custom', 'posts-by-tag' ); ?></option>
+            </select>
+
+            <span id = "<?php echo $this->get_field_id( 'thumbnail_size' ); ?>-span" style = "display: <?php echo $thumbnail_size_custom_style; ?> ;">
+                <?php _e('Custom size:', 'posts-by-tag'); ?>
+                <input style=" text-align: center;" id="<?php echo $this->get_field_id('thumbnail_size_width'); ?>" name="<?php echo $this->get_field_name('thumbnail_size_width'); ?>" size = "4" type="text" value="<?php echo $thumbnail_size_width; ?>" /> x
+                <input style=" text-align: center;" id="<?php echo $this->get_field_id('thumbnail_size_height'); ?>" name="<?php echo $this->get_field_name('thumbnail_size_height'); ?>" size = "4" type="text" value="<?php echo $thumbnail_size_height; ?>" />
+            </span>
         </p>
 
         <p>
@@ -623,6 +667,7 @@ class TagWidget extends WP_Widget {
  *         <bool> excerpt - Whether to display excerpts or not
  *         <bool> excerpt_filter - Whether to enable or disable excerpt filter
  *         <bool> thumbnail - Whether to display thumbnail or not
+ *         <string/array> thumbnail_size - Size of the thumbnail image. Refer to http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail#Thumbnail_Sizes
  *         <set> order_by (title, date) defaults to 'date'
  *         <set> order (asc, desc) defaults to 'desc'
  *         <bool> author - Whether to show the author name or not
@@ -633,7 +678,7 @@ class TagWidget extends WP_Widget {
  *         <bool> tag_links Whether to display tag links at the end
  *         <string> link_target the value to the target attribute of each links that needs to be added
  */
-function posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $tag_links = FALSE) {
+function posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $tag_links = FALSE ) {
     $output = '';
 
     // compatibility with older versions
@@ -641,17 +686,17 @@ function posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt
         // build the array
         $number = $options;
         $options = array(
-            'number' => $number,
-            'excerpt' => $excerpt, 
-            'thumbnail' => $thumbnail, 
-            'order_by' => $order_by, 
-            'order' => $order,
-            'author' => $author, 
-            'date' => $date, 
-            'content' => $content, 
-            'exclude_current_post' => $exclude_current_post, 
-            'tag_links' => $tag_links,
-            'link_target' => $link_target
+            'number'               => $number,
+            'excerpt'              => $excerpt,
+            'thumbnail'            => $thumbnail,
+            'order_by'             => $order_by,
+            'order'                => $order,
+            'author'               => $author,
+            'date'                 => $date,
+            'content'              => $content,
+            'exclude_current_post' => $exclude_current_post,
+            'tag_links'            => $tag_links,
+            'link_target'          => $link_target
         );
     }
 
@@ -674,6 +719,7 @@ function posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt
  *         <bool> excerpt - Whether to display excerpts or not
  *         <bool> excerpt_filter - Whether to enable or disable excerpt filter
  *         <bool> thumbnail - Whether to display thumbnail or not
+ *         <string/array> thumbnail_size - Size of the thumbnail image. Refer to http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail#Thumbnail_Sizes
  *         <set> order_by (title, date) defaults to 'date'
  *         <set> order (asc, desc) defaults to 'desc'
  *         <bool> author - Whether to show the author name or not
@@ -684,7 +730,7 @@ function posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt
  *         <bool> tag_links Whether to display tag links at the end
  *         <string> link_target the value to the target attribute of each links that needs to be added
  */
-function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $link_target = '') {
+function get_posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $link_target = '' ) {
     global $wp_query;
     global $post;
 
@@ -694,19 +740,22 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
     if (is_array($options)) {
 
         wp_parse_args($options, array(
-                                'number' => 5,
-                                'exclude' => FALSE,
-                                'excerpt' => FALSE, 
-                                'thumbnail' => FALSE, 
-                                'order_by' => 'date', 
-                                'order' => 'desc', 
-                                'author' => FALSE, 
-                                'date' => FALSE, 
-                                'content' => FALSE, 
-                                'content_filter' => TRUE, 
-                                'exclude_current_post' => FALSE, 
-                                'tag_links' => FALSE,
-                                'link_target' => '' 
+                                'number'                => 5,
+                                'exclude'               => FALSE,
+                                'excerpt'               => FALSE,
+                                'thumbnail'             => FALSE,
+                                'thumbnail_size'        => 'thumbnail',
+                                'thumbnail_size_width'  => 100,
+                                'thumbnail_size_height' => 100,
+                                'order_by'              => 'date',
+                                'order'                 => 'desc',
+                                'author'                => FALSE,
+                                'date'                  => FALSE,
+                                'content'               => FALSE,
+                                'content_filter'        => TRUE,
+                                'exclude_current_post'  => FALSE,
+                                'tag_links'             => FALSE,
+                                'link_target'           => ''
                             )
                      );
         extract( $options, EXTR_OVERWRITE);
@@ -762,11 +811,16 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
                     array_push( $tag_post_tags, $tag_post_tag->name );
                 }
 
-                $output .= '<li class="posts-by-tag-item' . implode( ' ', $tag_post_tags ) . '" id="posts-by-tag-item-' . $tag_post->ID . '">';
+                $output .= '<li class="posts-by-tag-item ' . implode( ' ', $tag_post_tags ) . '" id="posts-by-tag-item-' . $tag_post->ID . '">';
 
                 if ($thumbnail) {
                     if (has_post_thumbnail($tag_post->ID)) {
-                        $output .=  '<a class="thumb" href="' . get_permalink($tag_post->ID) . '" title="' . get_the_title($tag_post->ID) . '"><img src="' . get_the_post_thumbnail($tag_post->ID, 'thumbnail') . '" alt="' . get_the_title($tag_post->ID) . '" ></a>';
+                        if ( $thumbnail_size == 'custom' ) {
+                            $t_size = array( $thumbnail_size_width, $thumbnail_size_height );
+                        } else {
+                            $t_size = $thumbnail_size;
+                        }
+                        $output .=  '<a class="thumb" href="' . get_permalink($tag_post->ID) . '" title="' . get_the_title($tag_post->ID) . '">' . get_the_post_thumbnail($tag_post->ID, $t_size) . '</a>';
                     } else {
                         if (get_post_meta($tag_post->ID, 'post_thumbnail', true) != '') {
                             $output .=  '<a class="thumb" href="' . get_permalink($tag_post->ID) . '" title="' . get_the_title($tag_post->ID) . '"><img src="' . esc_url(get_post_meta($tag_post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($tag_post->ID) . '" ></a>';
