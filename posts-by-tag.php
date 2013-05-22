@@ -64,10 +64,12 @@ Text Domain: posts-by-tag
                   - Fixed the bug which caused PHP to timeout when content option is set to true
 2013-01-26 - v2.7.4 - (Dev time: 0.5 hour)
                   - Exclude current post by default
-2013-03-13 - v2.8 - (Dev time: 2.5 hour)
+2013-03-13 - v2.8 - (Dev time: 5 hour)
                   - Added underscore to meta key so it is protected and also code to migrate date from old key
                   - Added an option to disable content filter
                   - Added an option to disable excerpt filter
+                  - Make thumbnail to link to post
+                  - Added tag names as class in <li> to additional styling
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -753,7 +755,14 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
                 }
 
                 setup_postdata($tag_post);
-                $output .= '<li class="posts-by-tag-item" id="posts-by-tag-item-' . $tag_post->ID . '">';
+                $tag_post_tags_array = wp_get_post_tags( $tag_post->ID );
+                $tag_post_tags = array();
+
+                foreach ( $tag_post_tags_array as $tag_post_tag ) {
+                    array_push( $tag_post_tags, $tag_post_tag->name );
+                }
+
+                $output .= '<li class="posts-by-tag-item' . implode( ' ', $tag_post_tags ) . '" id="posts-by-tag-item-' . $tag_post->ID . '">';
 
                 if ($thumbnail) {
                     if (has_post_thumbnail($tag_post->ID)) {
