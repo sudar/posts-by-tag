@@ -757,10 +757,10 @@ function get_posts_by_tag($tags = '', $options = array(), $exclude = FALSE, $exc
 
                 if ($thumbnail) {
                     if (has_post_thumbnail($tag_post->ID)) {
-                        $output .= get_the_post_thumbnail($tag_post->ID, 'thumbnail');
+                        $output .=  '<a class="thumb" href="' . get_permalink($tag_post->ID) . '" title="' . get_the_title($tag_post->ID) . '"><img src="' . get_the_post_thumbnail($tag_post->ID, 'thumbnail') . '" alt="' . get_the_title($tag_post->ID) . '" ></a>';
                     } else {
                         if (get_post_meta($tag_post->ID, 'post_thumbnail', true) != '') {
-                            $output .=  '<a class="thumb" href="' . get_permalink($tag_post) . '" title="' . get_the_title($tag_post->ID) . '"><img src="' . esc_url(get_post_meta($tag_post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($tag_post->ID) . '" ></a>';
+                            $output .=  '<a class="thumb" href="' . get_permalink($tag_post->ID) . '" title="' . get_the_title($tag_post->ID) . '"><img src="' . esc_url(get_post_meta($tag_post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($tag_post->ID) . '" ></a>';
                         }
                     }
                 }
