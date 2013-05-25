@@ -1,134 +1,186 @@
-# Copyright (C) 2012 Posts By Tag
+# Copyright (C) 2013 Posts By Tag
 # This file is distributed under the same license as the Posts By Tag package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Posts By Tag 2.6\n"
+"Project-Id-Version: Posts By Tag 2.8\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/posts-by-tag\n"
-"POT-Creation-Date: 2012-05-31 11:09:49+00:00\n"
+"POT-Creation-Date: 2013-05-25 12:06:07+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2012-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2013-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: posts-by-tag.php:139
+#: posts-by-tag.php:200
+msgid "Buy Addons"
+msgstr ""
+
+#: posts-by-tag.php:212
 msgid "Posts By Tag Page Fields"
 msgstr ""
 
-#: posts-by-tag.php:165
+#: posts-by-tag.php:241
 msgid "Widget Title"
 msgstr ""
 
-#: posts-by-tag.php:166
+#: posts-by-tag.php:242
 msgid "Widget Tags"
 msgstr ""
 
-#: posts-by-tag.php:274
+#: posts-by-tag.php:402
 msgid "Widget that shows posts from a set of tags"
 msgstr ""
 
-#. #-#-#-#-#  plugin.pot (Posts By Tag 2.6)  #-#-#-#-#
+#. #-#-#-#-#  posts-by-tag.pot (Posts By Tag 2.8)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
-#: posts-by-tag.php:280
+#: posts-by-tag.php:408
 msgid "Posts By Tag"
 msgstr ""
 
-#: posts-by-tag.php:431
+#: posts-by-tag.php:574
 msgid "Title:"
 msgstr ""
 
-#: posts-by-tag.php:437
+#: posts-by-tag.php:580
 msgid "Tags:"
 msgstr ""
 
-#: posts-by-tag.php:440
+#: posts-by-tag.php:583
 msgid "Separate multiple tags by comma"
 msgstr ""
 
-#: posts-by-tag.php:446
+#: posts-by-tag.php:589
 msgid "Exclude these tags"
 msgstr ""
 
-#: posts-by-tag.php:452
+#: posts-by-tag.php:595
 msgid "Exclude current post/page"
 msgstr ""
 
-#: posts-by-tag.php:458
+#: posts-by-tag.php:601
 msgid "Get tags from current Post"
 msgstr ""
 
-#: posts-by-tag.php:464
+#: posts-by-tag.php:607
 msgid ""
 "Get tags and title from custom fields. You need to set the custom field for "
 "each post/page."
 msgstr ""
 
-#: posts-by-tag.php:469
+#: posts-by-tag.php:612
 msgid "Number of posts to show:"
 msgstr ""
 
-#: posts-by-tag.php:476
+#: posts-by-tag.php:619
 msgid "Show post thumbnails"
 msgstr ""
 
-#: posts-by-tag.php:482
+#: posts-by-tag.php:623
+msgid "Select thumbnail size"
+msgstr ""
+
+#: posts-by-tag.php:625
+msgid "Thumbnail"
+msgstr ""
+
+#: posts-by-tag.php:626
+msgid "Medium"
+msgstr ""
+
+#: posts-by-tag.php:627
+msgid "Large"
+msgstr ""
+
+#: posts-by-tag.php:628
+msgid "Full"
+msgstr ""
+
+#: posts-by-tag.php:629
+msgid "Custom"
+msgstr ""
+
+#: posts-by-tag.php:633
+msgid "Custom size:"
+msgstr ""
+
+#: posts-by-tag.php:642
 msgid "Show author name"
 msgstr ""
 
-#: posts-by-tag.php:488
+#: posts-by-tag.php:648
 msgid "Show post date"
 msgstr ""
 
-#: posts-by-tag.php:494
+#: posts-by-tag.php:654
 msgid "Show post excerpt"
 msgstr ""
 
-#: posts-by-tag.php:500
+#: posts-by-tag.php:660
 msgid "Show post content"
 msgstr ""
 
-#: posts-by-tag.php:504
+#: posts-by-tag.php:664
 msgid "Sort by: "
 msgstr ""
 
-#: posts-by-tag.php:507
+#: posts-by-tag.php:667
 msgid "Date"
 msgstr ""
 
-#: posts-by-tag.php:511
+#: posts-by-tag.php:671
 msgid "Title"
 msgstr ""
 
-#: posts-by-tag.php:516
+#: posts-by-tag.php:676
 msgid "Order by: "
 msgstr ""
 
-#: posts-by-tag.php:519
+#: posts-by-tag.php:679
 msgid "Ascending"
 msgstr ""
 
-#: posts-by-tag.php:523
+#: posts-by-tag.php:683
 msgid "Descending"
 msgstr ""
 
-#: posts-by-tag.php:530
+#: posts-by-tag.php:690
 msgid "Show Tag links"
 msgstr ""
 
-#: posts-by-tag.php:535
+#: posts-by-tag.php:695
 msgid "Target attribute for links"
 msgstr ""
 
-#: posts-by-tag.php:542
+#: posts-by-tag.php:702
 msgid "Disable Cache"
 msgstr ""
 
+#: posts-by-tag.php:706
+msgid "Google Analytics Tracking"
+msgstr ""
+
 #: posts-by-tag.php:711
-msgid "Posted by: "
+msgid "Only available in Pro addon."
 msgstr ""
 
 #: posts-by-tag.php:716
+msgid "Campaign code"
+msgstr ""
+
+#: posts-by-tag.php:723
+msgid "Event code"
+msgstr ""
+
+#: posts-by-tag.php:727
+msgid "You can use the following placeholders"
+msgstr ""
+
+#: posts-by-tag.php:944
+msgid "Posted by: "
+msgstr ""
+
+#: posts-by-tag.php:949
 msgid "Posted on: "
 msgstr ""
 

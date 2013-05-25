@@ -620,7 +620,7 @@ class TagWidget extends WP_Widget {
         </p>
 
         <p style = "display: <?php echo $thumbnail_size_style; ?> ;">
-            <label for="<?php echo $this->get_field_id('thumbnail_size'); ?>"><?php _e( 'Select thumbnail size' ) ?></label>
+            <label for="<?php echo $this->get_field_id('thumbnail_size'); ?>"><?php _e( 'Select thumbnail size' , 'posts-by-tag') ?></label>
             <select id = "<?php echo $this->get_field_id( 'thumbnail_size' ); ?>" name = "<?php echo $this->get_field_name( 'thumbnail_size' ); ?>" onchange = "thumbnailSizeChanged(<?php echo "'", $this->get_field_id( 'thumbnail_size' ), "'"; ?>);">
                 <option value = "thumbnail" <?php selected( $thumbnail_size, 'thumbnail' ); ?> ><?php _e( 'Thumbnail', 'posts-by-tag' ); ?></option>
                 <option value = "medium" <?php selected( $thumbnail_size, 'medium' ); ?> ><?php _e( 'Medium', 'posts-by-tag' ); ?></option>
@@ -708,7 +708,7 @@ class TagWidget extends WP_Widget {
         if ( ! $is_analytics ) {
             $disable = 'disabled';
 ?>
-            <span class = "pbt-google-analytics-pro" style = "color:red;"><?php _e( 'Only available in Pro addon.' ); ?><a href = "http://sudarmuthu.com/out/buy-posts-by-tag-google-analytics-addon" target = '_blank'>Buy now</a></span>
+            <span class = "pbt-google-analytics-pro" style = "color:red;"><?php _e( 'Only available in Pro addon.' , 'posts-by-tag'); ?><a href = "http://sudarmuthu.com/out/buy-posts-by-tag-google-analytics-addon" target = '_blank'>Buy now</a></span>
 <?php
         }
 ?>
@@ -724,7 +724,7 @@ class TagWidget extends WP_Widget {
                 <input type ="text" <?php echo $disable; ?> id="<?php echo $this->get_field_id('event'); ?>" name="<?php echo $this->get_field_name('event'); ?>" value ="<?php echo $event; ?>" style="width: 100%;">
             </label>
 
-            <p> <?php _e( 'You can use the following placeholders' ) ?> </p>
+            <p> <?php _e( 'You can use the following placeholders' , 'posts-by-tag') ?> </p>
             <p><?php echo implode( ', ', Posts_By_Tag::$TEMPLATES ); ?></p>
 
 <?php
