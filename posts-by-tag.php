@@ -197,7 +197,7 @@ class Posts_By_Tag {
 
         if ($file == $plugin) // only for this plugin
             return array_merge( $links, 
-            array( '<a href="http://sudarmuthu.com/wordpress/posts-by-tag/pro-addons" target="_blank">' . __('Buy Addons', 'posts-by-tag') . '</a>' )
+            array( '<a href="http://sudarmuthu.com/wordpress/posts-by-tag/pro-addons?utm_source=wpadmin&utm_campaign=PostsByTag&utm_medium=plugin-listing&utm_content=pro-addon" target="_blank">' . __('Buy Addons', 'posts-by-tag') . '</a>' )
         );
         return $links;
     }
