@@ -68,7 +68,7 @@ The following options can be passed in the $options array
   - `tag_links` (bool) - default FALSE - To display link to tag archive page or not.
   - `link_target` (string) - default empty - target attribute for the permalink links.
 
-In addition to the above options the following options are available in the Pro addon
+In addition to the above options the following options are available in the [Pro addon](sudarmuthu.com/wordpress/posts-by-tag/pro-addons)
 
 - `campaign` (string) - The Google Analytics campaign code that needs to be appended to every link
 - `event` (string) - The Google Analytics events code that needs to be appended to every link
@@ -83,7 +83,7 @@ You can also include the following shortcode in your blog posts or WordPress pag
 
 All the parameters that are accepted by the template tag can also be used in the shortcode.
 
-You can checkout [some example shortcodes](http://sudarmuthu.com/wordpress/posts-by-tag#example-shortcod3) that shows how you can use the shortcode with different options.
+You can checkout [some example shortcodes](http://sudarmuthu.com/wordpress/posts-by-tag#example-shortcode) that shows how you can use the shortcode with different options.
 
 #### Custom field
 
@@ -180,86 +180,86 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 ## Changelog ##
 
-### v0.1 (2009-07-26)  
+### v0.1 (2009-07-26)  ###
 
 *   Initial Version
 
-### v0.2 (2009-08-02)  
+### v0.2 (2009-08-02)  ###
 
 *   Added template functions
 *   Added Swedish translation (Thanks Gunnar Lindberg Årneby)
 
-### v0.3 (2009-08-14)  
+### v0.3 (2009-08-14)  ###
 
 *   Improved caching performance
 *   Added Turkish translation (Thanks Yakup Gövler)
 
-### v0.4 (2009-09-16)  
+### v0.4 (2009-09-16)  ###
 
 *   Added support for sorting the posts (Thanks to Michael http://mfields.org/)
 
-### v0.5 (2010-01-03)
+### v0.5 (2010-01-03) ###
 
 *   Removed JavaScript from unwanted admin pages and added Belorussian translation.
 
-### v0.6 (2010-03-18)
+### v0.6 (2010-03-18) ###
 
 *   Added option to hide author links.
 
-### v0.7 (2010-04-16)
+### v0.7 (2010-04-16) ###
 
 *   Fixed an issue in showing the number of posts.
 
-### v0.8 (2010-05-08)
+### v0.8 (2010-05-08) ###
 
  *  Added support for shortcode and sorting by title.
 
-### v0.9 (2010-06-18)
+### v0.9 (2010-06-18) ###
 
  *  Fixed an issue with the order by option.
 
-### v1.0 (2010-06-19)
+### v1.0 (2010-06-19) ###
 
  *  Fixed issue with shortcode.
 
-### v1.1 (2010-06-23)
+### v1.1 (2010-06-23) ###
 
  *  Fixed issue with shortcode, which was not fixed properly in 1.0
 
-### v1.2 (2010-06-25)
+### v1.2 (2010-06-25) ###
 
  *  Fixed issue with shortcode, which was not fixed properly in 1.0 and 1.1
 
-### v1.3 (2010-07-12)
+### v1.3 (2010-07-12) ###
 
  *  Fixed some inconsistency in documentation and code
 
-### v1.4 (2010-08-04)
+### v1.4 (2010-08-04) ###
 
  *  Added German translations
 
-### v1.5 (2010-08-26)
+### v1.5 (2010-08-26) ###
 
  *  Added Dutch translations and fixed typos
 
-### v1.6 (2011-02-17)
+### v1.6 (2011-02-17) ###
 
  *  Fixed an issue in handling boolean in shortcode
 
-### v1.7 (2011-05-11)
+### v1.7 (2011-05-11) ###
 
  *  Added support for displaying post dates.
  *  Fixed a bug which was corrupting the loop.
 
-### v1.8 (2011-09-07)
+### v1.8 (2011-09-07) ###
 
  *  Added support for displaying content (Thanks rjune)
  
-### v1.9 (2011-11-13)
+### v1.9 (2011-11-13) ###
 
  * Added Spanish and Hebrew translations.
 
-### v2.0 (2011-11-20)
+### v2.0 (2011-11-20) ###
 
   * Added option to exclude tags.
   * Fixed bug in displaying author name
@@ -269,53 +269,53 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
   * Added the option to take tags from the current post
   * Added the option to take tags from the custom fields of current page
 
-### v2.1 (2011-11-22)
+### v2.1 (2011-11-22) ###
 
  * Added option to include tag links from shortcode and template function.
 
-### v2.1.1 (2011-12-31)
+### v2.1.1 (2011-12-31) ###
 
  *  Fixed undefined notices for nouncename while creating new posts
 
-### v2.2 (2012-01-31)
+### v2.2 (2012-01-31) ###
 
  *  Fixed issues with order by option.
  *  Added Bulgarian translations
 
-### v2.3 (2012-04-04) (Dev time - 3 hours)
+### v2.3 (2012-04-04) (Dev time - 3 hours) ###
 * Added filter to the get_the_content() call
 * Moved caching logic to widget
 * Added the option to exclude current post/page
 * Added Lithuanian translations
 
-### v2.4 (2012-04-15) (Dev time - 0.5 hours)
+### v2.4 (2012-04-15) (Dev time - 0.5 hours) ###
 * Added option to disable cache if needed
 
-### v2.5 (2012-04-30) (Dev time - 0.5 hours)
+### v2.5 (2012-04-30) (Dev time - 0.5 hours) ###
 * Fixed the sorting by title issue 
 
-### v2.6 (2012-05-31) (Dev time: 2 hours)
+### v2.6 (2012-05-31) (Dev time: 2 hours) ###
 * Added support for specifying link targets
 * Changed the argument list for the posts_by_tag template functions
 
-### v2.7 (2012-06-23) (Dev time: 1 hour)
+### v2.7 (2012-06-23) (Dev time: 1 hour) ###
 * Added support for custom fields to all post types
 * Added autocomplete for tag fields in custom field boxes
 * Added Hindi translations
 
-### v2.7.1 (2012-07-23) (Dev time: 0.5 hour)
+### v2.7.1 (2012-07-23) (Dev time: 0.5 hour) ###
 * Renamed all template functions with a prefix to avoid clash with other Plugins
 
-### v2.7.2 (2012-12-30) (Dev time: 1 hour)
+### v2.7.2 (2012-12-30) (Dev time: 1 hour) ###
 * Fixed the bug which caused the comment to be posted to another post
 
-### v2.7.3 (2013-01-23) - (Dev time: 1 hour)
+### v2.7.3 (2013-01-23) - (Dev time: 1 hour) ###
 * Fixed the bug which caused PHP to timeout when content option is set to true
 
-### v2.7.4 (2013-01-26) - (Dev time: 0.5 hour)
+### v2.7.4 (2013-01-26) - (Dev time: 0.5 hour) ###
 * Exclude current post by default
 
-### v2.8 (2013-05-25 ) - (Dev time: 15 hour)
+### v2.8 (2013-05-25 ) - (Dev time: 15 hour) ###
 
 - Added underscore to meta key so it is protected and also code to migrate date from old key
 - Added an option to disable content filter
