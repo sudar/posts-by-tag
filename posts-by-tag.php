@@ -74,6 +74,7 @@ Domain Path: languages/
                   - Added tag names as class in <li> to additional styling
                   - Added the ability to specify the size of thumbnail
                   - Added support for Pro addons
+                  - Added Gujarati translations
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)

@@ -155,6 +155,7 @@ The following are the features that I am thinking of adding to the Plugin, when 
 *   Bulgarian (Thanks Nikolay Nikolov of [IQ Test][11])
 *   Lithuanian (Thanks  Vincent G , from [http://www.host1free.com][12])
 *   Hindi (Thanks Love Chandel)
+*   Gujarati (Thanks Punnet of [Resolutions Mart][13])
 
  [2]: http://www.fatcow.com/
  [3]: http://www.heftrucknederland.nl
@@ -163,6 +164,7 @@ The following are the features that I am thinking of adding to the Plugin, when 
  [7]: http://www.inmotionhosting.com/
  [11]: http://umenlisam.com/
  [12]: http://www.host1free.com
+ [13]: http://resolutionsmart.com/
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
 
@@ -320,6 +322,7 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 - Added tag names as class in <li> to additional styling
 - Added the ability to specify the size of thumbnail
 - Added support for Pro addons
+- Added Gujarati translations
 
 ## Readme Generator ##
 
