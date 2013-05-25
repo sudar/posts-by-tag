@@ -1,6 +1,7 @@
 <?php
 /**
 Plugin Name: Posts By Tag
+Plugin Script: posts-by-tag.php
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
 Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 Author: Sudar
@@ -9,6 +10,7 @@ License: GPL
 Version: 2.8
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
+Domain Path: languages/
 
 === RELEASE NOTES ===
 2009-07-26 - v0.1 - Initial Release
@@ -64,13 +66,14 @@ Text Domain: posts-by-tag
                   - Fixed the bug which caused PHP to timeout when content option is set to true
 2013-01-26 - v2.7.4 - (Dev time: 0.5 hour)
                   - Exclude current post by default
-2013-05-23 - v2.8 - (Dev time: 10 hour)
+2013-05-25 - v2.8 - (Dev time: 15 hour)
                   - Added underscore to meta key so it is protected and also code to migrate date from old key
                   - Added an option to disable content filter
                   - Added an option to disable excerpt filter
                   - Make thumbnail to link to post
                   - Added tag names as class in <li> to additional styling
                   - Added the ability to specify the size of thumbnail
+                  - Added support for Pro addons
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -92,18 +95,26 @@ Text Domain: posts-by-tag
 /**
  * The main Plugin class
  *
- * @package PostsByTag
+ * @package Posts_By_Tag
  * @subpackage default
  * @author Sudar
  */
-class PostsByTag {
+class Posts_By_Tag {
 
     // boolean fields that needs to be validated
     private $boolean_fields = array( 'exclude', 'exclude_current_post', 'excerpt', 'excerpt_filter', 'content', 'content_filter', 'thumbnail', 'author', 'date', 'tag_links');
 
     // constants 
+    const VERSION               = '2.8';
     const CUSTOM_POST_FIELD_OLD = 'posts_by_tag_page_fields'; // till v 2.7.4
-    const CUSTOM_POST_FIELD = '_posts_by_tag_page_fields';
+    const CUSTOM_POST_FIELD     = '_posts_by_tag_page_fields';
+
+    // Filters
+    const FILTER_PERMALINK      = 'pbt_permalink_filter';
+    const FILTER_ONCLICK        = 'pbt_onclick_filter';
+    const FILTER_PRO_ANALYTICS  = 'pbt_pro_analytics_filter';
+
+    public static $TEMPLATES = array( '[TAGS]', '[POST_ID]', '[POST_SLUG]' );
 
     /**
      * Initalize the plugin by registering the hooks
@@ -111,7 +122,8 @@ class PostsByTag {
     function __construct() {
 
         // Load localization domain
-        load_plugin_textdomain( 'posts-by-tag', false, dirname(plugin_basename(__FILE__)) .  '/languages' );
+        $this->translations = dirname( plugin_basename( __FILE__ ) ) . '/languages/' ;
+        load_plugin_textdomain( 'posts-by-tag', FALSE, $this->translations );
 
         // Register hooks
         add_action('admin_print_scripts', array(&$this, 'add_script'));
@@ -122,6 +134,9 @@ class PostsByTag {
 
         /* Use the save_post action to do something with the data entered */
         add_action('save_post', array(&$this, 'save_postdata'));
+
+        // Add more links in the plugin listing page
+        add_filter( 'plugin_row_meta', array( &$this, 'add_plugin_links' ), 10, 2 );  
 
         //Short code
         add_shortcode('posts-by-tag', array(&$this, 'shortcode_handler'));
@@ -174,20 +189,16 @@ class PostsByTag {
     }
 
     /**
-     * Check whether you are on a Plugin page
-     *
-     * @return boolean
-     * @author Sudar
+     * Adds additional links in the Plugin listing. Based on http://zourbuth.com/archives/751/creating-additional-wordpress-plugin-links-row-meta/
      */
-    private function is_on_plugin_page() {
-        if( strstr($_SERVER['REQUEST_URI'], 'wp-admin/post-new.php') || 
-                strstr($_SERVER['REQUEST_URI'], 'wp-admin/post.php') ||
-                strstr($_SERVER['REQUEST_URI'], 'wp-admin/widgets.php') ||
-                strstr($_SERVER['REQUEST_URI'], 'wp-admin/edit.php')) {
-            return TRUE; 
-        } else {
-            return FALSE;
-        }
+    function add_plugin_links($links, $file) {
+        $plugin = plugin_basename(__FILE__);
+
+        if ($file == $plugin) // only for this plugin
+            return array_merge( $links, 
+            array( '<a href="http://sudarmuthu.com/wordpress/posts-by-tag/pro-addons" target="_blank">' . __('Buy Addons', 'posts-by-tag') . '</a>' )
+        );
+        return $links;
     }
 
     /**
@@ -324,6 +335,35 @@ class PostsByTag {
     }
 
     /**
+     * Check whether you are on a Plugin page
+     *
+     * @return boolean
+     * @author Sudar
+     */
+    private function is_on_plugin_page() {
+        if ( strstr( $_SERVER['REQUEST_URI'], 'wp-admin/post-new.php' ) || 
+                strstr( $_SERVER['REQUEST_URI'], 'wp-admin/post.php' ) ||
+                strstr( $_SERVER['REQUEST_URI'], 'wp-admin/edit.php' ) ||
+                $this->is_widget_page() ) {
+            return TRUE; 
+        } else {
+            return FALSE;
+        }
+    }
+
+    /**
+     * Check whether you are on the widget page
+     */
+    private function is_widget_page() {
+        if ( strstr( $_SERVER['REQUEST_URI'], 'wp-admin/widgets.php' ) ) {
+            return TRUE;
+        } else {
+            return False;
+        }
+
+    }
+
+    /**
      * Update postmeta key.
      *
      * Uptill v2.7.4 the Plugin was using a old postmeta key without '_'. 
@@ -342,7 +382,7 @@ class PostsByTag {
 }
 
 // Start this plugin once all other plugins are fully loaded
-add_action( 'init', 'PostsByTag' ); function PostsByTag() { global $PostsByTag; $PostsByTag = new PostsByTag(); }
+add_action( 'init', 'Posts_By_Tag_Init' ); function Posts_By_Tag_Init() { global $Posts_By_Tag; $Posts_By_Tag = new Posts_By_Tag(); }
 
 // register TagWidget widget
 add_action('widgets_init', create_function('', 'return register_widget("TagWidget");'));
@@ -350,7 +390,7 @@ add_action('widgets_init', create_function('', 'return register_widget("TagWidge
 /**
  * TagWidget Class - Wrapper for the widget
  *
- * @package PostsByTag
+ * @package Posts_By_Tag
  * @subpackage Widgets
  * @author Sudar
  */
@@ -471,6 +511,9 @@ class TagWidget extends WP_Widget {
         $instance['order']                 = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
         $instance['order_by']              = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
 
+        $instance['campaign']              = strip_tags( $new_instance['campaign'] );
+        $instance['event']                 = strip_tags( $new_instance['event'] );
+
         $instance['tag_links']             = (bool)$new_instance['tag_links'];
         $instance['link_target']           = $new_instance['link_target'];
         $instance['disable_cache']         = (bool)$new_instance['disable_cache'];
@@ -503,6 +546,9 @@ class TagWidget extends WP_Widget {
         $order                 = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc';
         $order_by              = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
 
+        $campaign              = esc_attr( $instance['campaign'] );
+        $event                 = esc_attr( $instance['event'] );
+
         $tag_links             = (bool) $instance['tag_links'];
         $link_target           = $instance['link_target'];
         $disable_cache         = (bool) $instance['disable_cache'];
@@ -518,6 +564,8 @@ class TagWidget extends WP_Widget {
         } else {
             $thumbnail_size_style = 'none';
         }
+
+        $is_analytics = apply_filters( Posts_By_Tag::FILTER_PRO_ANALYTICS, FALSE );
 
         // TODO: Use JavaScript to disable mutually exclusive fields
 ?>
@@ -653,6 +701,31 @@ class TagWidget extends WP_Widget {
 				<?php _e( 'Disable Cache' , 'posts-by-tag'); ?>
         </p>
 
+        <p class = "pbt-analytics">
+            <strong><?php _e('Google Analytics Tracking', 'posts-by-tag'); ?></strong><br>
+<?php
+        if ( ! $is_analytics ) {
+            $disable = 'disabled';
+?>
+            <span class = "pbt-google-analytics-pro" style = "color:red;"><?php _e( 'Only available in Pro addon.' ); ?><a href = "http://sudarmuthu.com/out/buy-posts-by-tag-google-analytics-addon" target = '_blank'>Buy now</a></span>
+<?php
+        }
+?>
+            <label for="<?php echo $this->get_field_id('campaign'); ?>">
+				<?php _e('Campaign code', 'posts-by-tag'); ?>
+                <input type ="text" <?php echo $disable; ?> id="<?php echo $this->get_field_id('campaign'); ?>" name="<?php echo $this->get_field_name('campaign'); ?>" value ="<?php echo $campaign; ?>" style="width:100%;">
+            </label>
+
+            <br>
+
+            <label for="<?php echo $this->get_field_id('event'); ?>">
+				<?php _e('Event code', 'posts-by-tag'); ?><br>
+                <input type ="text" <?php echo $disable; ?> id="<?php echo $this->get_field_id('event'); ?>" name="<?php echo $this->get_field_name('event'); ?>" value ="<?php echo $event; ?>" style="width: 100%;">
+            </label>
+
+            <p> <?php _e( 'You can use the following placeholders' ) ?> </p>
+            <p><?php echo implode( ', ', Posts_By_Tag::$TEMPLATES ); ?></p>
+
 <?php
     }
 } // class TagWidget
@@ -782,6 +855,9 @@ function get_posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $ex
         }
     }
 
+    // append the tag ids to options
+    $options['tag_ids'] = $tag_id_array;
+
     if (count($tag_id_array) > 0) {
         // only if we have atleast one tag. get_posts has a bug. If empty array is passed, it returns all posts. That's why we need this condition
         $tag_arg = 'tag__in';
@@ -811,6 +887,13 @@ function get_posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $ex
                     array_push( $tag_post_tags, $tag_post_tag->name );
                 }
 
+                $permalink = apply_filters( Posts_By_Tag::FILTER_PERMALINK, get_permalink( $tag_post->ID ), $options, $tag_post );
+                $onclick = apply_filters( Posts_By_Tag::FILTER_ONCLICK, '', $options, $tag_post );
+
+                if ( $onclick != '' ) {
+                    $onclick_attr = ' onclick = "' . $onclick . '" ';
+                }
+
                 $output .= '<li class="posts-by-tag-item ' . implode( ' ', $tag_post_tags ) . '" id="posts-by-tag-item-' . $tag_post->ID . '">';
 
                 if ($thumbnail) {
@@ -820,21 +903,26 @@ function get_posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $ex
                         } else {
                             $t_size = $thumbnail_size;
                         }
-                        $output .=  '<a class="thumb" href="' . get_permalink($tag_post->ID) . '" title="' . get_the_title($tag_post->ID) . '">' . get_the_post_thumbnail($tag_post->ID, $t_size) . '</a>';
+                        $output .=  '<a class="thumb" href="' . $permalink . '" title="' . get_the_title($tag_post->ID) . '" ' . $onclick_attr . ' >' . 
+                            get_the_post_thumbnail($tag_post->ID, $t_size) . 
+                            '</a>';
                     } else {
                         if (get_post_meta($tag_post->ID, 'post_thumbnail', true) != '') {
-                            $output .=  '<a class="thumb" href="' . get_permalink($tag_post->ID) . '" title="' . get_the_title($tag_post->ID) . '"><img src="' . esc_url(get_post_meta($tag_post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($tag_post->ID) . '" ></a>';
+                            $output .=  '<a class="thumb" href="' . $permalink . '" title="' . get_the_title($tag_post->ID) . '" ' . $onclick_attr . '>' . 
+                                '<img src="' . esc_url(get_post_meta($tag_post->ID, 'post_thumbnail', true)) . '" alt="' . get_the_title($tag_post->ID) . '" >' . 
+                            '</a>';
                         }
                     }
                 }
 
                 // add permalink
-                $output .= '<a href="' . get_permalink($tag_post) . '"';
+                $output .= '<a href="' . $permalink . '"';
                
                 if ($link_target != '') {
                     $output .= ' target = "' . $link_target . '"';
                 }
 
+                $output .= $onclick_attr;
                 $output .= '>' . $tag_post->post_title . '</a>';
 
                 if($content) {
@@ -874,13 +962,13 @@ function get_posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $ex
                 }
                 $output .=  '</li>';
             }
+
             $output .=  '</ul>';
         }
 
         // restoring the query so it can be later used to display our posts
         $wp_query = clone $temp_query;
         $post = $temp_post;
-
     }
 
     return $output;
