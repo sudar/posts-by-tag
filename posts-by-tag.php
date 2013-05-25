@@ -66,7 +66,7 @@ Domain Path: languages/
                   - Fixed the bug which caused PHP to timeout when content option is set to true
 2013-01-26 - v2.7.4 - (Dev time: 0.5 hour)
                   - Exclude current post by default
-2013-05-25 - v2.8 - (Dev time: 15 hour)
+2013-05-25 - v2.8 - (Dev time: 20 hour)
                   - Added underscore to meta key so it is protected and also code to migrate date from old key
                   - Added an option to disable content filter
                   - Added an option to disable excerpt filter
