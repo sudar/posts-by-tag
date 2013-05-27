@@ -4,7 +4,7 @@
 **Requires at least:** 2.9  
 **Donate Link:** http://sudarmuthu.com/if-you-wanna-thank-me  
 **Tested up to:** 3.5.1  
-**Stable tag:** 2.8  
+**Stable tag:** 2.9  
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -315,7 +315,7 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ### v2.7.4 (2013-01-26) - (Dev time: 0.5 hour) ###
 * Exclude current post by default
 
-### v2.8 (2013-05-25 ) - (Dev time: 15 hour) ###
+### v2.8 (2013-05-25 ) - (Dev time: 20 hour) ###
 
 - Added underscore to meta key so it is protected and also code to migrate date from old key
 - Added an option to disable content filter
@@ -325,6 +325,15 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 - Added the ability to specify the size of thumbnail
 - Added support for Pro addons
 - Added Gujarati translations
+
+### v2.9 (2013-05-27 ) - (Dev time: 0.5 hour) ###
+- Fixed a bug that caused the widget to fail when custom fields are enabled
+
+## Upgrade Notice ##
+
+### 2.8 ###
+
+Fixed a bug that caused the widget to fail when custom fields are used
 
 ## Readme Generator ##
 
