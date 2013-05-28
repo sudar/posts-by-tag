@@ -806,7 +806,7 @@ function posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $excerp
  *         <bool> tag_links Whether to display tag links at the end
  *         <string> link_target the value to the target attribute of each links that needs to be added
  */
-function get_posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $link_target = '' ) {
+function get_posts_by_tag( $giventags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $link_target = '' ) {
     global $wp_query;
     global $post;
 
@@ -841,7 +841,7 @@ function get_posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $ex
 
     $tag_id_array = array();
     
-    if ($tags == '') {
+    if ( $giventags == '' ) {
         // if tags is empty then take from current posts
         if (is_single()) {
             $tag_array = wp_get_post_tags($current_post_id);
@@ -851,7 +851,7 @@ function get_posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $ex
         }
     } else {
         // Get array of post info.
-        $tag_array = explode(",", $tags);
+        $tag_array = explode( ",", $giventags );
 
         foreach ($tag_array as $tag) {
             $tag_id_array[] = pbt_get_tag_ID(trim($tag));
