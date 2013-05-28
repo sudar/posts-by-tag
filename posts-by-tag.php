@@ -7,7 +7,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 2.9
+Version: 3.0
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 Domain Path: languages/
@@ -77,6 +77,8 @@ Domain Path: languages/
                   - Added Gujarati translations
 2013-05-27 - v2.9 - (Dev time: 0.5 hour)
                   - Fixed a bug that caused the widget to fail when custom fields are enabled
+2013-05-28 - v3.0 - (Dev time: 0.5 hour)
+                  - Added the ability to sort the posts randomly
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -108,7 +110,7 @@ class Posts_By_Tag {
     private $boolean_fields = array( 'exclude', 'exclude_current_post', 'excerpt', 'excerpt_filter', 'content', 'content_filter', 'thumbnail', 'author', 'date', 'tag_links');
 
     // constants 
-    const VERSION               = '2.9';
+    const VERSION               = '3.0';
     const CUSTOM_POST_FIELD_OLD = 'posts_by_tag_page_fields'; // till v 2.7.4
     const CUSTOM_POST_FIELD     = '_posts_by_tag_page_fields';
 
@@ -512,7 +514,11 @@ class TagWidget extends WP_Widget {
         $instance['excerpt']               = (bool)$new_instance['excerpt'];
         $instance['content']               = (bool)$new_instance['content'];
         $instance['order']                 = ($new_instance['order'] === 'asc') ? 'asc' : 'desc';
-        $instance['order_by']              = ($new_instance['order_by'] === 'date') ? 'date' : 'title';
+        $instance['order_by']              = strip_tags( $new_instance['order_by'] );
+
+        if ( $instance['order_by'] == '' ) {
+            $instance['order_by'] = 'date';
+        }
 
         $instance['campaign']              = strip_tags( $new_instance['campaign'] );
         $instance['event']                 = strip_tags( $new_instance['event'] );
@@ -547,7 +553,11 @@ class TagWidget extends WP_Widget {
         $excerpt               = (bool) $instance['excerpt'];
         $content               = (bool) $instance['content'];
         $order                 = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc';
-        $order_by              = ( strtolower( $instance['order_by'] ) === 'date' ) ? 'date' : 'title';
+        $order_by              = strtolower( $instance['order_by'] );
+
+        if ( $order_by == '' ) {
+            $order_by = 'date';
+        }
 
         $campaign              = esc_attr( $instance['campaign'] );
         $event                 = esc_attr( $instance['event'] );
@@ -672,6 +682,10 @@ class TagWidget extends WP_Widget {
                 <input name="<?php echo $this->get_field_name('order_by'); ?>" type="radio" value="title" <?php checked($order_by, 'title'); ?> />
 				<?php _e( 'Title', 'posts-by-tag' ); ?>
             </label>
+            <label for="<?php echo $this->get_field_id( 'order_by' ); ?>">
+                <input name="<?php echo $this->get_field_name( 'order_by' ); ?>" type="radio" value="rand" <?php checked( $order_by, 'rand' ); ?> />
+				<?php _e( 'Random', 'posts-by-tag' ); ?>
+            </label>
         </p>
         
 		<p>
@@ -744,7 +758,7 @@ class TagWidget extends WP_Widget {
  *         <bool> excerpt_filter - Whether to enable or disable excerpt filter
  *         <bool> thumbnail - Whether to display thumbnail or not
  *         <string/array> thumbnail_size - Size of the thumbnail image. Refer to http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail#Thumbnail_Sizes
- *         <set> order_by (title, date) defaults to 'date'
+ *         <set> order_by (title, date, rand) defaults to 'date'
  *         <set> order (asc, desc) defaults to 'desc'
  *         <bool> author - Whether to show the author name or not
  *         <bool> date - Whether to show the post date or not

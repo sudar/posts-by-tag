@@ -4,7 +4,7 @@
 **Requires at least:** 2.9  
 **Donate Link:** http://sudarmuthu.com/if-you-wanna-thank-me  
 **Tested up to:** 3.5.1  
-**Stable tag:** 2.9  
+**Stable tag:** 3.0  
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -38,7 +38,7 @@ Each widget allows you to choose
 -   Option to specify the target attribute for links
 -   Option to display links to tag archive pages.
 -   Option to disable the cache if needed.
--   Option to enable Google Analytics tracking on the links (Only in Pro Addon)
+-   Option to enable Google Analytics tracking on the links (Only in [Pro Addon](http://sudarmuthu.com/wordpress/posts-by-tag/pro-addons))
 
 To add the widget, log into your WordPress admin console and go to Appearances -> Widgets. You will find the widget with the title "Posts By Tag". Drag and drop it in the sidebar where you want the widget to be displayed.
 
@@ -58,7 +58,7 @@ The following options can be passed in the $options array
   - `excerpt_filter` (bool) - default TRUE Whether to enable or disable excerpt filter
   - `thumbnail` (bool) - default FALSE  - To display post thumbnails or not
   - `thumbnail_size` (string/array) - default thumbnail  - Size of the thumbnail image. Refer to http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail#Thumbnail_Sizes
-  - `order_by` (date,title) - default title - Whether to order by date or by title.
+  - `order_by` (date,title, random) - default date - Whether to order by date or by title or show them randomly
   - `order` (asc,desc) - default desc - To change the order in which the posts are displayed.
   - `author` (bool) - default FALSE - To display author name or not.
   - `date` (bool) - default FALSE - To display post date or not.
@@ -119,12 +119,12 @@ If you are looking for ideas, then you can start with one of the following TODO 
 The following are the features that I am thinking of adding to the Plugin, when I get some free time. If you have any feature request or want to increase the priority of a particular feature, then let me know by adding them to [github issues][7].
 
 - Provide template tags for widget title, that will be dynamically expanded.
-- Ability to pull posts randomly.
 - Add support for custom post types
 - Ability to sort posts alphabetically
 - Ability to [exclude posts by id](http://sudarmuthu.com/wordpress/posts-by-tag#comment-783250)
 - Ability to [show comment count](http://sudarmuthu.com/wordpress/posts-by-tag#comment-783248)
 - Ability to [retrieve posts by date range](http://sudarmuthu.com/wordpress/posts-by-tag#comment-780935)
+- <del>Ability to pull posts randomly.</del> - Added in v3.0
 
 ### Support
 
@@ -315,7 +315,7 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ### v2.7.4 (2013-01-26) - (Dev time: 0.5 hour) ###
 * Exclude current post by default
 
-### v2.8 (2013-05-25 ) - (Dev time: 20 hour) ###
+### v2.8 (2013-05-25) - (Dev time: 20 hour) ###
 
 - Added underscore to meta key so it is protected and also code to migrate date from old key
 - Added an option to disable content filter
@@ -326,12 +326,19 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 - Added support for Pro addons
 - Added Gujarati translations
 
-### v2.9 (2013-05-27 ) - (Dev time: 0.5 hour) ###
+### v2.9 (2013-05-27) - (Dev time: 0.5 hour) ###
 - Fixed a bug that caused the widget to fail when custom fields are enabled
+
+### v3.0 (2013-05-28) - (Dev time: 0.5 hour) ###
+- Added the ability to sort the posts randomly
 
 ## Upgrade Notice ##
 
-### 2.8 ###
+### 3.0 ###
+
+Added the ability to order posts randomly
+
+### 2.9 ###
 
 Fixed a bug that caused the widget to fail when custom fields are used
 
