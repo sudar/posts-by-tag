@@ -4,7 +4,7 @@
 **Requires at least:** 2.9  
 **Donate Link:** http://sudarmuthu.com/if-you-wanna-thank-me  
 **Tested up to:** 3.5.1  
-**Stable tag:** 3.0  
+**Stable tag:** 3.0.1  
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
@@ -331,6 +331,9 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 ### v3.0 (2013-05-28) - (Dev time: 0.5 hour) ###
 - Added the ability to sort the posts randomly
+
+### v3.0.1 (2013-06-18) - (Dev time: 0.5 hour)
+- Fix undefined variable warnings
 
 ## Upgrade Notice ##
 

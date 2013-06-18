@@ -7,7 +7,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 3.0
+Version: 3.0.1
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 Domain Path: languages/
@@ -79,6 +79,8 @@ Domain Path: languages/
                   - Fixed a bug that caused the widget to fail when custom fields are enabled
 2013-05-28 - v3.0 - (Dev time: 0.5 hour)
                   - Added the ability to sort the posts randomly
+2013-06-18 - v3.0.1 - (Dev time: 0.5 hour)
+                  - Fix undefined variable warnings
 */
 
 /*  Copyright 2009  Sudar Muthu  (email : sudar@sudarmuthu.com)
@@ -470,7 +472,7 @@ class TagWidget extends WP_Widget {
 
                     $widget_content = get_posts_by_tag( $tags, $instance );
 
-                    if (!disable_cache) {
+                    if (!$disable_cache) {
                         // store in cache
                         set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
                     }
@@ -909,6 +911,8 @@ function get_posts_by_tag( $giventags = '', $options = array(), $exclude = FALSE
 
                 if ( $onclick != '' ) {
                     $onclick_attr = ' onclick = "' . $onclick . '" ';
+                } else {
+                    $onclick_attr = '';
                 }
 
                 $output .= '<li class="posts-by-tag-item ' . implode( ' ', $tag_post_tags ) . '" id="posts-by-tag-item-' . $tag_post->ID . '">';
