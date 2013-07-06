@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Posts By Tag package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Posts By Tag 3.0.2\n"
+"Project-Id-Version: Posts By Tag 3.0.3\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/posts-by-tag\n"
-"POT-Creation-Date: 2013-07-04 02:04:50+00:00\n"
+"POT-Creation-Date: 2013-07-06 09:37:18+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,179 +12,179 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: posts-by-tag.php:208
+#: posts-by-tag.php:210
 msgid "Buy Addons"
 msgstr ""
 
-#: posts-by-tag.php:220
+#: posts-by-tag.php:222
 msgid "Posts By Tag Page Fields"
 msgstr ""
 
-#: posts-by-tag.php:249
+#: posts-by-tag.php:251
 msgid "Widget Title"
 msgstr ""
 
-#: posts-by-tag.php:250
+#: posts-by-tag.php:252
 msgid "Widget Tags"
 msgstr ""
 
-#: posts-by-tag.php:410
+#: posts-by-tag.php:412
 msgid "Widget that shows posts from a set of tags"
 msgstr ""
 
-#. #-#-#-#-#  posts-by-tag.pot (Posts By Tag 3.0.2)  #-#-#-#-#
+#. #-#-#-#-#  posts-by-tag.pot (Posts By Tag 3.0.3)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
-#: posts-by-tag.php:416
+#: posts-by-tag.php:418
 msgid "Posts By Tag"
 msgstr ""
 
-#: posts-by-tag.php:590
+#: posts-by-tag.php:592
 msgid "Title:"
 msgstr ""
 
-#: posts-by-tag.php:596
+#: posts-by-tag.php:598
 msgid "Tags:"
 msgstr ""
 
-#: posts-by-tag.php:599
+#: posts-by-tag.php:601
 msgid "Separate multiple tags by comma"
 msgstr ""
 
-#: posts-by-tag.php:605
+#: posts-by-tag.php:607
 msgid "Exclude these tags"
 msgstr ""
 
-#: posts-by-tag.php:611
+#: posts-by-tag.php:613
 msgid "Exclude current post/page"
 msgstr ""
 
-#: posts-by-tag.php:617
+#: posts-by-tag.php:619
 msgid "Get tags from current Post"
 msgstr ""
 
-#: posts-by-tag.php:623
+#: posts-by-tag.php:625
 msgid ""
 "Get tags and title from custom fields. You need to set the custom field for "
 "each post/page."
 msgstr ""
 
-#: posts-by-tag.php:628
+#: posts-by-tag.php:630
 msgid "Number of posts to show:"
 msgstr ""
 
-#: posts-by-tag.php:635
+#: posts-by-tag.php:637
 msgid "Show post thumbnails"
 msgstr ""
 
-#: posts-by-tag.php:639
+#: posts-by-tag.php:641
 msgid "Select thumbnail size"
 msgstr ""
 
-#: posts-by-tag.php:641
+#: posts-by-tag.php:643
 msgid "Thumbnail"
 msgstr ""
 
-#: posts-by-tag.php:642
+#: posts-by-tag.php:644
 msgid "Medium"
 msgstr ""
 
-#: posts-by-tag.php:643
+#: posts-by-tag.php:645
 msgid "Large"
 msgstr ""
 
-#: posts-by-tag.php:644
+#: posts-by-tag.php:646
 msgid "Full"
 msgstr ""
 
-#: posts-by-tag.php:645
+#: posts-by-tag.php:647
 msgid "Custom"
 msgstr ""
 
-#: posts-by-tag.php:649
+#: posts-by-tag.php:651
 msgid "Custom size:"
 msgstr ""
 
-#: posts-by-tag.php:658
+#: posts-by-tag.php:660
 msgid "Show author name"
 msgstr ""
 
-#: posts-by-tag.php:664
+#: posts-by-tag.php:666
 msgid "Show post date"
 msgstr ""
 
-#: posts-by-tag.php:670
+#: posts-by-tag.php:672
 msgid "Show post excerpt"
 msgstr ""
 
-#: posts-by-tag.php:676
+#: posts-by-tag.php:678
 msgid "Show post content"
 msgstr ""
 
-#: posts-by-tag.php:680
+#: posts-by-tag.php:682
 msgid "Sort by: "
 msgstr ""
 
-#: posts-by-tag.php:683
+#: posts-by-tag.php:685
 msgid "Date"
 msgstr ""
 
-#: posts-by-tag.php:687
+#: posts-by-tag.php:689
 msgid "Title"
 msgstr ""
 
-#: posts-by-tag.php:691
+#: posts-by-tag.php:693
 msgid "Random"
 msgstr ""
 
-#: posts-by-tag.php:696
+#: posts-by-tag.php:698
 msgid "Order by: "
 msgstr ""
 
-#: posts-by-tag.php:699
+#: posts-by-tag.php:701
 msgid "Ascending"
 msgstr ""
 
-#: posts-by-tag.php:703
+#: posts-by-tag.php:705
 msgid "Descending"
 msgstr ""
 
-#: posts-by-tag.php:710
+#: posts-by-tag.php:712
 msgid "Show Tag links"
 msgstr ""
 
-#: posts-by-tag.php:715
+#: posts-by-tag.php:717
 msgid "Target attribute for links"
 msgstr ""
 
-#: posts-by-tag.php:722
+#: posts-by-tag.php:724
 msgid "Disable Cache"
 msgstr ""
 
-#: posts-by-tag.php:726
+#: posts-by-tag.php:728
 msgid "Google Analytics Tracking"
 msgstr ""
 
-#: posts-by-tag.php:731
+#: posts-by-tag.php:733
 msgid "Only available in Pro addon."
 msgstr ""
 
-#: posts-by-tag.php:736
+#: posts-by-tag.php:738
 msgid "Campaign code"
 msgstr ""
 
-#: posts-by-tag.php:743
+#: posts-by-tag.php:745
 msgid "Event code"
 msgstr ""
 
-#: posts-by-tag.php:747
+#: posts-by-tag.php:749
 msgid "You can use the following placeholders"
 msgstr ""
 
-#: posts-by-tag.php:966
+#: posts-by-tag.php:968
 msgid "Posted by: "
 msgstr ""
 
-#: posts-by-tag.php:971
+#: posts-by-tag.php:973
 msgid "Posted on: "
 msgstr ""
 
