@@ -148,24 +148,15 @@ The following are the features that I am thinking of adding to the Plugin, when 
 
 *   Swedish (Thanks Gunnar Lindberg Årneby)
 *   Turkish (Thanks Yakup Gövler)
-*   Belorussian (Thanks [FatCow][2])
-*   German (Thanks [Renate][3])
-*   Dutch (Thanks [Rene][4])
-*   Hebrew (Thanks [Sagive SEO][6])
-*   Spanish (Thanks Brian Flores of [InMotion Hosting][7])
-*   Bulgarian (Thanks Nikolay Nikolov of [IQ Test][11])
-*   Lithuanian (Thanks  Vincent G , from [http://www.host1free.com][12])
+*   Belorussian (Thanks FatCow)
+*   German (Thanks Renate)
+*   Dutch (Thanks Rene)
+*   Hebrew (Thanks Sagive SEO)
+*   Spanish (Thanks Brian Flores of InMotion Hosting)
+*   Bulgarian (Thanks Nikolay Nikolov of [IQ Test)
+*   Lithuanian (Thanks  Vincent G)
 *   Hindi (Thanks Love Chandel)
-*   Gujarati (Thanks Punnet of [Resolutions Mart][13])
-
- [2]: http://www.fatcow.com/
- [3]: http://www.heftrucknederland.nl
- [4]: http://wpwebshop.com/premium-wordpress-plugins/
- [6]: http://www.sagive.co.il
- [7]: http://www.inmotionhosting.com/
- [11]: http://umenlisam.com/
- [12]: http://www.host1free.com
- [13]: http://resolutionsmart.com/
+*   Gujarati (Thanks Punnet of Resolutions Mart)
 
 The pot file is available with the Plugin. If you are willing to do translation for the Plugin, use the pot file to create the .po files for your language and let me know. I will add it to the Plugin after giving credit to you.
 
@@ -178,182 +169,6 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 1. Widget settings page. This is how the sidebar widget settings page looks like
 
 2. Custom fields meta box. This is how the custom fields meta box looks like in the add or edit post/page screen
-
-## Changelog ##
-
-### v0.1 (2009-07-26)  ###
-
-*   Initial Version
-
-### v0.2 (2009-08-02)  ###
-
-*   Added template functions
-*   Added Swedish translation (Thanks Gunnar Lindberg Årneby)
-
-### v0.3 (2009-08-14)  ###
-
-*   Improved caching performance
-*   Added Turkish translation (Thanks Yakup Gövler)
-
-### v0.4 (2009-09-16)  ###
-
-*   Added support for sorting the posts (Thanks to Michael http://mfields.org/)
-
-### v0.5 (2010-01-03) ###
-
-*   Removed JavaScript from unwanted admin pages and added Belorussian translation.
-
-### v0.6 (2010-03-18) ###
-
-*   Added option to hide author links.
-
-### v0.7 (2010-04-16) ###
-
-*   Fixed an issue in showing the number of posts.
-
-### v0.8 (2010-05-08) ###
-
- *  Added support for shortcode and sorting by title.
-
-### v0.9 (2010-06-18) ###
-
- *  Fixed an issue with the order by option.
-
-### v1.0 (2010-06-19) ###
-
- *  Fixed issue with shortcode.
-
-### v1.1 (2010-06-23) ###
-
- *  Fixed issue with shortcode, which was not fixed properly in 1.0
-
-### v1.2 (2010-06-25) ###
-
- *  Fixed issue with shortcode, which was not fixed properly in 1.0 and 1.1
-
-### v1.3 (2010-07-12) ###
-
- *  Fixed some inconsistency in documentation and code
-
-### v1.4 (2010-08-04) ###
-
- *  Added German translations
-
-### v1.5 (2010-08-26) ###
-
- *  Added Dutch translations and fixed typos
-
-### v1.6 (2011-02-17) ###
-
- *  Fixed an issue in handling boolean in shortcode
-
-### v1.7 (2011-05-11) ###
-
- *  Added support for displaying post dates.
- *  Fixed a bug which was corrupting the loop.
-
-### v1.8 (2011-09-07) ###
-
- *  Added support for displaying content (Thanks rjune)
- 
-### v1.9 (2011-11-13) ###
-
- * Added Spanish and Hebrew translations.
-
-### v2.0 (2011-11-20) ###
-
-  * Added option to exclude tags.
-  * Fixed bug in displaying author name
-  * Added support for post thumbnails
-  * Don't display widget title if posts are not found
-  * Added Tag links
-  * Added the option to take tags from the current post
-  * Added the option to take tags from the custom fields of current page
-
-### v2.1 (2011-11-22) ###
-
- * Added option to include tag links from shortcode and template function.
-
-### v2.1.1 (2011-12-31) ###
-
- *  Fixed undefined notices for nouncename while creating new posts
-
-### v2.2 (2012-01-31) ###
-
- *  Fixed issues with order by option.
- *  Added Bulgarian translations
-
-### v2.3 (2012-04-04) (Dev time - 3 hours) ###
-* Added filter to the get_the_content() call
-* Moved caching logic to widget
-* Added the option to exclude current post/page
-* Added Lithuanian translations
-
-### v2.4 (2012-04-15) (Dev time - 0.5 hours) ###
-* Added option to disable cache if needed
-
-### v2.5 (2012-04-30) (Dev time - 0.5 hours) ###
-* Fixed the sorting by title issue 
-
-### v2.6 (2012-05-31) (Dev time: 2 hours) ###
-* Added support for specifying link targets
-* Changed the argument list for the posts_by_tag template functions
-
-### v2.7 (2012-06-23) (Dev time: 1 hour) ###
-* Added support for custom fields to all post types
-* Added autocomplete for tag fields in custom field boxes
-* Added Hindi translations
-
-### v2.7.1 (2012-07-23) (Dev time: 0.5 hour) ###
-* Renamed all template functions with a prefix to avoid clash with other Plugins
-
-### v2.7.2 (2012-12-30) (Dev time: 1 hour) ###
-* Fixed the bug which caused the comment to be posted to another post
-
-### v2.7.3 (2013-01-23) - (Dev time: 1 hour) ###
-* Fixed the bug which caused PHP to timeout when content option is set to true
-
-### v2.7.4 (2013-01-26) - (Dev time: 0.5 hour) ###
-* Exclude current post by default
-
-### v2.8 (2013-05-25) - (Dev time: 20 hour) ###
-
-- Added underscore to meta key so it is protected and also code to migrate date from old key
-- Added an option to disable content filter
-- Added an option to disable excerpt filter
-- Make thumbnail to link to post
-- Added tag names as class in <li> to additional styling
-- Added the ability to specify the size of thumbnail
-- Added support for Pro addons
-- Added Gujarati translations
-
-### v2.9 (2013-05-27) - (Dev time: 0.5 hour) ###
-- Fixed a bug that caused the widget to fail when custom fields are enabled
-
-### v3.0 (2013-05-28) - (Dev time: 0.5 hour) ###
-- Added the ability to sort the posts randomly
-
-### v3.0.1 (2013-06-18) - (Dev time: 0.5 hour)
-- Fix undefined variable warnings
-
-### v3.0.2 (2013-07-04) - (Dev time: 0.5 hour)
-- Added CSS class to the post title generated by widget
-
-### v3.0.3 (2013-07-06) - (Dev time: 0.5 hour)
-- Fixed the bug, that prevented shortcodes inside posts from getting expanded, when content is enabled in widget
-
-## Upgrade Notice ##
-
-### 3.0.2 ###
-Added CSS class to the post title generated by widget
-
-### 3.0 ###
-
-Added the ability to order posts randomly
-
-### 2.9 ###
-
-Fixed a bug that caused the widget to fail when custom fields are used
 
 ## Readme Generator ##
 
