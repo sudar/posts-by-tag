@@ -469,7 +469,31 @@ class TagWidget extends WP_Widget {
     function form($instance) {
         
         /* Set up some default widget settings. */
-        $defaults = array( 'title' => '', 'tags' => '', 'current_tags' => FALSE, 'number' => '5', 'exclude' => FALSE, 'exclude_current_post' => FALSE, 'thumbnail' => FALSE, 'thumbnail_size' => 'thumbnail', 'thumbnail_size_width' => '100', 'thumbnail_size_height' => '100', 'author' => FALSE, 'date' => FALSE, 'excerpt' => FALSE, 'content' => FALSE );
+        $defaults = array( 
+            'title'                 => '',
+            'tags'                  => '',
+            'number'                => '5',
+            'current_tags'          => FALSE,
+            'current_page_tags'     => FALSE,
+            'exclude'               => FALSE,
+            'exclude_current_post'  => FALSE,
+            'thumbnail'             => FALSE,
+            'thumbnail_size'        => 'thumbnail',
+            'thumbnail_size_width'  => '100',
+            'thumbnail_size_height' => '100',
+            'author'                => FALSE,
+            'date'                  => FALSE,
+            'excerpt'               => FALSE,
+            'content'               => FALSE,
+            'order'                 => 'desc',
+            'order_by'              => 'date',
+            'campaign'              => '',
+            'event'                 => '',
+            'tag_links'             => FALSE,
+            'link_target'           => FALSE,
+            'disable_cache'         => FALSE
+        );
+
         $instance = wp_parse_args( (array) $instance, $defaults );
 
         $title                 = esc_attr($instance['title']);
@@ -489,10 +513,6 @@ class TagWidget extends WP_Widget {
         $content               = (bool) $instance['content'];
         $order                 = ( strtolower( $instance['order'] ) === 'asc' ) ? 'asc' : 'desc';
         $order_by              = strtolower( $instance['order_by'] );
-
-        if ( $order_by == '' ) {
-            $order_by = 'date';
-        }
 
         $campaign              = esc_attr( $instance['campaign'] );
         $event                 = esc_attr( $instance['event'] );

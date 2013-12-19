@@ -161,6 +161,9 @@
 ### v3.0.3 (2013-07-06) - (Dev time: 0.5 hour)
 - Fixed the bug, that prevented shortcodes inside posts from getting expanded, when content is enabled in widget
 
+### v3.0.4 (2013-12-19) - (Dev time: 0.5 hour)
+- Fix: Remove undefined notices and warnings
+
 ## Upgrade Notice ##
 
 ### 3.0.2 ###
