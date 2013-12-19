@@ -3,8 +3,8 @@
 **Tags:** posts, sidebar, widget, tag, cache  
 **Requires at least:** 2.9  
 **Donate Link:** http://sudarmuthu.com/if-you-wanna-thank-me  
-**Tested up to:** 3.5.2  
-**Stable tag:** 3.0.3  
+**Tested up to:** 3.8  
+**Stable tag:** 3.0.4  
 	
 Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
 
