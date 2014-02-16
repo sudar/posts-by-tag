@@ -166,9 +166,13 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 
 ## Screenshots ##
 
-1. Widget settings page. This is how the sidebar widget settings page looks like
+![](screenshot-1.png)
 
-2. Custom fields meta box. This is how the custom fields meta box looks like in the add or edit post/page screen
+Widget settings page. This is how the sidebar widget settings page looks like
+
+![](screenshot-2.png)
+
+Custom fields meta box. This is how the custom fields meta box looks like in the add or edit post/page screen
 
 ## Readme Generator ##
 
