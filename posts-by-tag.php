@@ -3,7 +3,7 @@
 Plugin Name: Posts By Tag
 Plugin Script: posts-by-tag.php
 Plugin URI: http://sudarmuthu.com/wordpress/posts-by-tag
-Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
+Description: Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
@@ -42,9 +42,23 @@ Check readme file for full release notes
 class Posts_By_Tag {
 
     // boolean fields that needs to be validated
-    private $boolean_fields = array( 'exclude', 'exclude_current_post', 'excerpt', 'excerpt_filter', 'content', 'content_filter', 'thumbnail', 'author', 'date', 'tag_links');
+    private $boolean_fields     = array( 
+                'tag_from_post',
+                'tag_from_post_slug',
+                'tag_from_post_custom_field',
+                'exclude',
+                'exclude_current_post',
+                'excerpt',
+                'excerpt_filter',
+                'content',
+                'content_filter',
+                'thumbnail',
+                'author',
+                'date',
+                'tag_links'
+            );
 
-    // constants 
+    // constants
     const VERSION               = '3.0.4';
     const CUSTOM_POST_FIELD_OLD = 'posts_by_tag_page_fields'; // till v 2.7.4
     const CUSTOM_POST_FIELD     = '_posts_by_tag_page_fields';
@@ -241,24 +255,27 @@ class Posts_By_Tag {
      */
     function shortcode_handler($attributes) {
         $options = shortcode_atts(array(
-            "tags"                  => '',   // comma Separated list of tags
-            "number"                => 5,
-            "exclude"               => FALSE,
-            "exclude_current_post"  => FALSE,
-            "excerpt"               => FALSE,
-            "excerpt_filter"        => TRUE,
-            "content"               => FALSE,
-            "content_filter"        => TRUE,
-            'thumbnail'             => FALSE,
-            'thumbnail_size'        => 'thumbnail',
-            'thumbnail_size_width'  => 100,
-            'thumbnail_size_height' => 100,
-            'order_by'              => 'date',
-            'order'                 => 'desc',
-            'author'                => FALSE,
-            'date'                  => FALSE,
-            'tag_links'             => FALSE,
-            'link_target'           => ''
+            'tags'                       => '',   // comma Separated list of tags
+            'number'                     => 5,
+            'tag_from_post'              => FALSE,
+            'tag_from_post_slug'         => FALSE,
+            'tag_from_post_custom_field' => FALSE,
+            'exclude'                    => FALSE,
+            'exclude_current_post'       => FALSE,
+            'excerpt'                    => FALSE,
+            'excerpt_filter'             => TRUE,
+            'content'                    => FALSE,
+            'content_filter'             => TRUE,
+            'thumbnail'                  => FALSE,
+            'thumbnail_size'             => 'thumbnail',
+            'thumbnail_size_width'       => 100,
+            'thumbnail_size_height'      => 100,
+            'order_by'                   => 'date',
+            'order'                      => 'desc',
+            'author'                     => FALSE,
+            'date'                       => FALSE,
+            'tag_links'                  => FALSE,
+            'link_target'                => ''
         ), $attributes);
 
         $options = pbt_validate_boolean_options($options, $this->boolean_fields);
@@ -300,7 +317,6 @@ class Posts_By_Tag {
         } else {
             return False;
         }
-
     }
 
     /**
@@ -351,26 +367,22 @@ class TagWidget extends WP_Widget {
     function widget($args, $instance) {
         global $post;
 
+        $post_id           = $post->ID;
+
         extract( $args );
+        $instance          = $this->handle_old_keys( $instance );
+        $tags              = $instance['tags'];
+        $current_tags      = (bool) $instance['current_tags'];
+        $current_page_tags = (bool) $instance['current_page_tags'];
+        $current_slug_tags = (bool) $instance['current_slug_tags'];
 
-        $tags                 = $instance['tags'];
-        $current_tags         = (bool) $instance['current_tags'];
-        $current_page_tags    = (bool) $instance['current_page_tags'];
+        $tag_links         = (bool) $instance['tag_links'];
+        $disable_cache     = (bool) $instance['disable_cache'];
+        $link_target       = $instance['link_target'];
 
-        $tag_links            = (bool) $instance['tag_links'];
-        $disable_cache        = (bool) $instance['disable_cache'];
-        $link_target          = $instance['link_target'];
-
-        $title                = $instance['title'];
-        $post_id              = $post->ID;
-
-        if ($current_tags) {
-            // if current tags is enabled then set tags to empty
-            $tags = '';
-        }
+        $title             = $instance['title'];
 
         if ($current_page_tags) {
-            $tags = ''; // reset the tags
             // get tags and title from page custom fields
 
             if ($post_id > 0) {
@@ -381,35 +393,23 @@ class TagWidget extends WP_Widget {
                     if ($posts_by_tag_page_fields['widget_title'] != '') {
                         $title = $posts_by_tag_page_fields['widget_title'];
                     }
-                    if ($posts_by_tag_page_fields['widget_tags'] != '') {
-                        $tags = $posts_by_tag_page_fields['widget_tags'];
-                    }
                 }
             }
         }
 
-        if (($current_tags || $current_page_tags) && !is_singular()) {
-            // either current post tags or page custom tags is enabled and it is not a singular page
-            $widget_content = '';
+        if ( ( $current_tags || $current_page_tags || $current_slug_tags ) && is_singular() && $post_id > 0 ) {
+            $key = "posts-by-tag-$widget_id-$post_id";
         } else {
-            if ($current_page_tags && $tags == '') {
-                $widget_content = '';
-            } else {
-                if (($current_tags || $current_page_tags) && is_singular() && $post_id > 0) {
-                    $key = "posts-by-tag-$widget_id-$post_id";
-                } else {
-                    $key = "posts-by-tag-$widget_id";
-                }
+            $key = "posts-by-tag-$widget_id";
+        }
 
-                if ($disable_cache || (false === ( $widget_content = get_transient( $key ) ) )) {
+        if ($disable_cache || (false === ( $widget_content = get_transient( $key ) ) )) {
 
-                    $widget_content = get_posts_by_tag( $tags, $instance );
+            $widget_content = get_posts_by_tag( $tags, $instance );
 
-                    if (!$disable_cache) {
-                        // store in cache
-                        set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
-                    }
-                }
+            if (!$disable_cache) {
+                // store in cache
+                set_transient($key, $widget_content, 86400); // 60*60*24 - 1 Day
             }
         }
 
@@ -428,6 +428,22 @@ class TagWidget extends WP_Widget {
         }
     }
 
+    /**
+     * Handle old keys
+     *
+     * These new keys were added in 3.1 and are not present in older version.
+     *
+     * @since 3.1
+     * @access private
+     */
+    private function handle_old_keys( $instance ) {
+        $instance['tag_from_post']              = $instance['current_tags'];
+        $instance['tag_from_post_custom_field'] = $instance['current_page_tags'];
+        $instance['tag_from_post_slug']         = $instance['current_slug_tags'];
+
+        return $instance;
+    }
+
     /** @see WP_Widget::update */
     function update($new_instance, $old_instance) {
         $instance = $old_instance;
@@ -437,6 +453,7 @@ class TagWidget extends WP_Widget {
         $instance['tags']                  = strip_tags($new_instance['tags']);
         $instance['current_tags']          = (bool)$new_instance['current_tags'];
         $instance['current_page_tags']     = (bool)$new_instance['current_page_tags'];
+        $instance['current_slug_tags']     = (bool)$new_instance['current_slug_tags'];
         $instance['number']                = intval($new_instance['number']);
         $instance['exclude']               = (bool)$new_instance['exclude'];
         $instance['exclude_current_post']  = (bool)$new_instance['exclude_current_post'];
@@ -475,6 +492,7 @@ class TagWidget extends WP_Widget {
             'number'                => '5',
             'current_tags'          => FALSE,
             'current_page_tags'     => FALSE,
+            'current_slug_tags'     => FALSE,
             'exclude'               => FALSE,
             'exclude_current_post'  => FALSE,
             'thumbnail'             => FALSE,
@@ -501,6 +519,7 @@ class TagWidget extends WP_Widget {
         $number                = intval($instance['number']);
         $current_tags          = (bool) $instance['current_tags'];
         $current_page_tags     = (bool) $instance['current_page_tags'];
+        $current_slug_tags     = (bool) $instance['current_slug_tags'];
         $exclude               = (bool) $instance['exclude'];
         $exclude_current_post  = (bool) $instance['exclude_current_post'];
         $thumbnail             = (bool) $instance['thumbnail'];
@@ -572,6 +591,12 @@ class TagWidget extends WP_Widget {
             <label for="<?php echo $this->get_field_id('current_page_tags'); ?>">
             <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id('current_page_tags'); ?>" name="<?php echo $this->get_field_name('current_page_tags'); ?>" value ="true" <?php checked($current_page_tags, true); ?> /></label>
             <?php _e( 'Get tags and title from custom fields. You need to set the custom field for each post/page.' , 'posts-by-tag'); ?>
+        </p>
+
+        <p>
+            <label for="<?php echo $this->get_field_id( 'current_slug_tags' ); ?>">
+            <input type ="checkbox" class ="checkbox" id="<?php echo $this->get_field_id( 'current_slug_tags' ); ?>" name="<?php echo $this->get_field_name( 'current_slug_tags' ); ?>" value ="true" <?php checked( $current_slug_tags, true ); ?> /></label>
+            <?php _e( 'Use current post slug as tag.' , 'posts-by-tag' ); ?>
         </p>
 
         <p>
@@ -705,23 +730,33 @@ class TagWidget extends WP_Widget {
 /**
  * Template function to display posts by tags
  *
- * @param <string> $tags
- * @param <array> $options. An array which has the following values
- *         <int> number Number of posts to show
- *         <bool> exclude Whether to exclude the tags specified. Default is FALSE
- *         <bool> excerpt - Whether to display excerpts or not
- *         <bool> excerpt_filter - Whether to enable or disable excerpt filter
- *         <bool> thumbnail - Whether to display thumbnail or not
- *         <string/array> thumbnail_size - Size of the thumbnail image. Refer to http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail#Thumbnail_Sizes
- *         <set> order_by (title, date, rand) defaults to 'date'
- *         <set> order (asc, desc) defaults to 'desc'
- *         <bool> author - Whether to show the author name or not
- *         <bool> date - Whether to show the post date or not
- *         <bool> content - Whether to display content or not
- *         <bool> content_filter - Whether to enable or disable content filter
- *         <bool> exclude_current_post Whether to exclude the current post/page. Default is FALSE
- *         <bool> tag_links Whether to display tag links at the end
- *         <string> link_target the value to the target attribute of each links that needs to be added
+ * @param string $tags List of tags from where the posts should be retrieved.
+ *          If you want the plugin to automatically pick up tags from the current post,
+ *          then set either one of the following options to true and leave tags empty
+ *          - tag_from_post
+ *          - tag_from_post_slug
+ *          - tag_from_post_custom_field
+ * @param array $options An array which has the following values
+ *       - int number Number of posts to show
+ *       - bool tag_from_post Whether to get tags from current post's tags. Default is FALSE
+ *       - bool tag_from_post_slug Whether to get tags from current post's slug. Default is FALSE
+ *       - bool tag_from_post_custom_field Whether to get tags from current post's custom field. Default is FALSE
+ *       - bool exclude Whether to exclude the tags specified. Default is FALSE
+ *       - bool excerpt - Whether to display excerpts or not
+ *       - bool excerpt_filter - Whether to enable or disable excerpt filter
+ *       - bool thumbnail - Whether to display thumbnail or not
+ *       - string|array thumbnail_size - Size of the thumbnail image. Refer to http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail#Thumbnail_Sizes
+ *       - set order_by (title, date, rand) defaults to 'date'
+ *       - set order (asc, desc) defaults to 'desc'
+ *       - bool author - Whether to show the author name or not
+ *       - bool date - Whether to show the post date or not
+ *       - bool content - Whether to display content or not
+ *       - bool content_filter - Whether to enable or disable content filter
+ *       - bool exclude_current_post Whether to exclude the current post/page. Default is FALSE
+ *       - bool tag_links Whether to display tag links at the end
+ *       - string link_target the value to the target attribute of each links that needs to be added
+ *       
+ * @return string $output The posts HTML content 
  */
 function posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $tag_links = FALSE ) {
     $output = '';
@@ -755,78 +790,45 @@ function posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $excerp
 }
 
 /**
- * Helper function for posts_by_tag
+ * Helper function for @link posts_by_tag
+ * 
+ * @link posts_by_tag for information about parameters
+ * @see posts_by_tag
  *
- * @param <string> $tags
- * @param <array> $options. An array which has the following values
- *         <int> number Number of posts to show
- *         <bool> exclude Whether to exclude the tags specified. Default is FALSE
- *         <bool> excerpt - Whether to display excerpts or not
- *         <bool> excerpt_filter - Whether to enable or disable excerpt filter
- *         <bool> thumbnail - Whether to display thumbnail or not
- *         <string/array> thumbnail_size - Size of the thumbnail image. Refer to http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail#Thumbnail_Sizes
- *         <set> order_by (title, date) defaults to 'date'
- *         <set> order (asc, desc) defaults to 'desc'
- *         <bool> author - Whether to show the author name or not
- *         <bool> date - Whether to show the post date or not
- *         <bool> content - Whether to display content or not
- *         <bool> content_filter - Whether to enable or disable content filter
- *         <bool> exclude_current_post Whether to exclude the current post/page. Default is FALSE
- *         <bool> tag_links Whether to display tag links at the end
- *         <string> link_target the value to the target attribute of each links that needs to be added
  */
-function get_posts_by_tag( $giventags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $link_target = '' ) {
+function get_posts_by_tag( $giventags = '', $options = array() ) {
     global $wp_query;
     global $post;
 
     $current_post_id = $wp_query->post->ID;
-    $output = '';
+    $output          = '';
 
-    if (is_array($options)) {
+    $options         = wp_parse_args( $options, array(
+                            'number'                     => 5,
+                            'tag_from_post'              => FALSE,
+                            'tag_from_post_slug'         => FALSE,
+                            'tag_from_post_custom_field' => FALSE,
+                            'exclude'                    => FALSE,
+                            'excerpt'                    => FALSE,
+                            'thumbnail'                  => FALSE,
+                            'thumbnail_size'             => 'thumbnail',
+                            'thumbnail_size_width'       => 100,
+                            'thumbnail_size_height'      => 100,
+                            'order_by'                   => 'date',
+                            'order'                      => 'desc',
+                            'author'                     => FALSE,
+                            'date'                       => FALSE,
+                            'content'                    => FALSE,
+                            'content_filter'             => TRUE,
+                            'exclude_current_post'       => FALSE,
+                            'tag_links'                  => FALSE,
+                            'link_target'                => ''
+                        )
+                    );
 
-        $options = wp_parse_args($options, array(
-                                'number'                => 5,
-                                'exclude'               => FALSE,
-                                'excerpt'               => FALSE,
-                                'thumbnail'             => FALSE,
-                                'thumbnail_size'        => 'thumbnail',
-                                'thumbnail_size_width'  => 100,
-                                'thumbnail_size_height' => 100,
-                                'order_by'              => 'date',
-                                'order'                 => 'desc',
-                                'author'                => FALSE,
-                                'date'                  => FALSE,
-                                'content'               => FALSE,
-                                'content_filter'        => TRUE,
-                                'exclude_current_post'  => FALSE,
-                                'tag_links'             => FALSE,
-                                'link_target'           => ''
-                            )
-                     );
-        extract( $options, EXTR_OVERWRITE);
-    } else {
-        $number = $options;
-    }
-
-    $tag_id_array = array();
+    extract( $options, EXTR_OVERWRITE);
     
-    if ( $giventags == '' ) {
-        // if tags is empty then take from current posts
-        if (is_single()) {
-            $tag_array = wp_get_post_tags($current_post_id);
-            foreach ($tag_array as $tag) {
-                $tag_id_array[] = $tag->term_id;
-            }
-        }
-    } else {
-        // Get array of post info.
-        $tag_array = explode( ",", $giventags );
-
-        foreach ($tag_array as $tag) {
-            $tag_id_array[] = pbt_get_tag_ID(trim($tag));
-        }
-    }
-
+    $tag_id_array = pbt_get_tag_id_array( $giventags, $options );
     // append the tag ids to options
     $options['tag_ids'] = $tag_id_array;
 
@@ -945,7 +947,62 @@ function get_posts_by_tag( $giventags = '', $options = array(), $exclude = FALSE
         $post = $temp_post;
     }
 
+    // if there were no posts, then don't return any content
+    if ( '<ul class = "posts-by-tag-list"></ul>' == $output ) {
+        $output = '';
+    }
     return $output;
+}
+
+function pbt_get_tag_id_array( $tags, $options ) {
+    global $post;
+
+    $tag_id_array = array();
+
+    if ( $options['tag_from_post'] || $options['tag_from_post_slug'] || $options['tag_from_post_custom_field'] ) {
+        
+        // if tags is empty then try to take it from current posts
+        if ( is_singular() && !is_attachment() ) {
+
+            if ( $options['tag_from_post'] ) {
+                $tag_array = wp_get_post_tags( $post->ID );
+                foreach ($tag_array as $tag) {
+                    $tag_id_array[] = $tag->term_id;
+                }
+                return $tag_id_array;
+            }
+
+            if ( $options['tag_from_post_slug'] ) {
+                if ($post->ID > 0) {
+                    $tags = get_post( $post )->post_name; 
+                }
+            }
+
+            if ( $options['tag_from_post_custom_field'] ) {
+                if ($post->ID > 0) {
+                    Posts_By_Tag::update_postmeta_key( $post_id );
+                    $posts_by_tag_page_fields = get_post_meta( $post_id, Posts_By_Tag::CUSTOM_POST_FIELD, TRUE );
+
+                    if (isset($posts_by_tag_page_fields) && is_array($posts_by_tag_page_fields)) {
+                        if ($posts_by_tag_page_fields['widget_tags'] != '') {
+                            $tags = $posts_by_tag_page_fields['widget_tags'];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if ( '' != $tags ) {
+        // Get array of post info.
+        $tag_array = explode( ",", $tags );
+
+        foreach ($tag_array as $tag) {
+            $tag_id_array[] = pbt_get_tag_ID(trim($tag));
+        }
+    }
+    
+    return $tag_id_array;
 }
 
 /**
@@ -998,9 +1055,9 @@ function pbt_get_tag_more_link($tag) {
 }
 
 /**
- * get tag id from tag name
+ * get tag id from tag name or slug
  *
- * @param <string> $tag_name
+ * @param <string> $tag_name - Tag name or slug
  * @return <int> term id. 0 if not found
  */
 function pbt_get_tag_ID($tag_name) {
@@ -1008,6 +1065,10 @@ function pbt_get_tag_ID($tag_name) {
     if ($tag) {
         return $tag->term_id;
     } else {
+        $tag = get_term_by( 'slug', $tag_name, 'post_tag' );
+        if ( $tag ) {
+            return $tag->term_id;
+        }
         return 0;
     }
 }

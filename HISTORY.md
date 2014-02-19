@@ -164,6 +164,9 @@
 ### v3.0.4 (2013-12-19) - (Dev time: 0.5 hour)
 - Fix: Remove undefined notices and warnings
 
+### v3.1 (2014-02-19) - (Dev time: 10 hours)
+- Add: Add the ability to specify tags from post slug
+
 ## Upgrade Notice ##
 
 ### 3.0.2 ###

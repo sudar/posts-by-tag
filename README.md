@@ -6,13 +6,13 @@
 **Tested up to:** 3.8  
 **Stable tag:** 3.0.4  
 	
-Provide sidebar widgets that can be used to display posts from a set of tags in the sidebar.
+Provide sidebar widget, shortcode and template functions that can be used to display posts from a set of tags using various options in the sidebar or anywhere in a post.
 
 ## Description ##
 
 Posts By Tag WordPress Plugin, provides sidebar widgets which can be used to display posts from a specific set of tags in the sidebar.
 
-These tags can be specified in the widget or the Plugin can automatically retrieve them from the current post. You can also specify the tags using custom fields in the edit post or page screen.
+These tags can be specified in the widget or the Plugin can automatically retrieve them from the current post tags, post slug or form custom field. The custom fields can be specified in the edit post or page screen.
 
 You can also use shortcode or template function to display the posts.
 
@@ -28,6 +28,9 @@ Each widget allows you to choose
 
 -   The set of tags from where posts should be selected (or excluded)
 -   The number of posts to be displayed. 
+-   Whether to pick the tags from current post
+-   Whether to pick the tags from current post slug
+-   Whether to pick the tags from current post's custom field
 -   Option to enable post excerpts to be displayed with post titles. 
 -   Option to display post thumbnail if present.
 -   Option to display post author.
@@ -53,6 +56,9 @@ The following options can be passed in the $options array
 - `$tags` (string) - set of comma separated tags. If you leave this empty, then the tags from the current post will be used.
 - `$options` (array) - set of options. The following are the fields that are allowed
   - `number` (number) - default 5 - number of posts to display
+  - `tag_from_post` (bool) - default FALSE - whether to pick up tags from current post's tag
+  - `tag_from_post_slug` (bool) - default FALSE - whether to pick up tags from current post's slug
+  - `tag_from_post_custom_field` (bool) - default FALSE - whether to pick up tags from current post's custom field
   - `exclude` (bool) - default FALSE - Where to include the tags or exclude the tags
   - `excerpt` (bool)  - default FALSE - To display post excerpts or not
   - `excerpt_filter` (bool) - default TRUE Whether to enable or disable excerpt filter
