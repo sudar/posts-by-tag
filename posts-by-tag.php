@@ -378,28 +378,7 @@ add_action('widgets_init', create_function('', 'return register_widget("TagWidge
  *       
  * @return string $output The posts HTML content 
  */
-function posts_by_tag( $tags = '', $options = array(), $exclude = FALSE, $excerpt = FALSE, $thumbnail = FALSE, $order_by = 'date', $order = 'desc', $author = FALSE, $date = FALSE, $content = FALSE, $exclude_current_post = TRUE, $tag_links = FALSE ) {
-    $output = '';
-
-    // compatibility with older versions
-    if (!is_array($options)) {
-        // build the array
-        $number = $options;
-        $options = array(
-            'number'               => $number,
-            'excerpt'              => $excerpt,
-            'thumbnail'            => $thumbnail,
-            'order_by'             => $order_by,
-            'order'                => $order,
-            'author'               => $author,
-            'date'                 => $date,
-            'content'              => $content,
-            'exclude_current_post' => $exclude_current_post,
-            'tag_links'            => $tag_links,
-            'link_target'          => $link_target
-        );
-    }
-
+function posts_by_tag( $tags = '', $options = array() ) {
     $output = get_posts_by_tag($tags, $options);
 
     if ($options['tag_links'] && !$option['exclude']) {
