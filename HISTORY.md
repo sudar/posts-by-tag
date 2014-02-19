@@ -166,6 +166,7 @@
 
 ### v3.1 (2014-02-19) - (Dev time: 10 hours)
 - Add: Add the ability to specify tags from post slug
+- Tweak: Move Widget class to a separate file
 
 ## Upgrade Notice ##
 
