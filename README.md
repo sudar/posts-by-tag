@@ -4,7 +4,7 @@
 **Requires at least:** 2.9  
 **Donate Link:** http://sudarmuthu.com/if-you-wanna-thank-me  
 **Tested up to:** 3.8.1  
-**Stable tag:** 3.1  
+**Stable tag:** 3.1.1  
 	
 Provide sidebar widget, shortcode and template functions that can be used to display posts from a set of tags using various options in the sidebar or anywhere in a post.
 
@@ -41,7 +41,7 @@ Each widget allows you to choose
 -   Option to specify the target attribute for links
 -   Option to display links to tag archive pages.
 -   Option to disable the cache if needed.
--   Option to enable Google Analytics tracking on the links (Only in [Pro Addon](http://sudarmuthu.com/wordpress/posts-by-tag/pro-addons))
+-   Option to enable Google Analytics tracking on the links (Only in [Pro Addon](http://sudarmuthu.com/wordpress/posts-by-tag/pro-addons) )
 
 To add the widget, log into your WordPress admin console and go to Appearances -> Widgets. You will find the widget with the title "Posts By Tag". Drag and drop it in the sidebar where you want the widget to be displayed.
 
@@ -74,7 +74,7 @@ The following options can be passed in the $options array
   - `tag_links` (bool) - default FALSE - To display link to tag archive page or not.
   - `link_target` (string) - default empty - target attribute for the permalink links.
 
-In addition to the above options the following options are available in the [Pro addon](sudarmuthu.com/wordpress/posts-by-tag/pro-addons)
+In addition to the above options the following options are available in the [Pro addon](http://sudarmuthu.com/wordpress/posts-by-tag/pro-addons)
 
 - `campaign` (string) - The Google Analytics campaign code that needs to be appended to every link
 - `event` (string) - The Google Analytics events code that needs to be appended to every link
