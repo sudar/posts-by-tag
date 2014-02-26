@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Posts By Tag package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Posts By Tag 3.1\n"
+"Project-Id-Version: Posts By Tag 3.1.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/posts-by-tag\n"
-"POT-Creation-Date: 2014-02-20 06:13:32+00:00\n"
+"POT-Creation-Date: 2014-02-26 06:21:56+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "Widget that shows posts from a set of tags"
 msgstr ""
 
-#. #-#-#-#-#  posts-by-tag.pot (Posts By Tag 3.1)  #-#-#-#-#
+#. #-#-#-#-#  posts-by-tag.pot (Posts By Tag 3.1.1)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
 #: include/class-tagwidget.php:19
 msgid "Posts By Tag"
