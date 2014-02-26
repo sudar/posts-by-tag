@@ -194,6 +194,11 @@ class Posts_By_Tag_Util {
 
         $tag_id_array = array();
 
+        if ( ! ( $options['tag_from_post'] || $options['tag_from_post_slug'] || $options['tag_from_post_custom_field'] ) && '' == $tags )  {
+            // if tags is empty and no options are set, then try to get tags from post tags
+            $options['tag_from_post'] = TRUE;
+        }
+
         if ( $options['tag_from_post'] || $options['tag_from_post_slug'] || $options['tag_from_post_custom_field'] ) {
             
             if ( is_singular() && !is_attachment() ) {

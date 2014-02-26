@@ -169,6 +169,9 @@
 - Tweak: Move Widget class to a separate file
 - Tweak: Move template functions to a separate file
 
+### v3.1.1 (2014-02-26) - (Dev time: 0.5 hours)
+- Fix: If tags is empty and no options are set, then try to get tags from post tags
+
 ## Upgrade Notice ##
 
 ### 3.1 ###
