@@ -172,7 +172,13 @@
 ### v3.1.1 (2014-02-26) - (Dev time: 0.5 hours)
 - Fix: If tags is empty and no options are set, then try to get tags from post tags
 
+### v3.1.2 (2014-03-06) - (Dev time: 0.5 hours)
+- Fix: In some cases Widget was not able to retrieve tags and title from custom field
+
 ## Upgrade Notice ##
+
+### 3.1.2 ###
+Fixed a bug that causes Widgets not to work in certain cases
 
 ### 3.1 ###
 Ability to pick up tags from post slug

@@ -53,6 +53,9 @@ class TagWidget extends WP_Widget {
                     if ($posts_by_tag_page_fields['widget_title'] != '') {
                         $title = $posts_by_tag_page_fields['widget_title'];
                     }
+                    if ( '' != $posts_by_tag_page_fields['widget_tags'] ) {
+                        $tags = $posts_by_tag_page_fields['widget_tags'];
+                    }
                 }
             }
         }
