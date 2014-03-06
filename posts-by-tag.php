@@ -7,7 +7,7 @@ Description: Provide sidebar widgets that can be used to display posts from a se
 Author: Sudar
 Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
 License: GPL
-Version: 3.1.1
+Version: 3.1.2
 Author URI: http://sudarmuthu.com/
 Text Domain: posts-by-tag
 Domain Path: languages/
@@ -72,7 +72,7 @@ class Posts_By_Tag {
             );
 
     // constants
-    const VERSION               = '3.1.1';
+    const VERSION               = '3.1.2';
     const CUSTOM_POST_FIELD_OLD = 'posts_by_tag_page_fields'; // till v 2.7.4
     const CUSTOM_POST_FIELD     = '_posts_by_tag_page_fields';
 
