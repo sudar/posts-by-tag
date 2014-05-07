@@ -167,6 +167,7 @@ class Posts_By_Tag_Util {
             // restoring the query so it can be later used to display our posts
             $wp_query = clone $temp_query;
             $post = $temp_post;
+            wp_reset_postdata();
         }
 
         // if there were no posts, then don't return any content

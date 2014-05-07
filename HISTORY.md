@@ -177,6 +177,7 @@
 
 ### v3.1.3 (2014-05-07) - (Dev time: 0.5 hours)
 - Fix: Fixed an undefined variable warning
+- Fix: Reset global post details
 
 ## Upgrade Notice ##
 
