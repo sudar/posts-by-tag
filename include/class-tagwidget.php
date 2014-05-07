@@ -22,7 +22,7 @@ class TagWidget extends WP_Widget {
     /**
      * Handle Widget
      *
-     * @see WP_Widget::widget 
+     * @see WP_Widget::widget
      */
     function widget($args, $instance) {
         global $post;
@@ -35,6 +35,7 @@ class TagWidget extends WP_Widget {
         $current_tags      = (bool) $instance['current_tags'];
         $current_page_tags = (bool) $instance['current_page_tags'];
         $current_slug_tags = (bool) $instance['current_slug_tags'];
+        $exclude           = (bool) $instance['exclude'];
 
         $tag_links         = (bool) $instance['tag_links'];
         $disable_cache     = (bool) $instance['disable_cache'];
@@ -84,7 +85,7 @@ class TagWidget extends WP_Widget {
 
             echo $widget_content;
             if ($tag_links && !$exclude) {
-                echo pbt_get_tag_more_links($tags);
+                echo Posts_By_Tag_Util::get_tag_more_links( $tags );
             }
 
             echo $after_widget;
@@ -94,12 +95,12 @@ class TagWidget extends WP_Widget {
     /**
      * Handle Widget update
      *
-     * @see WP_Widget::update 
+     * @see WP_Widget::update
      *
      */
     function update($new_instance, $old_instance) {
         $instance = $old_instance;
-        
+
         // validate data
         $instance['title']                 = strip_tags($new_instance['title']);
         $instance['tags']                  = strip_tags($new_instance['tags']);

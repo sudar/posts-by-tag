@@ -74,7 +74,7 @@
 ### v1.8 (2011-09-07) ###
 
  *  Added support for displaying content (Thanks rjune)
- 
+
 ### v1.9 (2011-11-13) ###
 
  * Added Spanish and Hebrew translations.
@@ -112,7 +112,7 @@
 * Added option to disable cache if needed
 
 ### v2.5 (2012-04-30) (Dev time - 0.5 hours) ###
-* Fixed the sorting by title issue 
+* Fixed the sorting by title issue
 
 ### v2.6 (2012-05-31) (Dev time: 2 hours) ###
 * Added support for specifying link targets
@@ -174,6 +174,9 @@
 
 ### v3.1.2 (2014-03-06) - (Dev time: 0.5 hours)
 - Fix: In some cases Widget was not able to retrieve tags and title from custom field
+
+### v3.1.3 (2014-05-07) - (Dev time: 0.5 hours)
+- Fix: Fixed an undefined variable warning
 
 ## Upgrade Notice ##
 

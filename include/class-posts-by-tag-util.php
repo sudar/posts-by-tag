@@ -12,7 +12,7 @@ class Posts_By_Tag_Util {
 
     /**
      * Helper function for @link get_posts_by_tag
-     * 
+     *
      * @link posts_by_tag for information about parameters
      * @see get_posts_by_tag
      * @see posts_by_tag
@@ -200,7 +200,7 @@ class Posts_By_Tag_Util {
         }
 
         if ( $options['tag_from_post'] || $options['tag_from_post_slug'] || $options['tag_from_post_custom_field'] ) {
-            
+
             if ( is_singular() && !is_attachment() ) {
 
                 if ( $options['tag_from_post'] ) {
@@ -218,7 +218,8 @@ class Posts_By_Tag_Util {
                 }
 
                 if ( $options['tag_from_post_custom_field'] ) {
-                    if ($post->ID > 0) {
+                    if ( isset( $post->ID ) && $post->ID > 0 ) {
+                        $post_id = $post->ID;
                         Posts_By_Tag::update_postmeta_key( $post_id );
                         $posts_by_tag_page_fields = get_post_meta( $post_id, Posts_By_Tag::CUSTOM_POST_FIELD, TRUE );
 
@@ -239,7 +240,7 @@ class Posts_By_Tag_Util {
                 $tag_id_array[] = self::get_tag_ID( trim( $tag ) );
             }
         }
-        
+
         return $tag_id_array;
     }
 
