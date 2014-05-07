@@ -3,9 +3,9 @@
 **Tags:** posts, sidebar, widget, tag, cache  
 **Requires at least:** 2.9  
 **Donate Link:** http://sudarmuthu.com/if-you-wanna-thank-me  
-**Tested up to:** 3.8.1  
-**Stable tag:** 3.1.2  
-	
+**Tested up to:** 3.9  
+**Stable tag:** 3.1.3  
+
 Provide sidebar widget, shortcode and template functions that can be used to display posts from a set of tags using various options in the sidebar or anywhere in a post.
 
 ## Description ##
@@ -27,11 +27,11 @@ Posts By Tag Plugin provides a sidebar widget which can be configured to display
 Each widget allows you to choose
 
 -   The set of tags from where posts should be selected (or excluded)
--   The number of posts to be displayed. 
+-   The number of posts to be displayed.
 -   Whether to pick the tags from current post
 -   Whether to pick the tags from current post slug
 -   Whether to pick the tags from current post's custom field
--   Option to enable post excerpts to be displayed with post titles. 
+-   Option to enable post excerpts to be displayed with post titles.
 -   Option to display post thumbnail if present.
 -   Option to display post author.
 -   Option to display post date.
