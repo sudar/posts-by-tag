@@ -89,20 +89,20 @@ class Posts_By_Tag {
 		load_plugin_textdomain( 'posts-by-tag', false, $this->translations );
 
 		// Register hooks
-		add_action( 'admin_print_scripts', array( &$this, 'add_script' ) );
-		add_action( 'admin_head', array( &$this, 'add_script_config' ) );
+		add_action( 'admin_print_scripts', array( $this, 'add_script' ) );
+		add_action( 'admin_head', array( $this, 'add_script_config' ) );
 
 		/* Use the admin_menu action to define the custom boxes */
-		add_action( 'admin_menu', array( &$this, 'add_custom_box' ) );
+		add_action( 'admin_menu', array( $this, 'add_custom_box' ) );
 
 		/* Use the save_post action to do something with the data entered */
-		add_action( 'save_post', array( &$this, 'save_postdata' ) );
+		add_action( 'save_post', array( $this, 'save_postdata' ) );
 
 		// Add more links in the plugin listing page
-		add_filter( 'plugin_row_meta', array( &$this, 'add_plugin_links' ), 10, 2 );
+		add_filter( 'plugin_row_meta', array( $this, 'add_plugin_links' ), 10, 2 );
 
 		//Short code
-		add_shortcode( 'posts-by-tag', array( &$this, 'shortcode_handler' ) );
+		add_shortcode( 'posts-by-tag', array( $this, 'shortcode_handler' ) );
 	}
 
 	/**
@@ -180,7 +180,7 @@ class Posts_By_Tag {
 				add_meta_box(
 					'posts_by_tag_page_box',
 					__( 'Posts By Tag Page Fields', 'posts-by-tag' ),
-					array( &$this, 'inner_custom_box' ),
+					array( $this, 'inner_custom_box' ),
 					$post_type->name,
 					'side'
 				);

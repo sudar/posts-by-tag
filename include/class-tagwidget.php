@@ -7,8 +7,10 @@
  */
 
 class TagWidget extends WP_Widget {
-	/** constructor */
-	function TagWidget() {
+	/**
+	 * Constructor
+	 */
+	function __construct() {
 		/* Widget settings. */
 		$widget_ops = array( 'classname' => 'TagWidget', 'description' => __( 'Widget that shows posts from a set of tags', 'posts-by-tag' ) );
 
@@ -16,7 +18,7 @@ class TagWidget extends WP_Widget {
 		$control_ops = array( 'id_base' => 'tag-widget' );
 
 		/* Create the widget. */
-		parent::WP_Widget( 'tag-widget', __( 'Posts By Tag', 'posts-by-tag' ), $widget_ops, $control_ops );
+		parent::__construct( 'tag-widget', __( 'Posts By Tag', 'posts-by-tag' ), $widget_ops, $control_ops );
 	}
 
 	/**
