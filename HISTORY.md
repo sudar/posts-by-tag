@@ -179,7 +179,13 @@
 - Fix: Fixed an undefined variable warning
 - Fix: Reset global post details
 
+### v3.2.3 (2015-08-16) - (Dev time: 1 hours)
+- Fix: Added compatibility with WordPress 4.3
+
 ## Upgrade Notice ##
+
+### 3.2 ###
+Added compatibility with WordPress 4.3
 
 ### 3.1.2 ###
 Fixed a bug that causes Widgets not to work in certain cases

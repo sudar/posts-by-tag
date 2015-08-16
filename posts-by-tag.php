@@ -7,7 +7,7 @@
  * Author: Sudar
  * Donate Link: http://sudarmuthu.com/if-you-wanna-thank-me
  * License: GPL
- * Version: 3.1.3
+ * Version: 3.2
  * Author URI: http://sudarmuthu.com/
  * Text Domain: posts-by-tag
  * Domain Path: languages/
@@ -68,7 +68,7 @@ class Posts_By_Tag {
 	);
 
 	// constants
-	const VERSION               = '3.1.3';
+	const VERSION               = '3.2';
 	const CUSTOM_POST_FIELD_OLD = 'posts_by_tag_page_fields'; // till v 2.7.4
 	const CUSTOM_POST_FIELD     = '_posts_by_tag_page_fields';
 
