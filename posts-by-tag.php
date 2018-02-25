@@ -371,6 +371,10 @@ function posts_by_tag_init() {
 }
 add_action( 'init', 'posts_by_tag_init' );
 
-// register TagWidget widget
-add_action( 'widgets_init', create_function( '', 'return register_widget("TagWidget");' ) );
+// Init Simple Tags widget
+function simple_tags_register_widget() {
+  return register_widget("TagWidget");
+}
+add_action( 'widgets_init', 'simple_tags_register_widget' );
+
 ?>
