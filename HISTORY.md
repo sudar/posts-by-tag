@@ -179,8 +179,12 @@
 - Fix: Fixed an undefined variable warning
 - Fix: Reset global post details
 
-### v3.2.3 (2015-08-16) - (Dev time: 1 hours)
+### v3.2 (2015-08-16) - (Dev time: 1 hours)
 - Fix: Added compatibility with WordPress 4.3
+
+### v3.2.1 (2019-04-19)
+- Fix: Added compatibility with PHP 7.2
+- Merged Google Analytics add-on to core plugin.
 
 ## Upgrade Notice ##
 

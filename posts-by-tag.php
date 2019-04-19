@@ -42,6 +42,9 @@ if ( ! class_exists( 'Posts_By_Tag_Util' ) ) {
 // template functions
 require_once dirname( __FILE__ ) . '/include/template-functions.php';
 
+// Google Analytics (was a pro add-on earlier)
+require_once dirname( __FILE__ ) . '/include/posts-by-tag-google-analytics.php';
+
 /**
  * The main Plugin class
  *

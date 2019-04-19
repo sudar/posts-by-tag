@@ -41,7 +41,7 @@ Each widget allows you to choose
 -   Option to specify the target attribute for links
 -   Option to display links to tag archive pages.
 -   Option to disable the cache if needed.
--   Option to enable Google Analytics tracking on the links (Only in [Pro Addon](http://sudarmuthu.com/wordpress/posts-by-tag/pro-addons) )
+-   Option to enable Google Analytics tracking on the links
 
 To add the widget, log into your WordPress admin console and go to Appearances -> Widgets. You will find the widget with the title "Posts By Tag". Drag and drop it in the sidebar where you want the widget to be displayed.
 
