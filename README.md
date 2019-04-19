@@ -1,10 +1,10 @@
 # Posts By Tag #
 **Contributors:** sudar  
 **Tags:** posts, sidebar, widget, tag, cache  
-**Requires at least:** 2.9  
+**Requires at least:** 4.0  
 **Donate Link:** http://sudarmuthu.com/if-you-wanna-thank-me  
-**Tested up to:** 4.3
-**Stable tag:** 3.2  
+**Tested up to:** 5.1
+**Stable tag:** 3.2.1  
 
 Provide sidebar widget, shortcode and template functions that can be used to display posts from a set of tags using various options in the sidebar or anywhere in a post.
 
