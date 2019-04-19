@@ -1,14 +1,14 @@
-# Copyright (C) 2015 Posts By Tag
+# Copyright (C) 2019 Posts By Tag
 # This file is distributed under the same license as the Posts By Tag package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Posts By Tag 3.2\n"
+"Project-Id-Version: Posts By Tag 3.2.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/posts-by-tag\n"
-"POT-Creation-Date: 2015-08-16 07:58:59+00:00\n"
+"POT-Creation-Date: 2019-04-19 11:02:09+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
@@ -24,7 +24,7 @@ msgstr ""
 msgid "Widget that shows posts from a set of tags"
 msgstr ""
 
-#. #-#-#-#-#  posts-by-tag.pot (Posts By Tag 3.2)  #-#-#-#-#
+#. #-#-#-#-#  posts-by-tag.pot (Posts By Tag 3.2.1)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
 #: include/class-tagwidget.php:21
 msgid "Posts By Tag"
@@ -176,19 +176,19 @@ msgstr ""
 msgid "You can use the following placeholders"
 msgstr ""
 
-#: posts-by-tag.php:166
+#: posts-by-tag.php:169
 msgid "Buy Addons"
 msgstr ""
 
-#: posts-by-tag.php:182
+#: posts-by-tag.php:185
 msgid "Posts By Tag Page Fields"
 msgstr ""
 
-#: posts-by-tag.php:214
+#: posts-by-tag.php:217
 msgid "Widget Title"
 msgstr ""
 
-#: posts-by-tag.php:215
+#: posts-by-tag.php:218
 msgid "Widget Tags"
 msgstr ""
 
